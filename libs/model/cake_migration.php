@@ -1,5 +1,5 @@
 <?php
-App::import('Model', 'CakeSchema', false);
+App::import('Core', 'Schema');
 
 /**
  * Base Class for Migration management

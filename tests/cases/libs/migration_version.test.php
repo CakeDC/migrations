@@ -32,9 +32,9 @@ class MigrationVersionTest extends CakeTestCase {
 			'connection' => 'test_suite'
 		));
 
-		$plugins = $this->plugins = App::path('plugins');
+		$plugins = $this->plugins = Configure::read('pluginPaths');
 		$plugins[] = dirname(dirname(dirname(__FILE__))) . DS . 'test_app' . DS . 'plugins' . DS;
-		App::build(array('plugins' => $plugins), true);
+		Configure::write('pluginPaths', $plugins);
 	}
 
 /**
@@ -43,7 +43,7 @@ class MigrationVersionTest extends CakeTestCase {
  * @return void
  **/
 	function endTest() {
-		App::build(array('plugins' => $this->plugins), true);
+		Configure::write('pluginPaths', $this->plugins);
 		unset($this->Version, $this->plugins);
 	}
 

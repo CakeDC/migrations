@@ -1,5 +1,5 @@
 <?php
-App::import('Model', 'Migrations.CakeMigration', false);
+require_once dirname(__FILE__) . DS . 'model' . DS . 'cake_migration.php';
 
 /**
  * Migration version management.
@@ -247,19 +247,35 @@ class MigrationVersion {
  * @return mixed False in case of no file found, array with mapping
  * @access private
  */
-	function __loadFile($name, $type) {
-		$path = CONFIGS . 'migrations' . DS;
-		if ($type != 'app') {
-			$path = App::pluginPath($type) . 'config' . DS . 'migrations' . DS;
-		}
-		if (file_exists($path . $name . '.php')) {
-			include $path . $name . '.php';
-			if ($name == 'map') {
-				return $map;
+ 	function __loadFile($name, $type) {
+		$found = false;
+		if ($type == 'app') {
+			if (!file_exists(CONFIGS . 'migrations' . DS . $name . '.php')) {
+				return false;
 			}
-			return true;
-		}
-		return false;
-	}
+
+			include CONFIGS . 'migrations' . DS . $name . '.php';
+			$found = true;
+		} else {
+			$paths = Configure::read('pluginPaths');
+			foreach ($paths as $path) {
+				if (file_exists($path . $type) && is_dir($path . $type)) {
+					if (!file_exists($path . $type . DS . 'config' . DS . 'migrations' . DS . $name . '.php')) {
+						return false;
+					}
+
+					include $path . $type . DS . 'config' . DS . 'migrations' . DS . $name . '.php';
+					$found = true;
+					break;
+				}
+			}
+ 		}
+
+		if ($found && $name == 'map') {
+			return $map;
+ 		}
+		return $found;
+ 	}
+
 }
 ?>

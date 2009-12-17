@@ -158,9 +158,9 @@ class MigrationShellTest extends CakeTestCase {
 		$this->Shell->type = 'test_migration_plugin';
 		$this->Shell->path = TMP . 'tests' . DS;
 
-		$plugins = $this->plugins = App::path('plugins');
+		$plugins = $this->plugins = Configure::read('pluginPaths');
 		$plugins[] = dirname(dirname(dirname(__FILE__))) . DS . 'test_app' . DS . 'plugins' . DS;
-		App::build(array('plugins' => $plugins), true);
+		Configure::write('pluginPaths', $plugins);
 	}
 
 /**
@@ -169,7 +169,7 @@ class MigrationShellTest extends CakeTestCase {
  * @return void
  **/
 	function endTest() {
-		App::build(array('plugins' => $this->plugins), true);
+		Configure::write('pluginPaths', $this->plugins);
 		unset($this->Dispatcher, $this->Shell, $this->plugins);
 	}
 

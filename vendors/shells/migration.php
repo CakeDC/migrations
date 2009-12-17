@@ -1,6 +1,6 @@
 <?php
 App::import('Model', 'CakeSchema', false);
-App::import('Lib', 'Migrations.MigrationVersion');
+require_once dirname(dirname(dirname(__FILE__))) . DS . 'libs' . DS . 'migration_version.php';
 
 /**
  * Migration shell.
@@ -242,7 +242,7 @@ class MigrationShell extends Shell {
 		$this->out(__d('migrations', 'Mapping Migrations...', true));
 		$this->_writeMap($map);
 
-		$this->out();
+		$this->out('');
 		$this->out(__d('migrations', 'Done.', true));
 	}
 
@@ -513,10 +513,17 @@ TEXT;
  * @access private
  */
 	function __getPath() {
-		if ($this->type != 'app') {
-			return App::pluginPath($this->type);
-		}
-		return APP;
+		if ($this->type == 'app') {
+			return APP;
+		} else {
+			$paths = Configure::read('pluginPaths');
+			foreach ($paths as $path) {
+				if (file_exists($path . $this->type) && is_dir($path . $this->type)) {
+					return $path . $this->type . DS;
+				}
+			}
+ 		}
+		return false;
 	}
 
 /**
