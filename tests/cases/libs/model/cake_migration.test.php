@@ -139,18 +139,18 @@ class CakeMigrationTest extends CakeTestCase {
 		));
 
 		$sources = $this->db->listSources();
-		$this->assertFalse(in_array('migration_users', $sources));
-		$this->assertFalse(in_array('migration_posts', $sources));
+		$this->assertFalse(in_array($this->db->fullTableName('migration_user', false), $sources));
+		$this->assertFalse(in_array($this->db->fullTableName('migration_posts', false), $sources));
 
 		$this->assertTrue($migration->run('up'));
 		$sources = $this->db->listSources();
-		$this->assertTrue(in_array('migration_users', $sources));
-		$this->assertTrue(in_array('migration_posts', $sources));
+		$this->assertTrue(in_array($this->db->fullTableName('migration_users', false), $sources));
+		$this->assertTrue(in_array($this->db->fullTableName('migration_posts', false), $sources));
 
 		$this->assertTrue($migration->run('down'));
 		$sources = $this->db->listSources();
-		$this->assertFalse(in_array('migration_users', $sources));
-		$this->assertFalse(in_array('migration_posts', $sources));
+		$this->assertFalse(in_array($this->db->fullTableName('migration_users', false), $sources));
+		$this->assertFalse(in_array($this->db->fullTableName('migration_posts', false), $sources));
 	}
 
 /**
@@ -168,18 +168,18 @@ class CakeMigrationTest extends CakeTestCase {
 		));
 
 		$sources = $this->db->listSources();
-		$this->assertTrue(in_array('posts', $sources));
-		$this->assertFalse(in_array('renamed_posts', $sources));
+		$this->assertTrue(in_array($this->db->fullTableName('posts', false), $sources));
+		$this->assertFalse(in_array($this->db->fullTableName('renamed_posts', false), $sources));
 
 		$this->assertTrue($migration->run('up'));
 		$sources = $this->db->listSources();
-		$this->assertFalse(in_array('posts', $sources));
-		$this->assertTrue(in_array('renamed_posts', $sources));
+		$this->assertFalse(in_array($this->db->fullTableName('posts', false), $sources));
+		$this->assertTrue(in_array($this->db->fullTableName('renamed_posts', false), $sources));
 
 		$this->assertTrue($migration->run('down'));
 		$sources = $this->db->listSources();
-		$this->assertTrue(in_array('posts', $sources));
-		$this->assertFalse(in_array('renamed_posts', $sources));
+		$this->assertTrue(in_array($this->db->fullTableName('posts', false), $sources));
+		$this->assertFalse(in_array($this->db->fullTableName('renamed_posts', false), $sources));
 	}
 
 /**
