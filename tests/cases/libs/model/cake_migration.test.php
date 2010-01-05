@@ -416,5 +416,24 @@ class CakeMigrationTest extends CakeTestCase {
 		$this->assertEqual($return->name, 'Post');
 		$this->assertEqual($return->table, 'users');
 	}
+	
+/**
+ * Test run method with invalid syntaxes
+ * 
+ * @access public
+ * @return void
+ */
+	function testRunInvalidSyntaxes() {
+		$migration = new TestCakeMigration(array(
+			'up' => array('do_something' => array('posts' => array('updated' => 'renamed_updated'))),
+			'down' => array('undo_something' => array('posts' => array('renamed_updated' => 'updated'))),
+		));
+
+		$this->expectError('Migration direction (last) is not one of valid directions.');
+		$this->assertFalse($migration->run('last'));
+		
+		$this->expectError('Migration action type (do_something) is not one of valid actions type.');
+		$this->assertTrue($migration->run('up'));
+	}
 }
 ?>

@@ -58,7 +58,7 @@ class MigrationVersion {
 			'fields' => array('version'),
 			'conditions' => array($this->Version->alias . '.type' => $type),
 			'order' => array($this->Version->alias . '.version' => 'DESC'),
-			'recursive' => -1
+			'recursive' => -1,
 		));
 
 		if (empty($version)) {
@@ -114,7 +114,7 @@ class MigrationVersion {
 			'fields' => array('version', 'created'),
 			'conditions' => array($this->Version->alias . '.type' => $type),
 			'order' => array($this->Version->alias . '.version' => 'ASC'),
-			'recursive' => -1
+			'recursive' => -1,
 		));
 		$migrated = Set::combine($migrated, '/' . $this->Version->alias . '/version', '/' . $this->Version->alias . '/created');
 
