@@ -168,7 +168,7 @@ class MigrationShell extends Shell {
 		$this->Version->run($options);
 
 		$this->out(__d('migrations', 'All migrations have completed.', true));
-		$this->out();
+		$this->out(null);
 		return true;
 	}
 
@@ -547,7 +547,7 @@ TEXT;
  * @access public
  */
 	function afterMigration(&$Migration, $direction) {
-		$this->out();
+		$this->out(null);
 	}
 
 /**
