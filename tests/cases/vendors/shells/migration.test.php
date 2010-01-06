@@ -19,7 +19,7 @@ Mock::generatePartial(
 );
 Mock::generatePartial(
 	'MigrationShell', 'TestMigrationShellMockMigrationShell',
-	array('in', 'out', '_stop', '_showInfo')
+	array('in', 'out', 'err', 'hr', '_welcome', '_stop', '_showInfo')
 );
 Mock::generatePartial(
 	'MigrationVersion', 'TestMigrationShellMockMigrationVersion',
@@ -171,6 +171,26 @@ class MigrationShellTest extends CakeTestCase {
 	function endTest() {
 		App::build(array('plugins' => $this->plugins), true);
 		unset($this->Dispatcher, $this->Shell, $this->plugins);
+	}
+
+/**
+ * testStartup method
+ *
+ * @return void
+ **/
+	function testStartup() {
+		$Shell =& new TestMigrationShell($this->Dispatcher);
+		$Shell->startup();
+		$this->assertEqual($Shell->connection, 'default');
+		$this->assertEqual($Shell->type, 'app');
+		
+		$Shell->params = array(
+			'connection' => 'test_suite',
+			'plugin' => 'migrations'
+		);
+		$Shell->startup();
+		$this->assertEqual($Shell->connection, 'test_suite');
+		$this->assertEqual($Shell->type, 'migrations');
 	}
 
 /**
@@ -601,8 +621,10 @@ TEXT;
 		$this->assertPattern($pattern, $result);
 
 		// Adding other migration to it
-		$this->Shell->setReturnValueAt(2, 'in', '002 create some sample data');
-		$this->Shell->setReturnValueAt(3, 'in', 'n');
+		$this->Shell->expectCallCount('err', 1);
+		$this->Shell->setReturnValueAt(2, 'in', '002_invalid_name');
+		$this->Shell->setReturnValueAt(3, 'in', '002 create some sample data');
+		$this->Shell->setReturnValueAt(4, 'in', 'n');
 
 		$this->assertFalse(file_exists(TMP . 'tests' . DS . '002_create_some_sample_data.php'));
 		$this->Shell->generate();
