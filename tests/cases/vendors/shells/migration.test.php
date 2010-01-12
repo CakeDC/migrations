@@ -120,7 +120,7 @@ class MigrationShellTest extends CakeTestCase {
  * @var array
  * @access public
  */
-	var $fixtures = array('plugin.migrations.schema_migrations');
+	var $fixtures = array('plugin.migrations.schema_migrations', 'core.article');
 
 /**
  * tables property
@@ -183,7 +183,7 @@ class MigrationShellTest extends CakeTestCase {
 		$Shell->startup();
 		$this->assertEqual($Shell->connection, 'default');
 		$this->assertEqual($Shell->type, 'app');
-		
+
 		$Shell->params = array(
 			'connection' => 'test_suite',
 			'plugin' => 'migrations'
@@ -510,20 +510,7 @@ class MigrationShellTest extends CakeTestCase {
 		$this->assertTrue($this->Shell->writeMigration('migration_test_file', 'M' . str_replace('-', '', String::uuid()), $migration));
 		$this->assertTrue(file_exists(TMP . 'tests' . DS . 'migration_test_file.php'));
 
-		$result = array();
-		$array = explode("\n", file_get_contents(TMP . 'tests' . DS . 'migration_test_file.php'));
-		foreach ($array as $line) {
-			if ($line == "\tvar \$migration = array(") {
-				$result[] = $line;
-			} else if (!empty($result) && $line == "\t);") {
-				$result[] = $line;
-				break;
-			} else if (!empty($result)) {
-				$result[] = $line;
-			}
-		}
-		$result = implode("\n", $result);
-
+		$result = $this->__getMigrationVariable(TMP . 'tests' . DS . 'migration_test_file.php');
 		$expected = <<<TEXT
 	var \$migration = array(
 		'up' => array(
@@ -600,13 +587,13 @@ TEXT;
  * @return void
  */
 	function testGenerate() {
-		$this->Shell->setReturnValueAt(0, 'in', '001 schema dump');
+		$this->Shell->setReturnValueAt(0, 'in', '001 initial schema');
 		$this->Shell->setReturnValueAt(1, 'in', 'n');
 
-		$this->assertFalse(file_exists(TMP . 'tests' . DS . '001_schema_dump.php'));
+		$this->assertFalse(file_exists(TMP . 'tests' . DS . '001_initial_schema.php'));
 		$this->assertFalse(file_exists(TMP . 'tests' . DS . 'map.php'));
 		$this->Shell->generate();
-		$this->assertTrue(file_exists(TMP . 'tests' . DS . '001_schema_dump.php'));
+		$this->assertTrue(file_exists(TMP . 'tests' . DS . '001_initial_schema.php'));
 		$this->assertTrue(file_exists(TMP . 'tests' . DS . 'map.php'));
 
 		$result = file_get_contents(TMP . 'tests' . DS . 'map.php');
@@ -614,7 +601,7 @@ TEXT;
 /^<\?php
 \\\$map = array\(
 	1 => array\(
-		'001_schema_dump' => 'M([a-zA-Z0-9]+)'\),
+		'001_initial_schema' => 'M([a-zA-Z0-9]+)'\),
 \);
 \?>$/
 TEXT;
@@ -635,7 +622,7 @@ TEXT;
 /^<\?php
 \\\$map = array\(
 	1 => array\(
-		'001_schema_dump' => 'M([a-zA-Z0-9]+)'\),
+		'001_initial_schema' => 'M([a-zA-Z0-9]+)'\),
 	2 => array\(
 		'002_create_some_sample_data' => 'M([a-zA-Z0-9]+)'\),
 \);
@@ -644,9 +631,86 @@ TEXT;
 		$this->assertPattern($pattern, $result);
 
 		// Remove created files
-		@unlink(TMP . 'tests' . DS . '001_schema_dump.php');
+		@unlink(TMP . 'tests' . DS . '001_initial_schema.php');
 		@unlink(TMP . 'tests' . DS . '002_create_some_sample_data.php');
 		@unlink(TMP . 'tests' . DS . 'map.php');
+	}
+
+/**
+ * testGenerateDump method
+ *
+ * @return void
+ */
+	function testGenerateDump() {
+		$this->Shell->setReturnValueAt(0, 'in', '001 schema dump');
+		$this->Shell->setReturnValueAt(1, 'in', 'y');
+
+		$this->assertFalse(file_exists(TMP . 'tests' . DS . '001_schema_dump.php'));
+		$this->assertFalse(file_exists(TMP . 'tests' . DS . 'map.php'));
+		$this->Shell->type = 'test_migration_plugin';
+		$this->Shell->params['f'] = true;
+		$this->Shell->generate();
+		$this->assertTrue(file_exists(TMP . 'tests' . DS . '001_schema_dump.php'));
+		$this->assertTrue(file_exists(TMP . 'tests' . DS . 'map.php'));
+
+		$result = file_get_contents(TMP . 'tests' . DS . 'map.php');
+		$pattern = <<<TEXT
+/^<\?php
+\\\$map = array\(
+	1 => array\(
+		'001_schema_dump' => 'M([a-zA-Z0-9]+)'\),
+\);
+\?>$/
+TEXT;
+		$this->assertPattern($pattern, $result);
+
+		$result = $this->__getMigrationVariable(TMP . 'tests' . DS . '001_schema_dump.php');
+		$pattern = <<<TEXT
+/^	var \\\$migration = array\(
+		'up' => array\(
+			'create_table' => array\(
+				'articles' => array\(/
+TEXT;
+		$this->assertPattern($pattern, $result);
+
+		$pattern = <<<TEXT
+/				\),
+			\),
+		\),
+		'down' => array\(
+			'drop_table' => array\(
+				'articles'
+			\),
+		\),
+	\);$/
+TEXT;
+		$this->assertPattern($pattern, $result);
+
+		// Remove created files
+		@unlink(TMP . 'tests' . DS . '001_schema_dump.php');
+		@unlink(TMP . 'tests' . DS . 'map.php');
+	}
+
+/**
+ * Strip all the content surrounding the $migration variable
+ *
+ * @param string $file
+ * @return string
+ */
+	function __getMigrationVariable($file) {
+		$result = array();
+		$array = explode("\n", file_get_contents($file));
+		foreach ($array as $line) {
+			if ($line == "\tvar \$migration = array(") {
+				$result[] = $line;
+			} else if (!empty($result) && $line == "\t);") {
+				$result[] = $line;
+				break;
+			} else if (!empty($result)) {
+				$result[] = $line;
+			}
+		}
+		return implode("\n", $result);
 	}
 }
 ?>

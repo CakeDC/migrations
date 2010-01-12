@@ -205,7 +205,7 @@ class MigrationShell extends Shell {
 			}
 		}
 
-		$this->Schema = new CakeSchema(array('connection' => $this->connection));
+		$this->Schema = $this->_getSchema();
 		$migration = array('up' => array(), 'down' => array());
 
 		if (file_exists(CONFIGS . 'schema' . DS . 'schema.php')) {
@@ -231,6 +231,9 @@ class MigrationShell extends Shell {
 				$dump = $dump['tables'];
 				unset($dump['missing']);
 
+				if ($this->type !== 'migrations') {
+					unset($dump['schema_migrations']);
+				}
 				if (!empty($dump)) {
 					$migration['up']['create_table'] = $dump;
 					$migration['down']['drop_table'] = array_keys($dump);
@@ -394,6 +397,35 @@ TEXT;
 			}
 		}
 		return $migration;
+	}
+
+/**
+ * Load and construct the schema class if exists
+ *
+ * @param string $type Can be 'app' or a plugin name
+ * @return mixed False in case of no file found, schema object
+ * @access protected
+ */
+	function _getSchema($type = null) {
+		if ($type === null) {
+			return new CakeSchema(array('connection' => $this->connection));
+		}
+		$file = $this->path . 'config' . DS . 'schema' . DS . 'schema.php';
+		if (!file_exists($file)) {
+			return false;
+		}
+		require_once $file;
+
+		$name = Inflector::camelize($type) . 'Schema';
+		if (!class_exists($name)) {
+			return false;
+		}
+
+		$schema = new $name(array('connection' => $this->connection));
+		if ($type != 'app') {
+			$schema->plugin = $type;
+		}
+		return $schema;
 	}
 
 /**
