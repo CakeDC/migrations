@@ -1,4 +1,19 @@
 <?php
+/**
+ * CakePHP Migrations
+ *
+ * Copyright 2009 - 2010, Cake Development Corporation
+ *                        1785 E. Sahara Avenue, Suite 490-423
+ *                        Las Vegas, Nevada 89104
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright 2009 - 2010, Cake Development Corporation
+ * @link      http://codaset.com/cakedc/migrations/
+ * @package   plugns.migrations
+ * @license   MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
 App::import('Model', 'CakeSchema', false);
 require_once dirname(dirname(dirname(__FILE__))) . DS . 'libs' . DS . 'migration_version.php';
 
@@ -190,19 +205,21 @@ class MigrationShell extends Shell {
 			}
 		}
 
-		$this->Schema = new CakeSchema(array('connection' => $this->connection));
+		$this->Schema = $this->_getSchema();
 		$migration = array('up' => array(), 'down' => array());
 
-		if (file_exists(CONFIGS . 'schema' . DS . 'schema.php')) {
+		$oldSchema = $this->_getSchema($this->type);
+		if ($oldSchema !== false) {
 			$response = $this->in(__d('migrations', 'Do you wanna compare the schema.php file to the database?', true), array('y', 'n'), 'y');
 			if (strtolower($response) === 'y') {
 				$this->hr();
 				$this->out(__d('migrations', 'Comparing schema.php to the database...', true));
 
-				include CONFIGS . 'schema' . DS . 'schema.php';
-				$oldSchema = new AppSchema(array('connection' => $this->connection));
 				$newSchema = $this->Schema->read(array('models' => !isset($this->params['f'])));
 				$comparison = $this->Schema->compare($oldSchema, $newSchema);
+				if ($this->type !== 'migrations') {
+					unset($comparison['schema_migrations']);
+				}
 
 				$migration = $this->_fromComparison($migration, $comparison, $oldSchema->tables);
 			}
@@ -216,6 +233,9 @@ class MigrationShell extends Shell {
 				$dump = $dump['tables'];
 				unset($dump['missing']);
 
+				if ($this->type !== 'migrations') {
+					unset($dump['schema_migrations']);
+				}
 				if (!empty($dump)) {
 					$migration['up']['create_table'] = $dump;
 					$migration['down']['drop_table'] = array_keys($dump);
@@ -355,19 +375,22 @@ TEXT;
 				}
 
 				if ($type == 'add') {
-					$migration['up']['add_field'][$table] = array_merge($fields, $indexes);
+					$migration['up']['create_field'][$table] = array_merge($fields, $indexes);
 
 					$migration['down']['drop_field'][$table] = array_keys($fields);
 					if (!empty($indexes['indexes'])) {
 						$migration['down']['drop_field'][$table]['indexes'] = array_keys($indexes['indexes']);
 					}
+				} else if ($type == 'change') {
+					$migration['up']['alter_field'][$table] = $fields;
+					$migration['down']['alter_field'][$table] = array_intersect_key($oldTables[$table], $fields);
 				} else {
 					$migration['up']['drop_field'][$table] = array_keys($fields);
 					if (!empty($indexes['indexes'])) {
 						$migration['up']['drop_field'][$table]['indexes'] = array_keys($indexes['indexes']);
 					}
 
-					$migration['down']['add_field'][$table] = array_merge($fields, $indexes);
+					$migration['down']['create_field'][$table] = array_merge($fields, $indexes);
 				}
 			}
 		}
@@ -379,6 +402,31 @@ TEXT;
 			}
 		}
 		return $migration;
+	}
+
+/**
+ * Load and construct the schema class if exists
+ *
+ * @param string $type Can be 'app' or a plugin name
+ * @return mixed False in case of no file found, schema object
+ * @access protected
+ */
+	function _getSchema($type = null) {
+		if ($type === null) {
+			return new CakeSchema(array('connection' => $this->connection));
+		}
+		$file = $this->__getPath($type) . 'config' . DS . 'schema' . DS . 'schema.php';
+		if (!file_exists($file)) {
+			return false;
+		}
+		require_once $file;
+
+		$name = Inflector::camelize($type) . 'Schema';
+		$schema = new $name(array('connection' => $this->connection));
+		if ($type != 'app') {
+			$schema->plugin = $type;
+		}
+		return $schema;
 	}
 
 /**
@@ -396,7 +444,7 @@ TEXT;
 			$content .= "\t\t'" . $direction . "' => array(\n";
 			foreach ($actions as $type => $tables) {
 				$content .= "\t\t\t'" . $type . "' => array(\n";
-				if ($type == 'create_table' || $type == 'add_field') {
+				if ($type == 'create_table' || $type == 'create_field' || $type == 'alter_field') {
 					foreach ($tables as $table => $fields) {
 						$content .= "\t\t\t\t'" . $table . "' => array(\n";
 						foreach ($fields as $field => $col) {
@@ -509,17 +557,21 @@ TEXT;
 /**
  * Return the path used
  *
+ * @param string $type Can be 'app' or a plugin name
  * @return string Path used
  * @access private
  */
-	function __getPath() {
-		if ($this->type == 'app') {
+	function __getPath($type = null) {
+		if ($type === null) {
+			$type = $this->type;
+		}
+		if ($type == 'app') {
 			return APP;
 		} else {
 			$paths = Configure::read('pluginPaths');
 			foreach ($paths as $path) {
-				if (file_exists($path . $this->type) && is_dir($path . $this->type)) {
-					return $path . $this->type . DS;
+				if (file_exists($path . $type) && is_dir($path . $type)) {
+					return $path . $type . DS;
 				}
 			}
  		}
