@@ -208,16 +208,18 @@ class MigrationShell extends Shell {
 		$this->Schema = $this->_getSchema();
 		$migration = array('up' => array(), 'down' => array());
 
-		if (file_exists(CONFIGS . 'schema' . DS . 'schema.php')) {
+		$oldSchema = $this->_getSchema($this->type);
+		if ($oldSchema !== false) {
 			$response = $this->in(__d('migrations', 'Do you wanna compare the schema.php file to the database?', true), array('y', 'n'), 'y');
 			if (strtolower($response) === 'y') {
 				$this->hr();
 				$this->out(__d('migrations', 'Comparing schema.php to the database...', true));
 
-				include CONFIGS . 'schema' . DS . 'schema.php';
-				$oldSchema = new AppSchema(array('connection' => $this->connection));
 				$newSchema = $this->Schema->read(array('models' => !isset($this->params['f'])));
 				$comparison = $this->Schema->compare($oldSchema, $newSchema);
+				if ($this->type !== 'migrations') {
+					unset($comparison['schema_migrations']);
+				}
 
 				$migration = $this->_fromComparison($migration, $comparison, $oldSchema->tables);
 			}
@@ -373,19 +375,22 @@ TEXT;
 				}
 
 				if ($type == 'add') {
-					$migration['up']['add_field'][$table] = array_merge($fields, $indexes);
+					$migration['up']['create_field'][$table] = array_merge($fields, $indexes);
 
 					$migration['down']['drop_field'][$table] = array_keys($fields);
 					if (!empty($indexes['indexes'])) {
 						$migration['down']['drop_field'][$table]['indexes'] = array_keys($indexes['indexes']);
 					}
+				} else if ($type == 'change') {
+					$migration['up']['alter_field'][$table] = $fields;
+					$migration['down']['alter_field'][$table] = array_intersect_key($oldTables[$table], $fields);
 				} else {
 					$migration['up']['drop_field'][$table] = array_keys($fields);
 					if (!empty($indexes['indexes'])) {
 						$migration['up']['drop_field'][$table]['indexes'] = array_keys($indexes['indexes']);
 					}
 
-					$migration['down']['add_field'][$table] = array_merge($fields, $indexes);
+					$migration['down']['create_field'][$table] = array_merge($fields, $indexes);
 				}
 			}
 		}
@@ -410,17 +415,13 @@ TEXT;
 		if ($type === null) {
 			return new CakeSchema(array('connection' => $this->connection));
 		}
-		$file = $this->path . 'config' . DS . 'schema' . DS . 'schema.php';
+		$file = $this->__getPath($type) . 'config' . DS . 'schema' . DS . 'schema.php';
 		if (!file_exists($file)) {
 			return false;
 		}
 		require_once $file;
 
 		$name = Inflector::camelize($type) . 'Schema';
-		if (!class_exists($name)) {
-			return false;
-		}
-
 		$schema = new $name(array('connection' => $this->connection));
 		if ($type != 'app') {
 			$schema->plugin = $type;
@@ -443,7 +444,7 @@ TEXT;
 			$content .= "\t\t'" . $direction . "' => array(\n";
 			foreach ($actions as $type => $tables) {
 				$content .= "\t\t\t'" . $type . "' => array(\n";
-				if ($type == 'create_table' || $type == 'add_field') {
+				if ($type == 'create_table' || $type == 'create_field' || $type == 'alter_field') {
 					foreach ($tables as $table => $fields) {
 						$content .= "\t\t\t\t'" . $table . "' => array(\n";
 						foreach ($fields as $field => $col) {
@@ -556,12 +557,16 @@ TEXT;
 /**
  * Return the path used
  *
+ * @param string $type Can be 'app' or a plugin name
  * @return string Path used
  * @access private
  */
-	function __getPath() {
-		if ($this->type != 'app') {
-			return App::pluginPath($this->type);
+	function __getPath($type = null) {
+		if ($type === null) {
+			$type = $this->type;
+		}
+		if ($type != 'app') {
+			return App::pluginPath($type);
 		}
 		return APP;
 	}

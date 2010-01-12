@@ -155,11 +155,11 @@ class MigrationShellTest extends CakeTestCase {
 	function startTest() {
 		$this->Dispatcher =& new TestMigrationShellMockShellDispatcher();
 		$this->Shell =& new TestMigrationShell($this->Dispatcher);
-		$this->Shell->type = 'test_migration_plugin';
+		$this->Shell->type = 'app';
 		$this->Shell->path = TMP . 'tests' . DS;
 
 		$plugins = $this->plugins = App::path('plugins');
-		$plugins[] = dirname(dirname(dirname(__FILE__))) . DS . 'test_app' . DS . 'plugins' . DS;
+		$plugins[] = dirname(dirname(dirname(dirname(__FILE__)))) . DS . 'test_app' . DS . 'plugins' . DS;
 		App::build(array('plugins' => $plugins), true);
 	}
 
@@ -352,7 +352,7 @@ class MigrationShellTest extends CakeTestCase {
 		$result = $this->Shell->fromComparison(array(), $comparison, $oldTables);
 		$expected = array(
 			'up' => array(
-				'add_field' => array(
+				'create_field' => array(
 					'posts' => array('views' => array('type' => 'integer', 'null' => false))
 				)
 			),
@@ -372,7 +372,7 @@ class MigrationShellTest extends CakeTestCase {
 		$result = $this->Shell->fromComparison(array(), $comparison, $oldTables);
 		$expected = array(
 			'up' => array(
-				'add_field' => array(
+				'create_field' => array(
 					'posts' => array(
 						'indexes' => array('VIEW_COUNT' => array('column' => 'views', 'unique' => false))
 					)
@@ -395,7 +395,7 @@ class MigrationShellTest extends CakeTestCase {
 		$result = $this->Shell->fromComparison(array(), $comparison, $oldTables);
 		$expected = array(
 			'up' => array(
-				'add_field' => array(
+				'create_field' => array(
 					'posts' => array(
 						'views' => array('type' => 'integer', 'null' => false),
 						'indexes' => array('VIEW_COUNT' => array('column' => 'views', 'unique' => false))
@@ -428,7 +428,7 @@ class MigrationShellTest extends CakeTestCase {
 				)
 			),
 			'down' => array(
-				'add_field' => array(
+				'create_field' => array(
 					'posts' => array('views' => array('type' => 'integer', 'null' => false))
 				)
 			)
@@ -448,7 +448,7 @@ class MigrationShellTest extends CakeTestCase {
 				)
 			),
 			'down' => array(
-				'add_field' => array(
+				'create_field' => array(
 					'posts' => array('indexes' => array('VIEW_COUNT' => array('column' => 'views', 'unique' => false)))
 				)
 			)
@@ -469,10 +469,35 @@ class MigrationShellTest extends CakeTestCase {
 				)
 			),
 			'down' => array(
-				'add_field' => array(
+				'create_field' => array(
 					'posts' => array(
 						'views' => array('type' => 'integer', 'null' => false),
 						'indexes' => array('VIEW_COUNT' => array('column' => 'views', 'unique' => false))
+					)
+				)
+			)
+		);
+		$this->assertEqual($result, $expected);
+
+		// Change field
+		$comparison = array(
+			'posts' => array('change' => array(
+				'views' => array('type' => 'integer', 'null' => false, 'length' => 2),
+			))
+		);
+		$result = $this->Shell->fromComparison(array(), $comparison, $oldTables);
+		$expected = array(
+			'up' => array(
+				'alter_field' => array(
+					'posts' => array(
+						'views' => array('type' => 'integer', 'null' => false, 'length' => 2)
+					)
+				)
+			),
+			'down' => array(
+				'alter_field' => array(
+					'posts' => array(
+						'views' => array('type' => 'integer', 'null' => false)
 					)
 				)
 			)
@@ -492,7 +517,7 @@ class MigrationShellTest extends CakeTestCase {
 		$migration = array(
 			'up' => array(
 				'create_table' => array('users' => $users),
-				'add_field' => array(
+				'create_field' => array(
 					'posts' => array(
 						'views' => array('type' => 'integer', 'null' => false),
 						'indexes' => array('VIEW_COUNT' => array('column' => 'views', 'unique' => false))
@@ -526,7 +551,7 @@ class MigrationShellTest extends CakeTestCase {
 					),
 				),
 			),
-			'add_field' => array(
+			'create_field' => array(
 				'posts' => array(
 					'views' => array('type' => 'integer', 'null' => false),
 					'indexes' => array(
@@ -637,6 +662,45 @@ TEXT;
 	}
 
 /**
+ * testGenerateComparison method
+ *
+ * @return void
+ */
+	function testGenerateComparison() {
+		$this->Shell->setReturnValueAt(0, 'in', '002 drop slug field');
+		$this->Shell->setReturnValueAt(1, 'in', 'y');
+
+		$this->assertFalse(file_exists(TMP . 'tests' . DS . '002_drop_slug_field.php'));
+		$this->assertFalse(file_exists(TMP . 'tests' . DS . 'map.php'));
+		$this->Shell->type = 'test_migration_plugin';
+		$this->Shell->params['f'] = true;
+		$this->Shell->generate();
+		$this->assertTrue(file_exists(TMP . 'tests' . DS . '002_drop_slug_field.php'));
+		$this->assertTrue(file_exists(TMP . 'tests' . DS . 'map.php'));
+
+		$result = $this->__getMigrationVariable(TMP . 'tests' . DS . '002_drop_slug_field.php');
+		$pattern = <<<TEXT
+/			'drop_field' => array\(
+				'articles' => array\('slug',\),
+			\),/
+TEXT;
+		$this->assertPattern($pattern, $result);
+
+		$pattern = <<<TEXT
+/			'create_field' => array\(
+				'articles' => array\(
+					'slug' => array\('type' => 'string', 'null' => false\),
+				\),
+			\),/
+TEXT;
+		$this->assertPattern($pattern, $result);
+
+		// Remove created files
+		@unlink(TMP . 'tests' . DS . '002_drop_slug_field.php');
+		@unlink(TMP . 'tests' . DS . 'map.php');
+	}
+
+/**
  * testGenerateDump method
  *
  * @return void
@@ -647,7 +711,6 @@ TEXT;
 
 		$this->assertFalse(file_exists(TMP . 'tests' . DS . '001_schema_dump.php'));
 		$this->assertFalse(file_exists(TMP . 'tests' . DS . 'map.php'));
-		$this->Shell->type = 'test_migration_plugin';
 		$this->Shell->params['f'] = true;
 		$this->Shell->generate();
 		$this->assertTrue(file_exists(TMP . 'tests' . DS . '001_schema_dump.php'));
