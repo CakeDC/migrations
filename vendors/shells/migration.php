@@ -162,7 +162,7 @@ class MigrationShell extends Shell {
 					if (strtolower($response) === 'q') {
 						return $this->_stop();
 					} else if (strtolower($response) === 'c') {
-						$this->Dispatch->clear();
+						$this->_clear();
 						continue;
 					}
 
@@ -348,6 +348,16 @@ TEXT;
 				$this->out(__d('migrations', 'not applied', true));
 			}
 		}
+	}
+
+/**
+ * Clear the console
+ *
+ * @return void
+ * @access public
+ */
+	function _clear() {
+		$this->Dispatch->clear();
 	}
 
 /**
