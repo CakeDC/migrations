@@ -357,7 +357,13 @@ TEXT;
  * @access public
  */
 	function _clear() {
-		$this->Dispatch->clear();
+		if (empty($this->params['noclear'])) {
+			if ( DS === '/') {
+				passthru('clear');
+			} else {
+				passthru('cls');
+			}
+		}
 	}
 
 /**
