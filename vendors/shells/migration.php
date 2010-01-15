@@ -445,7 +445,11 @@ TEXT;
  * @access protected
  */
 	function _readSchema() {
-		$read = $this->Schema->read(array('models' => !isset($this->params['f'])));
+		$models = !isset($this->params['f']);
+		if ($models !== false && $this->type !== 'app') {
+			$models = Configure::listObjects('model', $this->__getPath() . 'models' . DS);
+		}
+		$read = $this->Schema->read(array('models' => $models));
 		if ($this->type !== 'migrations') {
 			unset($read['tables']['schema_migrations']);
 		}
