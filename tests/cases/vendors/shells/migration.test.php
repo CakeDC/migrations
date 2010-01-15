@@ -157,6 +157,7 @@ class MigrationShellTest extends CakeTestCase {
 		$this->Shell =& new TestMigrationShell($this->Dispatcher);
 		$this->Shell->type = 'app';
 		$this->Shell->path = TMP . 'tests' . DS;
+		$this->Shell->connection = 'test_suite';
 
 		$plugins = $this->plugins = App::path('plugins');
 		$plugins[] = dirname(dirname(dirname(dirname(__FILE__)))) . DS . 'test_app' . DS . 'plugins' . DS;

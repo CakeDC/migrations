@@ -215,12 +215,8 @@ class MigrationShell extends Shell {
 				$this->hr();
 				$this->out(__d('migrations', 'Comparing schema.php to the database...', true));
 
-				$newSchema = $this->Schema->read(array('models' => !isset($this->params['f'])));
+				$newSchema = $this->_readSchema();
 				$comparison = $this->Schema->compare($oldSchema, $newSchema);
-				if ($this->type !== 'migrations') {
-					unset($comparison['schema_migrations']);
-				}
-
 				$migration = $this->_fromComparison($migration, $comparison, $oldSchema->tables);
 			}
 		} else {
@@ -229,13 +225,10 @@ class MigrationShell extends Shell {
 				$this->hr();
 				$this->out(__d('migrations', 'Generating dump from current database...', true));
 
-				$dump = $this->Schema->read(array('models' => !isset($this->params['f'])));
+				$dump = $this->_readSchema();
 				$dump = $dump['tables'];
 				unset($dump['missing']);
 
-				if ($this->type !== 'migrations') {
-					unset($dump['schema_migrations']);
-				}
 				if (!empty($dump)) {
 					$migration['up']['create_table'] = $dump;
 					$migration['down']['drop_table'] = array_keys($dump);
@@ -437,6 +430,20 @@ TEXT;
 			$schema->plugin = $type;
 		}
 		return $schema;
+	}
+
+/**
+ * Reads the schema data
+ *
+ * @return array
+ * @access protected
+ */
+	function _readSchema() {
+		$read = $this->Schema->read(array('models' => !isset($this->params['f'])));
+		if ($this->type !== 'migrations') {
+			unset($read['tables']['schema_migrations']);
+		}
+		return $read;
 	}
 
 /**
