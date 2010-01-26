@@ -464,6 +464,9 @@ TEXT;
 		require_once $file;
 
 		$name = Inflector::camelize($type) . 'Schema';
+		if ($type == 'app' && !class_exists($name)) {
+			$name = Inflector::camelize($this->params['app']) . 'Schema';
+		}
 		$schema = new $name(array('connection' => $this->connection));
 		if ($type != 'app') {
 			$schema->plugin = $type;
