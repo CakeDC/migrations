@@ -72,6 +72,23 @@ class MigrationShellExpectation extends SimpleExpectation {
 class TestMigrationShell extends TestMigrationShellMockMigrationShell {
 
 /**
+ * output property
+ *
+ * @var string
+ */
+	var $output = '';
+
+/**
+ * out method
+ *
+ * @param $string
+ * @return void
+ */
+	function out($string = null) {
+		$this->output .= $string . "\n";
+	}
+
+/**
  * fromComparison method
  *
  * @param $migration
@@ -155,6 +172,7 @@ class MigrationShellTest extends CakeTestCase {
 	function startTest() {
 		$this->Dispatcher =& new TestMigrationShellMockShellDispatcher();
 		$this->Shell =& new TestMigrationShell($this->Dispatcher);
+		$this->Shell->Version =& new MigrationVersion(array('connection' => 'test_suite'));
 		$this->Shell->type = 'app';
 		$this->Shell->path = TMP . 'tests' . DS;
 		$this->Shell->connection = 'test_suite';
@@ -753,6 +771,26 @@ TEXT;
 		// Remove created files
 		@unlink(TMP . 'tests' . DS . '001_schema_dump.php');
 		@unlink(TMP . 'tests' . DS . 'map.php');
+	}
+
+/**
+ * testSummary method
+ *
+ * @return void
+ */
+	function testSummary() {
+		$this->Shell->summary();
+		$result = $this->Shell->output;
+
+		$pattern = <<<TEXT
+/Migrations Plugin
+
+Current version:
+  #001 001_init_migrations
+Latest version:
+  #001 001_init_migrations/
+TEXT;
+		$this->assertPattern($pattern, $result);
 	}
 
 /**

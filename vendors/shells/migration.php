@@ -183,7 +183,7 @@ class MigrationShell extends Shell {
 		$this->Version->run($options);
 
 		$this->out(__d('migrations', 'All migrations have completed.', true));
-		$this->out(null);
+		$this->out('');
 		return true;
 	}
 
@@ -270,6 +270,42 @@ class MigrationShell extends Shell {
 	}
 
 /**
+ * Displays a summary of all plugin and app migrations
+ *
+ * @access public
+ * @return void
+ */
+	function summary() {
+		$types = Configure::listObjects('plugin');
+		ksort($types);
+		array_unshift($types, 'App');
+
+		foreach ($types as $name) {
+			$type = Inflector::underscore($name);
+			$mapping = $this->Version->getMapping($type);
+			if ($mapping === false || count($mapping) === 0) {
+				continue;
+			}
+
+			$version = $this->Version->getVersion($type);
+			$this->out($name . ' Plugin');
+			$this->out('');
+			$this->out(__d('migrations', 'Current version:', true));
+			if ($version != 0) {
+				$info = $mapping[$version];
+				$this->out('  #' . number_format($info['version'] / 100, 2, '', '') . ' ' . $info['name']);
+			} else {
+				$this->out('  ' . __d('migrations', 'None applied.', true));
+			}
+
+			$info = array_pop($mapping);
+			$this->out(__d('migrations', 'Latest version:', true));
+			$this->out('  #' . number_format($info['version'] / 100, 2, '', '') . ' ' . $info['name']);
+			$this->hr();
+		}
+	}
+
+/**
  * Displays help contents
  *
  * @return void
@@ -303,6 +339,9 @@ Commands:
 	migration <generate|add>
 		Generates a migration file.
 		To force generation of all tables when making a comparison/dump, use the -f param.
+
+	migration summary
+		Displays a summary of all plugin and app migrations
 TEXT;
 
 		$this->out($help);
@@ -626,7 +665,7 @@ TEXT;
  * @access public
  */
 	function afterMigration(&$Migration, $direction) {
-		$this->out(null);
+		$this->out('');
 	}
 
 /**
