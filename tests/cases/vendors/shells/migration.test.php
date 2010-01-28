@@ -94,10 +94,11 @@ class TestMigrationShell extends TestMigrationShellMockMigrationShell {
  * @param $migration
  * @param $comparison
  * @param $oldTables
+ * @param $newTables
  * @return void
  */
-	function fromComparison($migration, $comparison, $oldTables) {
-		return $this->_fromComparison($migration, $comparison, $oldTables);
+	function fromComparison($migration, $comparison, $oldTables, $newTables) {
+		return $this->_fromComparison($migration, $comparison, $oldTables, $newTables);
 	}
 
 /**
@@ -331,7 +332,7 @@ class MigrationShellTest extends CakeTestCase {
 			'posts' => array('add' => $this->tables['posts'])
 		);
 		$oldTables = array();
-		$result = $this->Shell->fromComparison(array(), $comparison, $oldTables);
+		$result = $this->Shell->fromComparison(array(), $comparison, $oldTables, array());
 		$expected = array(
 			'up' => array('create_table' => $this->tables),
 			'down' => array('drop_table' => array('users', 'posts'))
@@ -340,7 +341,7 @@ class MigrationShellTest extends CakeTestCase {
 
 		$comparison = array('posts' => array('add' => $this->tables['posts']));
 		$oldTables = array('users' => $this->tables['users']);
-		$result = $this->Shell->fromComparison(array(), $comparison, $oldTables);
+		$result = $this->Shell->fromComparison(array(), $comparison, $oldTables, array());
 		$expected = array(
 			'up' => array(
 				'create_table' => array('posts' => $this->tables['posts']),
@@ -362,13 +363,14 @@ class MigrationShellTest extends CakeTestCase {
 	function testFromComparisonFieldActions() {
 		// Add field/index
 		$oldTables = array('posts' => $this->tables['posts']);
+		$newTables = array('posts' => array());
 
 		$comparison = array(
 			'posts' => array('add' => array(
 				'views' => array('type' => 'integer', 'null' => false)
 			))
 		);
-		$result = $this->Shell->fromComparison(array(), $comparison, $oldTables);
+		$result = $this->Shell->fromComparison(array(), $comparison, $oldTables, $newTables);
 		$expected = array(
 			'up' => array(
 				'create_field' => array(
@@ -388,7 +390,7 @@ class MigrationShellTest extends CakeTestCase {
 				'indexes' => array('VIEW_COUNT' => array('column' => 'views', 'unique' => false))
 			))
 		);
-		$result = $this->Shell->fromComparison(array(), $comparison, $oldTables);
+		$result = $this->Shell->fromComparison(array(), $comparison, $oldTables, $newTables);
 		$expected = array(
 			'up' => array(
 				'create_field' => array(
@@ -411,7 +413,7 @@ class MigrationShellTest extends CakeTestCase {
 				'indexes' => array('VIEW_COUNT' => array('column' => 'views', 'unique' => false))
 			))
 		);
-		$result = $this->Shell->fromComparison(array(), $comparison, $oldTables);
+		$result = $this->Shell->fromComparison(array(), $comparison, $oldTables, $newTables);
 		$expected = array(
 			'up' => array(
 				'create_field' => array(
@@ -430,7 +432,6 @@ class MigrationShellTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		// Drop field/index
-		$oldTables = array('posts' => $this->tables['posts']);
 		$oldTables['posts']['views'] = array('type' => 'integer', 'null' => false);
 		$oldTables['posts']['indexes'] = array('VIEW_COUNT' => array('column' => 'views', 'unique' => false));
 
@@ -439,7 +440,7 @@ class MigrationShellTest extends CakeTestCase {
 				'views' => array('type' => 'integer', 'null' => false)
 			))
 		);
-		$result = $this->Shell->fromComparison(array(), $comparison, $oldTables);
+		$result = $this->Shell->fromComparison(array(), $comparison, $oldTables, $newTables);
 		$expected = array(
 			'up' => array(
 				'drop_field' => array(
@@ -459,7 +460,7 @@ class MigrationShellTest extends CakeTestCase {
 				'indexes' => array('VIEW_COUNT' => array('column' => 'views', 'unique' => false))
 			))
 		);
-		$result = $this->Shell->fromComparison(array(), $comparison, $oldTables);
+		$result = $this->Shell->fromComparison(array(), $comparison, $oldTables, $newTables);
 		$expected = array(
 			'up' => array(
 				'drop_field' => array(
@@ -480,7 +481,7 @@ class MigrationShellTest extends CakeTestCase {
 				'indexes' => array('VIEW_COUNT' => array('column' => 'views', 'unique' => false))
 			))
 		);
-		$result = $this->Shell->fromComparison(array(), $comparison, $oldTables);
+		$result = $this->Shell->fromComparison(array(), $comparison, $oldTables, $newTables);
 		$expected = array(
 			'up' => array(
 				'drop_field' => array(
@@ -504,7 +505,7 @@ class MigrationShellTest extends CakeTestCase {
 				'views' => array('type' => 'integer', 'null' => false, 'length' => 2),
 			))
 		);
-		$result = $this->Shell->fromComparison(array(), $comparison, $oldTables);
+		$result = $this->Shell->fromComparison(array(), $comparison, $oldTables, $newTables);
 		$expected = array(
 			'up' => array(
 				'alter_field' => array(
