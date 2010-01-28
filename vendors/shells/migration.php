@@ -217,7 +217,7 @@ class MigrationShell extends Shell {
 
 				$newSchema = $this->_readSchema();
 				$comparison = $this->Schema->compare($oldSchema, $newSchema);
-				$migration = $this->_fromComparison($migration, $comparison, $oldSchema->tables);
+				$migration = $this->_fromComparison($migration, $comparison, $oldSchema->tables, $newSchema['tables']);
 			}
 		} else {
 			$response = $this->in(__d('migrations', 'Do you wanna generate a dump from current database?', true), array('y', 'n'), 'y');
@@ -404,10 +404,11 @@ TEXT;
  * @param array $migration Migration instructions array
  * @param array $comparison Result from CakeSchema::compare()
  * @param array $oldTables List of tables on schema.php file
+ * @param array $newTables List of tables current database
  * @return array
  * @access protected
  */
-	function _fromComparison($migration, $comparison, $oldTables) {
+	function _fromComparison($migration, $comparison, $oldTables, $newTables) {
 		foreach ($comparison as $table => $actions) {
 			if (!isset($oldTables[$table])) {
 				$migration['up']['create_table'][$table] = $actions['add'];
@@ -452,7 +453,7 @@ TEXT;
 		}
 
 		foreach ($oldTables as $table => $fields) {
-			if (!isset($comparison[$table])) {
+			if (!isset($newTables[$table])) {
 				$migration['up']['drop_table'][] = $table;
 				$migration['down']['create_table'][$table] = $fields;
 			}
