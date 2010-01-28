@@ -174,7 +174,7 @@ class MigrationShellTest extends CakeTestCase {
 		$this->Dispatcher =& new TestMigrationShellMockShellDispatcher();
 		$this->Shell =& new TestMigrationShell($this->Dispatcher);
 		$this->Shell->Version =& new MigrationVersion(array('connection' => 'test_suite'));
-		$this->Shell->type = 'app';
+		$this->Shell->type = 'test_migration_plugin';
 		$this->Shell->path = TMP . 'tests' . DS;
 		$this->Shell->connection = 'test_suite';
 
@@ -692,7 +692,6 @@ TEXT;
 
 		$this->assertFalse(file_exists(TMP . 'tests' . DS . '002_drop_slug_field.php'));
 		$this->assertFalse(file_exists(TMP . 'tests' . DS . 'map.php'));
-		$this->Shell->type = 'test_migration_plugin';
 		$this->Shell->params['f'] = true;
 		$this->Shell->generate();
 		$this->assertTrue(file_exists(TMP . 'tests' . DS . '002_drop_slug_field.php'));
@@ -731,6 +730,7 @@ TEXT;
 
 		$this->assertFalse(file_exists(TMP . 'tests' . DS . '001_schema_dump.php'));
 		$this->assertFalse(file_exists(TMP . 'tests' . DS . 'map.php'));
+		$this->Shell->type = 'test_migration_plugin2';
 		$this->Shell->params['f'] = true;
 		$this->Shell->generate();
 		$this->assertTrue(file_exists(TMP . 'tests' . DS . '001_schema_dump.php'));
