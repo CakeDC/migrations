@@ -398,11 +398,11 @@ TEXT;
  * @param array $migration Migration instructions array
  * @param array $comparison Result from CakeSchema::compare()
  * @param array $oldTables List of tables on schema.php file
- * @param array $newTables List of tables current database
+ * @param array $currentTables List of current tables on database
  * @return array
  * @access protected
  */
-	function _fromComparison($migration, $comparison, $oldTables, $newTables) {
+	function _fromComparison($migration, $comparison, $oldTables, $currentTables) {
 		foreach ($comparison as $table => $actions) {
 			if (!isset($oldTables[$table])) {
 				$migration['up']['create_table'][$table] = $actions['add'];
@@ -439,7 +439,7 @@ TEXT;
 		}
 
 		foreach ($oldTables as $table => $fields) {
-			if (!isset($newTables[$table])) {
+			if (!isset($currentTables[$table])) {
 				$migration['up']['drop_table'][] = $table;
 				$migration['down']['create_table'][$table] = $fields;
 			}

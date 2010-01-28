@@ -94,11 +94,11 @@ class TestMigrationShell extends TestMigrationShellMockMigrationShell {
  * @param $migration
  * @param $comparison
  * @param $oldTables
- * @param $newTables
+ * @param $currentTables
  * @return void
  */
-	function fromComparison($migration, $comparison, $oldTables, $newTables) {
-		return $this->_fromComparison($migration, $comparison, $oldTables, $newTables);
+	function fromComparison($migration, $comparison, $oldTables, $currentTables) {
+		return $this->_fromComparison($migration, $comparison, $oldTables, $currentTables);
 	}
 
 /**
@@ -332,7 +332,7 @@ class MigrationShellTest extends CakeTestCase {
 			'posts' => array('add' => $this->tables['posts'])
 		);
 		$oldTables = array();
-		$result = $this->Shell->fromComparison(array(), $comparison, $oldTables, array());
+		$result = $this->Shell->fromComparison(array(), $comparison, $oldTables, $this->tables);
 		$expected = array(
 			'up' => array('create_table' => $this->tables),
 			'down' => array('drop_table' => array('users', 'posts'))
@@ -341,15 +341,27 @@ class MigrationShellTest extends CakeTestCase {
 
 		$comparison = array('posts' => array('add' => $this->tables['posts']));
 		$oldTables = array('users' => $this->tables['users']);
-		$result = $this->Shell->fromComparison(array(), $comparison, $oldTables, array());
+		$result = $this->Shell->fromComparison(array(), $comparison, $oldTables, $this->tables);
 		$expected = array(
 			'up' => array(
-				'create_table' => array('posts' => $this->tables['posts']),
-				'drop_table' => array('users')
+				'create_table' => array('posts' => $this->tables['posts'])
 			),
 			'down' => array(
-				'drop_table' => array('posts'),
-				'create_table' => array('users' => $this->tables['users'])
+				'drop_table' => array('posts')
+			)
+		);
+		$this->assertEqual($result, $expected);
+
+		$comparison = array();
+		$oldTables = array('posts' => $this->tables['posts'], 'users' => $this->tables['users']);
+		$currentTables = array('users' => $this->tables['users']);
+		$result = $this->Shell->fromComparison(array(), $comparison, $oldTables, $currentTables);
+		$expected = array(
+			'up' => array(
+				'drop_table' => array('posts')
+			),
+			'down' => array(
+				'create_table' => array('posts' => $this->tables['posts'])
 			)
 		);
 		$this->assertEqual($result, $expected);
