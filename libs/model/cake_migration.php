@@ -152,7 +152,7 @@ class CakeMigration extends Object {
  */
 	public function run($direction) {
 		if (!in_array($direction, array('up', 'down'))) {
-			throw new MigrationException(sprintf(
+			throw new MigrationException($this, sprintf(
 				__d('migrations', 'Migration direction (%s) is not one of valid directions.', true), $direction
 			), E_USER_NOTICE);
 		}
@@ -194,7 +194,7 @@ class CakeMigration extends Object {
 					$methodName = '_alterTable';
 					break;
 				default:
-					throw new MigrationException(sprintf(
+					throw new MigrationException($this, sprintf(
 						__d('migrations', 'Migration action type (%s) is not one of valid actions type.', true), $type
 					), E_USER_NOTICE);
 			}
@@ -217,7 +217,7 @@ class CakeMigration extends Object {
 	protected function _createTable($type, $tables) {
 		foreach ($tables as $table => $fields) {
 			if (in_array($table, $this->db->listSources())) {
-				throw new MigrationException(sprintf(
+				throw new MigrationException($this, sprintf(
 					__d('migrations', 'Table "%s" already exists in database.', true), $table
 				));
 			}
@@ -225,7 +225,7 @@ class CakeMigration extends Object {
 
 			$this->__invokeCallbacks('beforeAction', 'create_table', array('table' => $table));
 			if (@$this->db->execute($this->db->createSchema($this->Schema)) === false) {
-				throw new MigrationException(sprintf(__d('migrations', 'SQL Error: %s', true), $this->db->error));
+				throw new MigrationException($this, sprintf(__d('migrations', 'SQL Error: %s', true), $this->db->error));
 			}
 			$this->__invokeCallbacks('afterAction', 'create_table', array('table' => $table));
 		}
@@ -243,7 +243,7 @@ class CakeMigration extends Object {
 	protected function _dropTable($type, $tables) {
 		foreach ($tables as $table) {
 			if (!in_array($table, $this->db->listSources())) {
-				throw new MigrationException(sprintf(
+				throw new MigrationException($this, sprintf(
 					__d('migrations', 'Table "%s" does not exists in database.', true), $table
 				));
 			}
@@ -251,7 +251,7 @@ class CakeMigration extends Object {
 
 			$this->__invokeCallbacks('beforeAction', 'drop_table', array('table' => $table));
 			if (@$this->db->execute($this->db->dropSchema($this->Schema)) === false) {
-				throw new MigrationException(sprintf(__d('migrations', 'SQL Error: %s', true), $this->db->error));
+				throw new MigrationException($this, sprintf(__d('migrations', 'SQL Error: %s', true), $this->db->error));
 			}
 			$this->__invokeCallbacks('afterAction', 'drop_table', array('table' => $table));
 		}
@@ -270,11 +270,11 @@ class CakeMigration extends Object {
 		foreach ($tables as $oldName => $newName) {
 			$sources = $this->db->listSources();
 			if (!in_array($oldName, $sources)) {
-				throw new MigrationException(sprintf(
+				throw new MigrationException($this, sprintf(
 					__d('migrations', 'Table "%s" does not exists in database.', true), $oldName
 				));
 			} else if (in_array($newName, $sources)) {
-				throw new MigrationException(sprintf(
+				throw new MigrationException($this, sprintf(
 					__d('migrations', 'Table "%s" already exists in database.', true), $newName
 				));
 			}
@@ -282,7 +282,7 @@ class CakeMigration extends Object {
 
 			$this->__invokeCallbacks('beforeAction', 'rename_table', array('old_name' => $oldName, 'new_name' => $newName));
 			if (@$this->db->execute($sql) === false) {
-				throw new MigrationException(sprintf(__d('migrations', 'SQL Error: %s', true), $this->db->error));
+				throw new MigrationException($this, sprintf(__d('migrations', 'SQL Error: %s', true), $this->db->error));
 			}
 			$this->__invokeCallbacks('afterAction', 'rename_table', array('old_name' => $oldName, 'new_name' => $newName));
 		}
@@ -313,7 +313,7 @@ class CakeMigration extends Object {
 					$field = $col;
 				}
 				if ($type !== 'add' && !isset($tableFields[$field])) {
-					throw new MigrationException(sprintf(
+					throw new MigrationException($this, sprintf(
 						__d('migrations', 'Field "%s" does not exists in "%s".', true), $field, $table
 					));
 				}
@@ -321,7 +321,7 @@ class CakeMigration extends Object {
 				switch ($type) {
 					case 'add':
 						if (isset($tableFields[$field])) {
-							throw new MigrationException(sprintf(
+							throw new MigrationException($this, sprintf(
 								__d('migrations', 'Field "%s" already exists in "%s".', true), $field, $table
 							));
 						}
@@ -354,7 +354,7 @@ class CakeMigration extends Object {
 
 				$this->__invokeCallbacks('beforeAction', $type . '_field', $data);
 				if (@$this->db->execute($sql) === false) {
-					throw new MigrationException(sprintf(__d('migrations', 'SQL Error: %s', true), $this->db->error));
+					throw new MigrationException($this, sprintf(__d('migrations', 'SQL Error: %s', true), $this->db->error));
 				}
 				$this->__invokeCallbacks('afterAction', $type . '_field', $data);
 			}
@@ -370,7 +370,7 @@ class CakeMigration extends Object {
 
 				$this->__invokeCallbacks('beforeAction', $type . '_index', array('table' => $table, 'index' => $key));
 				if (@$this->db->execute($sql) === false) {
-					throw new MigrationException(sprintf(__d('migrations', 'SQL Error: %s', true), $this->db->error));
+					throw new MigrationException($this, sprintf(__d('migrations', 'SQL Error: %s', true), $this->db->error));
 				}
 				$this->__invokeCallbacks('afterAction', $type . '_index', array('table' => $table, 'index' => $key));
 			}
@@ -446,6 +446,27 @@ class CakeMigration extends Object {
  * @package       migrations
  * @subpackage    migrations.libs.model
  */
-class MigrationException extends Exception {}
+class MigrationException extends Exception {
+
+/**
+ * Reference to the Migration being processed on time the error ocurred
+
+ * @var CakeMigration
+ */
+	public $Migration;
+
+/**
+ * Constructor
+ *
+ * @param CakeMigration $Migration Reference to the Migration
+ * @param string $message Message explaining the error
+ * @param int $code Error code
+ * @return void
+ */
+	public function __construct(&$Migration, $message = '', $code = 0) {
+		parent::__construct($message, $code);
+		$this->Migration = $Migration;
+	}
+}
 
 ?>

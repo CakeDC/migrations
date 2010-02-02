@@ -180,7 +180,16 @@ class MigrationShell extends Shell {
 		}
 
 		$this->out(__d('migrations', 'Running migrations:', true));
-		$this->Version->run($options);
+		try {
+			$this->Version->run($options);
+		} catch (MigrationException $e) {
+			$this->out(__d('migrations', 'An error ocurred when processing the migration:', true));
+			$this->out('  ' . sprintf(__d('migrations', 'Migration: %s', true), $e->Migration->info['name']));
+			$this->out('  ' . sprintf(__d('migrations', 'Error: %s', true), $e->getMessage()));
+
+			$this->out('');
+			return false;
+		}
 
 		$this->out(__d('migrations', 'All migrations have completed.', true));
 		$this->out('');

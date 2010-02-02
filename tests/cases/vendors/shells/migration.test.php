@@ -125,6 +125,29 @@ class TestMigrationShell extends TestMigrationShellMockMigrationShell {
 }
 
 /**
+ * TestMigrationShellMockedRunMigrationVersion
+ *
+ * @package       migrations
+ * @subpackage    migrations.tests.cases.shells
+ */
+class TestMigrationShellMockedRunMigrationVersion extends TestMigrationShellMockMigrationVersion {
+
+/**
+ * run method
+ *
+ * @param $options
+ * @return void
+ */
+	public function run($options) {
+		$mapping = $this->getMapping();
+		$Migration = new CakeMigration();
+		$Migration->info = $mapping[1];
+
+		throw new MigrationException($Migration, 'Exception message');
+	}
+}
+
+/**
  * MigrationShellTest
  *
  * @package       migrations
@@ -315,6 +338,42 @@ class MigrationShellTest extends CakeTestCase {
 		$Version->setReturnValueAt($versionCount++, 'getVersion', 0);
 		$this->Shell->args = array('11');
 		$this->assertFalse($this->Shell->run());
+
+		// Changing values back
+		$this->Shell->Version = $back;
+		unset($back);
+	}
+
+/**
+ * testRunWithFailures method
+ *
+ * @return void
+ **/
+	function testRunWithFailures() {
+		$back = $this->Shell->Version;
+
+		$Version =& new TestMigrationShellMockedRunMigrationVersion(array('connection' => 'test_suite'));
+		$this->Shell->Version = $Version;
+		$this->Shell->setReturnValue('_stop', false);
+
+		$mapping = array(1 => array(
+			'version' => 1, 'name' => '001_schema_dump',
+			'class' => 'M4af9d151e1484b74ad9d007058157726',
+			'type' => $this->Shell->type, 'migrated' => null
+		));
+		$Version->setReturnValue('getMapping', $mapping);
+		$Version->setReturnValue('getVersion', 0);
+		$this->Shell->args = array('up');
+		$this->assertFalse($this->Shell->run());
+
+		$result = $this->Shell->output;
+		$pattern = <<<TEXT
+/Running migrations:
+An error ocurred when processing the migration:
+  Migration: 001_schema_dump
+  Error: Exception message/
+TEXT;
+		$this->assertPattern($pattern, $result);
 
 		// Changing values back
 		$this->Shell->Version = $back;
