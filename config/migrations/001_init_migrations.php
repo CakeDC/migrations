@@ -7,7 +7,7 @@ class M4af6e0f0a1284147a0b100ca58157726 extends CakeMigration {
  * @var string
  * @access public
  */
-	var $description = 'Init migrations tables';
+	public $description = 'Init migrations tables';
 
 /**
  * Actions to be performed
@@ -15,7 +15,7 @@ class M4af6e0f0a1284147a0b100ca58157726 extends CakeMigration {
  * @var array $migration
  * @access public
  */
-	var $migration = array(
+	public $migration = array(
 		'up' => array(
 			'create_table' => array(
 				'schema_migrations' => array(
@@ -43,7 +43,7 @@ class M4af6e0f0a1284147a0b100ca58157726 extends CakeMigration {
  * @return boolean Should process continue
  * @access public
  */
-	function before($direction) {
+	public function before($direction) {
 		return true;
 	}
 
@@ -54,7 +54,7 @@ class M4af6e0f0a1284147a0b100ca58157726 extends CakeMigration {
  * @return boolean Should process continue
  * @access public
  */
-	function after($direction) {
+	public function after($direction) {
 		return true;
 	}
 }

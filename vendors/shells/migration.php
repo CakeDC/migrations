@@ -31,7 +31,7 @@ class MigrationShell extends Shell {
  * @var string
  * @access public
  */
-	var $connection = 'default';
+	public $connection = 'default';
 
 /**
  * Current path to load and save migrations
@@ -39,7 +39,7 @@ class MigrationShell extends Shell {
  * @var string
  * @access public
  */
-	var $path;
+	public $path;
 
 /**
  * Type of migration, can be 'app' or a plugin name
@@ -47,7 +47,7 @@ class MigrationShell extends Shell {
  * @var string
  * @access public
  */
-	var $type = 'app';
+	public $type = 'app';
 
 /**
  * MigrationVersion instance
@@ -55,7 +55,7 @@ class MigrationShell extends Shell {
  * @var MigrationVersion
  * @access public
  */
-	var $Version;
+	public $Version;
 
 /**
  * Messages used to display action being perfomed
@@ -63,7 +63,7 @@ class MigrationShell extends Shell {
  * @var array
  * @access private
  */
-	var $__messages = array();
+	private $__messages = array();
 
 /**
  * Override startup
@@ -71,7 +71,7 @@ class MigrationShell extends Shell {
  * @return void
  * @access public
  */
-	function startup() {
+	public function startup() {
 		$this->_welcome();
 		$this->out(__d('migrations', 'Cake Migration Shell', true));
 		$this->hr();
@@ -107,7 +107,7 @@ class MigrationShell extends Shell {
  * @return void
  * @access public
  */
-	function main() {
+	public function main() {
 		$this->run();
 	}
 
@@ -117,7 +117,7 @@ class MigrationShell extends Shell {
  * @return void
  * @access public
  */
-	function run() {
+	public function run() {
 		$mapping = $this->Version->getMapping($this->type);
 		if ($mapping === false) {
 			$this->out(__d('migrations', 'No migrations available.', true));
@@ -193,7 +193,7 @@ class MigrationShell extends Shell {
  * @return void
  * @access public
  */
-	function generate() {
+	public function generate() {
 		while (true) {
 			$name = $this->in(__d('migrations', 'Please enter the descriptive name of the migration to generate:', true));
 			if (!preg_match('/^([a-z0-9]+|\s)+$/', $name)) {
@@ -265,7 +265,7 @@ class MigrationShell extends Shell {
  * @see generate
  * @access public
  */
-	function add() {
+	public function add() {
 		return $this->generate();
 	}
 
@@ -275,7 +275,7 @@ class MigrationShell extends Shell {
  * @access public
  * @return void
  */
-	function summary() {
+	public function summary() {
 		$types = App::objects('plugin');
 		ksort($types);
 		array_unshift($types, 'App');
@@ -311,7 +311,7 @@ class MigrationShell extends Shell {
  * @return void
  * @access public
  */
-	function help() {
+	public function help() {
 		$help = <<<TEXT
 The Migration database management for CakePHP
 ---------------------------------------------------------------
@@ -356,7 +356,7 @@ TEXT;
  * @return void
  * @access protected
  */
-	function _showInfo($mapping, $type = null) {
+	protected function _showInfo($mapping, $type = null) {
 		if ($type === null) {
 			$type = $this->type;
 		}
@@ -388,7 +388,7 @@ TEXT;
  * @return void
  * @access public
  */
-	function _clear() {
+	protected function _clear() {
 		$this->Dispatch->clear();
 	}
 
@@ -402,7 +402,7 @@ TEXT;
  * @return array
  * @access protected
  */
-	function _fromComparison($migration, $comparison, $oldTables, $currentTables) {
+	protected function _fromComparison($migration, $comparison, $oldTables, $currentTables) {
 		foreach ($comparison as $table => $actions) {
 			if (!isset($oldTables[$table])) {
 				$migration['up']['create_table'][$table] = $actions['add'];
@@ -454,7 +454,7 @@ TEXT;
  * @return mixed False in case of no file found, schema object
  * @access protected
  */
-	function _getSchema($type = null) {
+	protected function _getSchema($type = null) {
 		if ($type === null) {
 			return new CakeSchema(array('connection' => $this->connection));
 		}
@@ -481,7 +481,7 @@ TEXT;
  * @return array
  * @access protected
  */
-	function _readSchema() {
+	protected function _readSchema() {
 		$read = $this->Schema->read(array('models' => !isset($this->params['f'])));
 		if ($this->type !== 'migrations') {
 			unset($read['tables']['schema_migrations']);
@@ -498,7 +498,7 @@ TEXT;
  * @return boolean
  * @access protected
  */
-	function _writeMigration($name, $class, $migration) {
+	protected function _writeMigration($name, $class, $migration) {
 		$content = '';
 		foreach ($migration as $direction => $actions) {
 			$content .= "\t\t'" . $direction . "' => array(\n";
@@ -559,7 +559,7 @@ TEXT;
  * @return boolean
  * @access protected
  */
-	function _writeMap($map) {
+	protected function _writeMap($map) {
 		$content = "<?php\n";
 		$content .= "\$map = array(\n";
 		foreach ($map as $version => $info) {
@@ -581,7 +581,7 @@ TEXT;
  * @return string
  * @access private
  */
-	function __values($values) {
+	private function __values($values) {
 		$_values = array();
 		if (is_array($values)) {
 			foreach ($values as $key => $value) {
@@ -604,7 +604,7 @@ TEXT;
  * @return string
  * @access private
  */
-	function __generateTemplate($template, $vars) {
+	private function __generateTemplate($template, $vars) {
 		extract($vars);
 		ob_start();
 		ob_implicit_flush(0);
@@ -621,7 +621,7 @@ TEXT;
  * @return string Path used
  * @access private
  */
-	function __getPath($type = null) {
+	private function __getPath($type = null) {
 		if ($type === null) {
 			$type = $this->type;
 		}
@@ -639,7 +639,7 @@ TEXT;
  * @return void
  * @access public
  */
-	function beforeMigration(&$Migration, $direction) {
+	public function beforeMigration(&$Migration, $direction) {
 		$this->out('  [' . number_format($Migration->info['version'] / 100, 2, '', '') . '] ' . $Migration->info['name']);
 	}
 
@@ -651,7 +651,7 @@ TEXT;
  * @return void
  * @access public
  */
-	function afterMigration(&$Migration, $direction) {
+	public function afterMigration(&$Migration, $direction) {
 		$this->out('');
 	}
 
@@ -664,7 +664,7 @@ TEXT;
  * @return void
  * @access public
  */
-	function beforeAction(&$Migration, $type, $data) {
+	public function beforeAction(&$Migration, $type, $data) {
 		if (isset($this->__messages[$type])) {
 			$message = String::insert($this->__messages[$type], $data);
 			$this->out('      > ' . $message);

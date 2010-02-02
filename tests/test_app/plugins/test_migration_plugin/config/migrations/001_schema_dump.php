@@ -7,7 +7,7 @@ class M4af6d40056b04408808500cb58157726 extends CakeMigration {
  * @var string
  * @access public
  */
-	var $description = 'Version 001 (schema dump) of TestMigrationPlugin';
+	public $description = 'Version 001 (schema dump) of TestMigrationPlugin';
 
 /**
  * Actions to be performed
@@ -15,7 +15,7 @@ class M4af6d40056b04408808500cb58157726 extends CakeMigration {
  * @var array $migration
  * @access public
  */
-	var $migration = array(
+	public $migration = array(
 		'up' => array(),
 		'down' => array()
 	);
@@ -27,7 +27,7 @@ class M4af6d40056b04408808500cb58157726 extends CakeMigration {
  * @return boolean Should process continue
  * @access public
  */
-	function before($direction) {
+	public function before($direction) {
 		return true;
 	}
 
@@ -38,7 +38,7 @@ class M4af6d40056b04408808500cb58157726 extends CakeMigration {
  * @return boolean Should process continue
  * @access public
  */
-	function after($direction) {
+	public function after($direction) {
 		return true;
 	}
 }

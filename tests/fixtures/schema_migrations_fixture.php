@@ -3,11 +3,11 @@ class SchemaMigrationsFixture extends CakeTestFixture {
 /**
  *
  */
-	var $name = 'SchemaMigrations';
+	public $name = 'SchemaMigrations';
 /**
  *
  */
-	var $fields = array(
+	public $fields = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
 		'version' => array('type' => 'integer', 'null' => false, 'default' => NULL),
 		'type' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 50),
@@ -18,7 +18,7 @@ class SchemaMigrationsFixture extends CakeTestFixture {
 /**
  *
  */
-	var $records = array(
+	public $records = array(
 		array('id' => '1', 'version' => '1', 'type' => 'migrations', 'created' => '2009-11-10 00:55:34')
 	);
 }

@@ -24,7 +24,7 @@ class <?php echo $class; ?> extends CakeMigration {
  * @var string
  * @access public
  */
-	var $description = '';
+	public $description = '';
 
 /**
  * Actions to be performed
@@ -32,7 +32,7 @@ class <?php echo $class; ?> extends CakeMigration {
  * @var array $migration
  * @access public
  */
-	var $migration = array(
+	public $migration = array(
 <?php echo $migration; ?>
 	);
 
@@ -43,7 +43,7 @@ class <?php echo $class; ?> extends CakeMigration {
  * @return boolean Should process continue
  * @access public
  */
-	function before($direction) {
+	public function before($direction) {
 		return true;
 	}
 
@@ -54,7 +54,7 @@ class <?php echo $class; ?> extends CakeMigration {
  * @return boolean Should process continue
  * @access public
  */
-	function after($direction) {
+	public function after($direction) {
 		return true;
 	}
 }

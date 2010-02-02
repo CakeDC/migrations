@@ -38,7 +38,7 @@ class MigrationShellExpectation extends SimpleExpectation {
  *
  * @var array
  */
-	var $_expected = array();
+	protected $_expected = array();
 
 /**
  * __construct method
@@ -76,7 +76,7 @@ class TestMigrationShell extends TestMigrationShellMockMigrationShell {
  *
  * @var string
  */
-	var $output = '';
+	public $output = '';
 
 /**
  * out method
@@ -138,7 +138,7 @@ class MigrationShellTest extends CakeTestCase {
  * @var array
  * @access public
  */
-	var $fixtures = array('plugin.migrations.schema_migrations', 'core.article');
+	public $fixtures = array('plugin.migrations.schema_migrations', 'core.article');
 
 /**
  * tables property
@@ -146,7 +146,7 @@ class MigrationShellTest extends CakeTestCase {
  * @var array
  * @access public
  */
-	var $tables = array(
+	public $tables = array(
 		'users' => array(
 			'id' => array('type' => 'integer', 'key' => 'primary'),
 			'user' => array('type' => 'string', 'null' => false),
@@ -569,7 +569,7 @@ class MigrationShellTest extends CakeTestCase {
 
 		$result = $this->__getMigrationVariable(TMP . 'tests' . DS . 'migration_test_file.php');
 		$expected = <<<TEXT
-	var \$migration = array(
+	public \$migration = array(
 		'up' => array(
 			'create_table' => array(
 				'users' => array(
@@ -761,7 +761,7 @@ TEXT;
 
 		$result = $this->__getMigrationVariable(TMP . 'tests' . DS . '001_schema_dump.php');
 		$pattern = <<<TEXT
-/^	var \\\$migration = array\(
+/^	public \\\$migration = array\(
 		'up' => array\(
 			'create_table' => array\(
 				'articles' => array\(/
@@ -816,7 +816,7 @@ TEXT;
 		$result = array();
 		$array = explode("\n", file_get_contents($file));
 		foreach ($array as $line) {
-			if ($line == "\tvar \$migration = array(") {
+			if ($line == "\tpublic \$migration = array(") {
 				$result[] = $line;
 			} else if (!empty($result) && $line == "\t);") {
 				$result[] = $line;

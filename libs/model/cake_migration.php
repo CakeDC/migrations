@@ -30,7 +30,7 @@ class CakeMigration extends Object {
  * @var string
  * @access public
  */
-	var $description = '';
+	public $description = '';
 
 /**
  * Migration information
@@ -45,7 +45,7 @@ class CakeMigration extends Object {
  * @var array
  * @access public
  */
-	var $info = null;
+	public $info = null;
 
 /**
  * Actions to be performed
@@ -53,7 +53,7 @@ class CakeMigration extends Object {
  * @var array $migration
  * @access public
  */
-	var $migration = array(
+	public $migration = array(
 		'up' => array(),
 		'down' => array()
 	);
@@ -64,7 +64,7 @@ class CakeMigration extends Object {
  * @var string $direction
  * @access public
  */
-	var $direction = null;
+	public $direction = null;
 
 /**
  * Connection used
@@ -72,7 +72,7 @@ class CakeMigration extends Object {
  * @var string
  * @access public
  */
-	var $connection = 'default';
+	public $connection = 'default';
 
 /**
  * DataSource used
@@ -80,7 +80,7 @@ class CakeMigration extends Object {
  * @var DataSource
  * @access public
  */
-	var $db = null;
+	public $db = null;
 
 /**
  * CakeSchema instace
@@ -88,7 +88,7 @@ class CakeMigration extends Object {
  * @var CakeSchema
  * @access public
  */
-	var $Schema = null;
+	public $Schema = null;
 
 /**
  * Callback class that will be called before/after every action
@@ -96,7 +96,7 @@ class CakeMigration extends Object {
  * @var object
  * @access public
  */
-	var $callback = null;
+	public $callback = null;
 
 /**
  * Before migration callback
@@ -105,7 +105,7 @@ class CakeMigration extends Object {
  * @return boolean Should process continue
  * @access public
  */
-	function before($direction) {
+	public function before($direction) {
 		return true;
 	}
 
@@ -116,7 +116,7 @@ class CakeMigration extends Object {
  * @return boolean Should process continue
  * @access public
  */
-	function after($direction) {
+	public function after($direction) {
 		return true;
 	}
 
@@ -125,7 +125,7 @@ class CakeMigration extends Object {
  *
  * @param array $options optional load object properties
  */
-	function __construct($options = array()) {
+	public function __construct($options = array()) {
 		parent::__construct();
 
 		if (!empty($options['up'])) {
@@ -150,7 +150,7 @@ class CakeMigration extends Object {
  * @return boolean Status of the process
  * @access public
  */
-	function run($direction) {
+	public function run($direction) {
 		if (!in_array($direction, array('up', 'down'))) {
 			trigger_error(sprintf(__d('migrations', 'Migration direction (%s) is not one of valid directions.', true), $direction), E_USER_NOTICE);
 			return false;
@@ -212,7 +212,7 @@ class CakeMigration extends Object {
  * @return boolean Return true in case of success, otherwise false
  * @access protected
  */
-	function _createTable($type, $tables) {
+	protected function _createTable($type, $tables) {
 		foreach ($tables as $table => $fields) {
 			$this->Schema->tables = array($table => $fields);
 
@@ -231,7 +231,7 @@ class CakeMigration extends Object {
  * @return boolean Return true in case of success, otherwise false
  * @access protected
  */
-	function _dropTable($type, $tables) {
+	protected function _dropTable($type, $tables) {
 		foreach ($tables as $table) {
 			$this->Schema->tables = array($table => array());
 
@@ -250,7 +250,7 @@ class CakeMigration extends Object {
  * @return boolean Return true in case of success, otherwise false
  * @access protected
  */
-	function _renameTable($type, $tables) {
+	protected function _renameTable($type, $tables) {
 		foreach ($tables as $oldName => $newName) {
 			$sql = 'RENAME TABLE ' . $this->db->fullTableName($oldName) . ' TO ' . $this->db->fullTableName($newName) . ';';
 
@@ -269,7 +269,7 @@ class CakeMigration extends Object {
  * @return boolean Return true in case of success, otherwise false
  * @access protected
  */
-	function _alterTable($type, $tables) {
+	protected function _alterTable($type, $tables) {
 		foreach ($tables as $table => $fields) {
 			$indexes = array();
 			if (isset($fields['indexes'])) {
@@ -348,7 +348,7 @@ class CakeMigration extends Object {
  * @return void
  * @access private
  */
-	function __invokeCallbacks($callback, $type, $data = array()) {
+	private function __invokeCallbacks($callback, $type, $data = array()) {
 		if ($this->callback !== null && method_exists($this->callback, $callback)) {
 			if ($callback == 'beforeMigration' || $callback == 'afterMigration') {
 				$this->callback->{$callback}($this, $type);
@@ -372,7 +372,7 @@ class CakeMigration extends Object {
  * @return void
  * @access private
  */
-	function __clearCache() {
+	private function __clearCache() {
 		Cache::clear(false, '_cake_model_');
 		ClassRegistry::flush();
 	}
@@ -385,7 +385,7 @@ class CakeMigration extends Object {
  * @return Model
  * @access public
  */
-	function generateModel($name, $table = null, $options = array()) {
+	public function generateModel($name, $table = null, $options = array()) {
 		if (empty($table)) {
 			$table = Inflector::tableize($name);
 		}

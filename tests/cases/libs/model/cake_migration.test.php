@@ -15,7 +15,7 @@ class TestCakeMigration extends CakeMigration {
  * @var string
  * @access public
  */
-	var $connection = 'test_suite';
+	public $connection = 'test_suite';
 }
 
 /**
@@ -32,7 +32,7 @@ class TestCallbackCakeMigration {
  * @var array
  * @access public
  */
-	var $calls = array();
+	public $calls = array();
 
 /**
  * beforeMigration method
@@ -40,7 +40,7 @@ class TestCallbackCakeMigration {
  * @access public
  * @return void
  */
-	function beforeMigration(&$Migration, $type) {
+	public function beforeMigration(&$Migration, $type) {
 		$this->calls[$Migration->direction]['beforeMigration'] = $type;
 	}
 
@@ -50,7 +50,7 @@ class TestCallbackCakeMigration {
  * @access public
  * @return void
  */
-	function afterMigration(&$Migration, $type) {
+	public function afterMigration(&$Migration, $type) {
 		$this->calls[$Migration->direction]['afterMigration'] = $type;
 	}
 
@@ -60,7 +60,7 @@ class TestCallbackCakeMigration {
  * @access public
  * @return void
  */
-	function beforeAction(&$Migration, $type, $data) {
+	public function beforeAction(&$Migration, $type, $data) {
 		$this->calls[$Migration->direction]['beforeAction'][] = array('type' => $type, 'data' => $data);
 	}
 
@@ -70,7 +70,7 @@ class TestCallbackCakeMigration {
  * @access public
  * @return void
  */
-	function afterAction(&$Migration, $type, $data) {
+	public function afterAction(&$Migration, $type, $data) {
 		$this->calls[$Migration->direction]['afterAction'][] = array('type' => $type, 'data' => $data);
 	}
 }
@@ -89,7 +89,7 @@ class CakeMigrationTest extends CakeTestCase {
  * @var array
  * @access public
  */
-	var $fixtures = array(
+	public $fixtures = array(
 		'core.user', 'core.post'
 	);
 
@@ -99,7 +99,7 @@ class CakeMigrationTest extends CakeTestCase {
  * @var array
  * @access public
  */
-	var $autoFixtures = false;
+	public $autoFixtures = false;
 
 /**
  * tables property
@@ -107,7 +107,7 @@ class CakeMigrationTest extends CakeTestCase {
  * @var array
  * @access public
  */
-	var $tables = array(
+	public $tables = array(
 		'users' => array(
 			'id' => array('type' => 'integer', 'key' => 'primary'),
 			'user' => array('type' => 'string', 'null' => false),
@@ -416,10 +416,10 @@ class CakeMigrationTest extends CakeTestCase {
 		$this->assertEqual($return->name, 'Post');
 		$this->assertEqual($return->table, 'users');
 	}
-	
+
 /**
  * Test run method with invalid syntaxes
- * 
+ *
  * @access public
  * @return void
  */
@@ -431,7 +431,7 @@ class CakeMigrationTest extends CakeTestCase {
 
 		$this->expectError('Migration direction (last) is not one of valid directions.');
 		$this->assertFalse($migration->run('last'));
-		
+
 		$this->expectError('Migration action type (do_something) is not one of valid actions type.');
 		$this->assertTrue($migration->run('up'));
 	}
