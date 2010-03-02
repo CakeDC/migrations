@@ -214,6 +214,7 @@ class MigrationShell extends Shell {
 			}
 		}
 
+		$fromSchema = false;
 		$this->Schema = $this->_getSchema();
 		$migration = array('up' => array(), 'down' => array());
 
@@ -227,6 +228,7 @@ class MigrationShell extends Shell {
 				$newSchema = $this->_readSchema();
 				$comparison = $this->Schema->compare($oldSchema, $newSchema);
 				$migration = $this->_fromComparison($migration, $comparison, $oldSchema->tables, $newSchema['tables']);
+				$fromSchema = true;
 			}
 		} else {
 			$response = $this->in(__d('migrations', 'Do you wanna generate a dump from current database?', true), array('y', 'n'), 'y');
@@ -242,6 +244,7 @@ class MigrationShell extends Shell {
 					$migration['up']['create_table'] = $dump;
 					$migration['down']['drop_table'] = array_keys($dump);
 				}
+				$fromSchema = true;
 			}
 		}
 
@@ -263,6 +266,10 @@ class MigrationShell extends Shell {
 
 		$this->out(__d('migrations', 'Mapping Migrations...', true));
 		$this->_writeMap($map);
+
+		if ($fromSchema) {
+			$this->Version->setVersion($version, $this->type);
+		}
 
 		$this->out('');
 		$this->out(__d('migrations', 'Done.', true));
@@ -472,7 +479,8 @@ TEXT;
  */
 	protected function _getSchema($type = null) {
 		if ($type === null) {
-			return new CakeSchema(array('connection' => $this->connection));
+			$plugin = ($this->type === 'app') ? null : $this->type;
+			return new CakeSchema(array('connection' => $this->connection) + compact('plugin'));
 		}
 		$file = $this->__getPath($type) . 'config' . DS . 'schema' . DS . 'schema.php';
 		if (!file_exists($file)) {
