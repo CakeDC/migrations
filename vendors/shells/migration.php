@@ -297,19 +297,26 @@ class MigrationShell extends Shell {
 			}
 
 			$version = $this->Version->getVersion($type);
-			$this->out($name . ' Plugin');
-			$this->out('');
-			$this->out(__d('migrations', 'Current version:', true));
 			if ($version != 0) {
 				$info = $mapping[$version];
+				$infoLatest = array_pop($mapping);
+				if (!empty($this->params['changed']) && (number_format($info['version'] / 100, 2, '', '') == number_format($infoLatest['version'] / 100, 2, '', ''))) {
+					continue;
+				}
+				$this->out($name . ' Plugin');
+				$this->out('');
+				$this->out(__d('migrations', 'Current version:', true));
 				$this->out('  #' . number_format($info['version'] / 100, 2, '', '') . ' ' . $info['name']);
 			} else {
+				$this->out($name . ' Plugin');
+				$this->out('');
+				$this->out(__d('migrations', 'Current version:', true));
 				$this->out('  ' . __d('migrations', 'None applied.', true));
+				$infoLatest = array_pop($mapping);
 			}
 
-			$info = array_pop($mapping);
 			$this->out(__d('migrations', 'Latest version:', true));
-			$this->out('  #' . number_format($info['version'] / 100, 2, '', '') . ' ' . $info['name']);
+			$this->out('  #' . number_format($infoLatest['version'] / 100, 2, '', '') . ' ' . $infoLatest['name']);
 			$this->hr();
 		}
 	}
