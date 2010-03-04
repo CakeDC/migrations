@@ -373,7 +373,7 @@ An error ocurred when processing the migration:
   Migration: 001_schema_dump
   Error: Exception message/
 TEXT;
-		$this->assertPattern($pattern, $result);
+		$this->assertPattern(str_replace("\r\n", "\n", $pattern), str_replace("\r\n", "\n", $result));
 
 		// Changing values back
 		$this->Shell->Version = $back;
@@ -661,7 +661,7 @@ TEXT;
 		),
 	);
 TEXT;
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($result, str_replace("\r\n", "\n", $expected));
 		@unlink(TMP . 'tests' . DS . 'migration_test_file.php');
 	}
 
@@ -693,7 +693,7 @@ TEXT;
 );
 ?>
 TEXT;
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($result, str_replace("\r\n", "\n", $expected));
 		@unlink(TMP . 'tests' . DS . 'map.php');
 	}
 
@@ -721,7 +721,7 @@ TEXT;
 \);
 \?>$/
 TEXT;
-		$this->assertPattern($pattern, $result);
+		$this->assertPattern(str_replace("\r\n", "\n", $pattern), str_replace("\r\n", "\n", $result));
 
 		// Adding other migration to it
 		$this->Shell->expectCallCount('err', 1);
@@ -744,7 +744,7 @@ TEXT;
 \);
 \?>$/
 TEXT;
-		$this->assertPattern($pattern, $result);
+		$this->assertPattern(str_replace("\r\n", "\n", $pattern), str_replace("\r\n", "\n", $result));
 
 		// Remove created files
 		@unlink(TMP . 'tests' . DS . '001_initial_schema.php');
@@ -774,7 +774,7 @@ TEXT;
 				'articles' => array\('slug',\),
 			\),/
 TEXT;
-		$this->assertPattern($pattern, $result);
+		$this->assertPattern(str_replace("\r\n", "\n", $pattern), $result);
 
 		$pattern = <<<TEXT
 /			'create_field' => array\(
@@ -783,7 +783,7 @@ TEXT;
 				\),
 			\),/
 TEXT;
-		$this->assertPattern($pattern, $result);
+		$this->assertPattern(str_replace("\r\n", "\n", $pattern), $result);
 
 		// Remove created files
 		@unlink(TMP . 'tests' . DS . '002_drop_slug_field.php');
@@ -816,7 +816,7 @@ TEXT;
 \);
 \?>$/
 TEXT;
-		$this->assertPattern($pattern, $result);
+		$this->assertPattern(str_replace("\r\n", "\n", $pattern), str_replace("\r\n", "\n", $result));
 
 		$result = $this->__getMigrationVariable(TMP . 'tests' . DS . '001_schema_dump.php');
 		$pattern = <<<TEXT
@@ -825,7 +825,7 @@ TEXT;
 			'create_table' => array\(
 				'articles' => array\(/
 TEXT;
-		$this->assertPattern($pattern, $result);
+		$this->assertPattern(str_replace("\r\n", "\n", $pattern), $result);
 
 		$pattern = <<<TEXT
 /				\),
@@ -838,7 +838,7 @@ TEXT;
 		\),
 	\);$/
 TEXT;
-		$this->assertPattern($pattern, $result);
+		$this->assertPattern(str_replace("\r\n", "\n", $pattern), $result);
 
 		// Remove created files
 		@unlink(TMP . 'tests' . DS . '001_schema_dump.php');
@@ -862,7 +862,7 @@ Current version:
 Latest version:
   #001 001_init_migrations/
 TEXT;
-		$this->assertPattern($pattern, $result);
+		$this->assertPattern(str_replace("\r\n", "\n", $pattern), $result);
 	}
 
 /**
@@ -873,7 +873,7 @@ TEXT;
  */
 	function __getMigrationVariable($file) {
 		$result = array();
-		$array = explode("\n", file_get_contents($file));
+		$array = explode("\n", str_replace("\r\n", "\n", file_get_contents($file)));
 		foreach ($array as $line) {
 			if ($line == "\tpublic \$migration = array(") {
 				$result[] = $line;
