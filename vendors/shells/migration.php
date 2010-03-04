@@ -286,16 +286,17 @@ class MigrationShell extends Shell {
 	}
 
 /**
- * Displays a summary of all plugin and app migrations
+ * Displays a status of all plugin and app migrations
  *
  * @access public
  * @return void
  */
-	public function summary() {
+	public function status() {
 		$types = App::objects('plugin');
 		ksort($types);
 		array_unshift($types, 'App');
 
+		$outdated = (isset($this->args[0]) && $this->args[0] == 'outdated');
 		foreach ($types as $name) {
 			$type = Inflector::underscore($name);
 			$mapping = $this->Version->getMapping($type);
@@ -304,26 +305,23 @@ class MigrationShell extends Shell {
 			}
 
 			$version = $this->Version->getVersion($type);
+			$latest = end($mapping);
+			if ($outdated && $latest['version'] == $version) {
+				continue;
+			}
+
+			$this->out(($type == 'app') ? 'Application' : $name . ' Plugin');
+			$this->out('');
+			$this->out(__d('migrations', 'Current version:', true));
 			if ($version != 0) {
 				$info = $mapping[$version];
-				$infoLatest = array_pop($mapping);
-				if (!empty($this->params['changed']) && (number_format($info['version'] / 100, 2, '', '') == number_format($infoLatest['version'] / 100, 2, '', ''))) {
-					continue;
-				}
-				$this->out($name . ' Plugin');
-				$this->out('');
-				$this->out(__d('migrations', 'Current version:', true));
 				$this->out('  #' . number_format($info['version'] / 100, 2, '', '') . ' ' . $info['name']);
 			} else {
-				$this->out($name . ' Plugin');
-				$this->out('');
-				$this->out(__d('migrations', 'Current version:', true));
 				$this->out('  ' . __d('migrations', 'None applied.', true));
-				$infoLatest = array_pop($mapping);
 			}
 
 			$this->out(__d('migrations', 'Latest version:', true));
-			$this->out('  #' . number_format($infoLatest['version'] / 100, 2, '', '') . ' ' . $infoLatest['name']);
+			$this->out('  #' . number_format($latest['version'] / 100, 2, '', '') . ' ' . $latest['name']);
 			$this->hr();
 		}
 	}
@@ -363,8 +361,8 @@ Commands:
 		Generates a migration file.
 		To force generation of all tables when making a comparison/dump, use the -f param.
 
-	migration summary
-		Displays a summary of all plugin and app migrations
+	migration status <outdated>
+		Displays a status of all plugin and app migrations.
 TEXT;
 
 		$this->out($help);

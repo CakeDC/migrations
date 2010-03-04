@@ -846,14 +846,13 @@ TEXT;
 	}
 
 /**
- * testSummary method
+ * testStatus method
  *
  * @return void
  */
-	function testSummary() {
-		$this->Shell->summary();
+	function testStatus() {
+		$this->Shell->status();
 		$result = $this->Shell->output;
-
 		$pattern = <<<TEXT
 /Migrations Plugin
 
@@ -863,6 +862,28 @@ Latest version:
   #001 001_init_migrations/
 TEXT;
 		$this->assertPattern(str_replace("\r\n", "\n", $pattern), $result);
+
+		$this->Shell->output = '';
+		$this->Shell->args = array('outdated');
+		$this->Shell->status();
+		$result = $this->Shell->output;
+		$this->assertNoPattern(str_replace("\r\n", "\n", $pattern), $result);
+
+		$this->Shell->Version->setVersion(1, 'migrations', false);
+		$this->Shell->output = '';
+		$this->Shell->args = array('outdated');
+		$this->Shell->status();
+		$result = $this->Shell->output;
+		$pattern = <<<TEXT
+/Migrations Plugin
+
+Current version:
+  None applied.
+Latest version:
+  #001 001_init_migrations/
+TEXT;
+		$this->assertPattern(str_replace("\r\n", "\n", $pattern), $result);
+		$this->Shell->Version->setVersion(1, 'migrations');
 	}
 
 /**
