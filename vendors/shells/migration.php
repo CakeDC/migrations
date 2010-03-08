@@ -298,31 +298,31 @@ class MigrationShell extends Shell {
 
 		$outdated = (isset($this->args[0]) && $this->args[0] == 'outdated');
 		foreach ($types as $name) {
-			$type = Inflector::underscore($name);
-			$mapping = $this->Version->getMapping($type);
-			if ($mapping === false || count($mapping) === 0) {
+			try {
+				$type = Inflector::underscore($name);
+				$mapping = $this->Version->getMapping($type);
+				$version = $this->Version->getVersion($type);
+				$latest = end($mapping);
+				if ($outdated && $latest['version'] == $version) {
+					continue;
+				}
+
+				$this->out(($type == 'app') ? 'Application' : $name . ' Plugin');
+				$this->out('');
+				$this->out(__d('migrations', 'Current version:', true));
+				if ($version != 0) {
+					$info = $mapping[$version];
+					$this->out('  #' . number_format($info['version'] / 100, 2, '', '') . ' ' . $info['name']);
+				} else {
+					$this->out('  ' . __d('migrations', 'None applied.', true));
+				}
+
+				$this->out(__d('migrations', 'Latest version:', true));
+				$this->out('  #' . number_format($latest['version'] / 100, 2, '', '') . ' ' . $latest['name']);
+				$this->hr();
+			} catch (MigrationVersionException $e) {
 				continue;
 			}
-
-			$version = $this->Version->getVersion($type);
-			$latest = end($mapping);
-			if ($outdated && $latest['version'] == $version) {
-				continue;
-			}
-
-			$this->out(($type == 'app') ? 'Application' : $name . ' Plugin');
-			$this->out('');
-			$this->out(__d('migrations', 'Current version:', true));
-			if ($version != 0) {
-				$info = $mapping[$version];
-				$this->out('  #' . number_format($info['version'] / 100, 2, '', '') . ' ' . $info['name']);
-			} else {
-				$this->out('  ' . __d('migrations', 'None applied.', true));
-			}
-
-			$this->out(__d('migrations', 'Latest version:', true));
-			$this->out('  #' . number_format($latest['version'] / 100, 2, '', '') . ' ' . $latest['name']);
-			$this->hr();
 		}
 	}
 

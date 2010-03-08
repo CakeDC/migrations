@@ -71,8 +71,12 @@ class MigrationVersionTest extends CakeTestCase {
  * @return void
  */
 	function testGetMapping() {
-		$result = $this->Version->getMapping('inexistent_plugin');
-		$this->assertFalse($result);
+		try {
+			$this->Version->getMapping('inexistent_plugin');
+			$this->fail('No expection triggered');
+		} catch (MigrationVersionException $e) {
+			$this->assertEqual('File `map.php` not found in the InexistentPlugin Plugin.', $e->getMessage());
+		}
 
 		$result = $this->Version->getMapping('test_migration_plugin');
 		$expected = array(
@@ -105,8 +109,19 @@ class MigrationVersionTest extends CakeTestCase {
  * @return void
  */
 	function testGetMigration() {
-		$result = $this->Version->getMigration('inexistent_migration', 'InexistentMigration', 'test_migration_plugin');
-		$this->assertFalse($result);
+		try {
+			$this->Version->getMigration('inexistent_migration', 'InexistentMigration', 'test_migration_plugin');
+			$this->fail('No expection triggered');
+		} catch (MigrationVersionException $e) {
+			$this->assertEqual('File `inexistent_migration.php` not found in the TestMigrationPlugin Plugin.', $e->getMessage());
+		}
+
+		try {
+			$this->Version->getMigration('blank_file', 'BlankFile', 'test_migration_plugin');
+			$this->fail('No expection triggered');
+		} catch (MigrationVersionException $e) {
+			$this->assertEqual('Class `BlankFile` not found on file `blank_file.php` for TestMigrationPlugin Plugin.', $e->getMessage());
+		}
 
 		$result = $this->Version->getMigration('001_schema_dump', 'M4af6d40056b04408808500cb58157726', 'test_migration_plugin');
 		$this->assertIsA($result, 'M4af6d40056b04408808500cb58157726');

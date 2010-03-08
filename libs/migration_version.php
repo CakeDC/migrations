@@ -119,11 +119,7 @@ class MigrationVersion {
 		if (!empty($this->__mapping[$type])) {
 			return $this->__mapping[$type];
 		}
-
 		$mapping = $this->__loadFile('map', $type);
-		if ($mapping === false) {
-			return false;
-		}
 
 		$migrated = $this->Version->find('all', array(
 			'fields' => array('version', 'created'),
@@ -162,7 +158,10 @@ class MigrationVersion {
  */
 	public function getMigration($name, $class, $type, $options = array()) {
 		if (!class_exists($class) && (!$this->__loadFile($name, $type) || !class_exists($class))) {
-			return false;
+			throw new MigrationVersionException(sprintf(
+				__d('migrations', 'Class `%1$s` not found on file `%2$s` for %3$s.', true),
+				$class, $name . '.php', (($type == 'app') ? 'Application' : Inflector::camelize($type) . ' Plugin')
+			));
 		}
 
 		$defaults = array(
@@ -259,7 +258,7 @@ class MigrationVersion {
  *
  * @param string $name File name to be loaded
  * @param string $type Can be 'app' or a plugin name
- * @return mixed False in case of no file found, array with mapping
+ * @return mixed Throw an exception in case of no file found, array with mapping
  * @access private
  */
 	private function __loadFile($name, $type) {
@@ -267,14 +266,32 @@ class MigrationVersion {
 		if ($type != 'app') {
 			$path = App::pluginPath($type) . 'config' . DS . 'migrations' . DS;
 		}
-		if (file_exists($path . $name . '.php')) {
-			include $path . $name . '.php';
-			if ($name == 'map') {
+		if (!file_exists($path . $name . '.php')) {
+			throw new MigrationVersionException(sprintf(
+				__d('migrations', 'File `%1$s` not found in the %2$s.', true),
+				$name . '.php', (($type == 'app') ? 'Application' : Inflector::camelize($type) . ' Plugin')
+			));
+		}
+		include $path . $name . '.php';
+		if ($name == 'map') {
+			if (isset($map) && is_array($map)) {
 				return $map;
 			}
-			return true;
+			throw new MigrationVersionException(sprintf(
+				__d('migrations', '%2$s does not contain a proper map.php file.', true),
+				(($type == 'app') ? 'Application' : Inflector::camelize($type) . ' Plugin')
+			));
 		}
-		return false;
+		return true;
 	}
 }
+
+/**
+ * Usually used when migrations file/class or map files are not found
+ *
+ * @package       migrations
+ * @subpackage    migrations.libs
+ */
+class MigrationVersionException extends Exception {}
+
 ?>
