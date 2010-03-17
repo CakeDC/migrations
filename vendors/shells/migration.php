@@ -58,7 +58,7 @@ class MigrationShell extends Shell {
 	public $Version;
 
 /**
- * Messages used to display action being perfomed
+ * Messages used to display action being performed
  *
  * @var array
  * @access private
@@ -183,7 +183,7 @@ class MigrationShell extends Shell {
 		try {
 			$this->Version->run($options);
 		} catch (MigrationException $e) {
-			$this->out(__d('migrations', 'An error ocurred when processing the migration:', true));
+			$this->out(__d('migrations', 'An error occurred when processing the migration:', true));
 			$this->out('  ' . sprintf(__d('migrations', 'Migration: %s', true), $e->Migration->info['name']));
 			$this->out('  ' . sprintf(__d('migrations', 'Error: %s', true), $e->getMessage()));
 
@@ -220,7 +220,7 @@ class MigrationShell extends Shell {
 
 		$oldSchema = $this->_getSchema($this->type);
 		if ($oldSchema !== false) {
-			$response = $this->in(__d('migrations', 'Do you wanna compare the schema.php file to the database?', true), array('y', 'n'), 'y');
+			$response = $this->in(__d('migrations', 'Do you want compare the schema.php file to the database?', true), array('y', 'n'), 'y');
 			if (strtolower($response) === 'y') {
 				$this->hr();
 				$this->out(__d('migrations', 'Comparing schema.php to the database...', true));
@@ -231,7 +231,7 @@ class MigrationShell extends Shell {
 				$fromSchema = true;
 			}
 		} else {
-			$response = $this->in(__d('migrations', 'Do you wanna generate a dump from current database?', true), array('y', 'n'), 'y');
+			$response = $this->in(__d('migrations', 'Do you want generate a dump from current database?', true), array('y', 'n'), 'y');
 			if (strtolower($response) === 'y') {
 				$this->hr();
 				$this->out(__d('migrations', 'Generating dump from current database...', true));

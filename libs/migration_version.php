@@ -221,7 +221,7 @@ class MigrationVersion {
 	}
 
 /**
- * Init the migrations schema and keep it up-to-date
+ * Initialize the migrations schema and keep it up-to-date
  *
  * @return void
  * @access private

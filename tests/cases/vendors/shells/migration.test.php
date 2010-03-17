@@ -369,7 +369,7 @@ class MigrationShellTest extends CakeTestCase {
 		$result = $this->Shell->output;
 		$pattern = <<<TEXT
 /Running migrations:
-An error ocurred when processing the migration:
+An error occurred when processing the migration:
   Migration: 001_schema_dump
   Error: Exception message/
 TEXT;

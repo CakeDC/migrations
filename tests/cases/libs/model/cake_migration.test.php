@@ -149,7 +149,7 @@ class CakeMigrationTest extends CakeTestCase {
 
 		try {
 			$migration->run('up');
-			$this->fail('No expection triggered');
+			$this->fail('No exception triggered');
 		} catch (MigrationException $e) {
 			$this->assertEqual('Table "migration_posts" already exists in database.', $e->getMessage());
 		}
@@ -162,7 +162,7 @@ class CakeMigrationTest extends CakeTestCase {
 		if ($this->db->config['driver'] != 'mysql' && $this->db->config['driver'] != 'mysqli') {
 			try {
 				$migration->run('down');
-				$this->fail('No expection triggered');
+				$this->fail('No exception triggered');
 			} catch (MigrationException $e) {
 				$this->assertEqual('Table "migration_posts" does not exists in database.', $e->getMessage());
 			}
@@ -194,7 +194,7 @@ class CakeMigrationTest extends CakeTestCase {
 
 		try {
 			$migration->run('up');
-			$this->fail('No expection triggered');
+			$this->fail('No exception triggered');
 		} catch (MigrationException $e) {
 			$this->assertEqual('Table "posts" does not exists in database.', $e->getMessage());
 		}
@@ -235,7 +235,7 @@ class CakeMigrationTest extends CakeTestCase {
 
 		try {
 			$migration->run('up');
-			$this->fail('No expection triggered');
+			$this->fail('No exception triggered');
 		} catch (MigrationException $e) {
 			$this->assertEqual('Field "views" already exists in "posts".', $e->getMessage());
 		}
@@ -246,7 +246,7 @@ class CakeMigrationTest extends CakeTestCase {
 
 		try {
 			$migration->run('down');
-			$this->fail('No expection triggered');
+			$this->fail('No exception triggered');
 		} catch (MigrationException $e) {
 			$this->assertEqual('Field "views" does not exists in "posts".', $e->getMessage());
 		}
@@ -290,7 +290,7 @@ class CakeMigrationTest extends CakeTestCase {
 
 		try {
 			$migration->run('up');
-			$this->fail('No expection triggered');
+			$this->fail('No exception triggered');
 		} catch (MigrationException $e) {
 			$this->pass('Exception caught');
 		}
@@ -301,7 +301,7 @@ class CakeMigrationTest extends CakeTestCase {
 
 		try {
 			$migration->run('down');
-			$this->fail('No expection triggered');
+			$this->fail('No exception triggered');
 		} catch (MigrationException $e) {
 			$this->pass('Exception caught');
 		}
@@ -417,7 +417,7 @@ class CakeMigrationTest extends CakeTestCase {
 
 		try {
 			$migration->run('up');
-			$this->fail('No expection triggered');
+			$this->fail('No exception triggered');
 		} catch (MigrationException $e) {
 			$this->assertEqual('Field "updated" does not exists in "posts".', $e->getMessage());
 		}
@@ -429,7 +429,7 @@ class CakeMigrationTest extends CakeTestCase {
 
 		try {
 			$migration->run('down');
-			$this->fail('No expection triggered');
+			$this->fail('No exception triggered');
 		} catch (MigrationException $e) {
 			$this->assertEqual('Field "renamed_updated" does not exists in "posts".', $e->getMessage());
 		}
@@ -525,14 +525,14 @@ class CakeMigrationTest extends CakeTestCase {
 
 		try {
 			$migration->run('last');
-			$this->fail('No expection triggered');
+			$this->fail('No exception triggered');
 		} catch (MigrationException $e) {
 			$this->assertEqual('Migration direction (last) is not one of valid directions.', $e->getMessage());
 		}
 
 		try {
 			$migration->run('up');
-			$this->fail('No expection triggered');
+			$this->fail('No exception triggered');
 		} catch (MigrationException $e) {
 			$this->assertEqual('Migration action type (do_something) is not one of valid actions type.', $e->getMessage());
 		}
