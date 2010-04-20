@@ -769,6 +769,8 @@ TEXT;
 		$this->assertTrue(file_exists(TMP . 'tests' . DS . 'map.php'));
 
 		$result = $this->__getMigrationVariable(TMP . 'tests' . DS . '002_drop_slug_field.php');
+		$this->assertNoPattern('/\'schema_migrations\'/', $result);
+
 		$pattern = <<<TEXT
 /			'drop_field' => array\(
 				'articles' => array\('slug',\),

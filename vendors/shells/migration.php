@@ -118,7 +118,13 @@ class MigrationShell extends Shell {
  * @access public
  */
 	public function run() {
-		$mapping = $this->Version->getMapping($this->type);
+		try {
+			$mapping = $this->Version->getMapping($this->type);
+		} catch (MigrationVersionException $e) {
+			$this->err($e->getMessage());
+			return false;
+		}
+
 		if ($mapping === false) {
 			$this->out(__d('migrations', 'No migrations available.', true));
 			return $this->_stop();
@@ -225,6 +231,9 @@ class MigrationShell extends Shell {
 				$this->hr();
 				$this->out(__d('migrations', 'Comparing schema.php to the database...', true));
 
+				if ($this->type !== 'migrations') {
+					unset($oldSchema->tables['schema_migrations']);
+				}
 				$newSchema = $this->_readSchema();
 				$comparison = $this->Schema->compare($oldSchema, $newSchema);
 				$migration = $this->_fromComparison($migration, $comparison, $oldSchema->tables, $newSchema['tables']);

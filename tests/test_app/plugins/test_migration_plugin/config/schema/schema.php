@@ -22,5 +22,14 @@ class TestMigrationPluginSchema extends CakeSchema {
 			'PRIMARY' => array('column' => 'id', 'unique' => true)
 		)
 	);
+	var $schema_migrations = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
+		'version' => array('type' => 'integer', 'null' => false, 'default' => NULL),
+		'type' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 50),
+		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
+		'indexes' => array(
+			'PRIMARY' => array('column' => 'id', 'unique' => 1)
+		)
+	);
 }
 ?>
