@@ -80,7 +80,7 @@ class MigrationShell extends Shell {
 			$this->connection = $this->params['connection'];
 		}
 		if (!empty($this->params['plugin'])) {
-			$this->type = $this->params['plugin'];
+			$this->type = Inflector::underscore($this->params['plugin']);
 		}
 		$this->path = $this->__getPath() . 'config' . DS . 'migrations' . DS;
 
