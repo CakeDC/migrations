@@ -15,6 +15,7 @@
  * @license   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Model', 'Migrations.CakeMigration', false);
+App::import('Lib', 'Migrations.MigrationDependencyGraph');
 
 /**
  * Migration version management.
@@ -169,6 +170,80 @@ class MigrationVersion {
 		);
 		$options = array_merge($defaults, $options);
 		return new $class($options);
+	}
+
+/**
+ * Returns a list of dependencies for the given migration
+ *
+ * @param CakeMigration $Migration The migration instance
+ * @return array
+ * @access public
+ */
+	public function getDependencies(CakeMigration $Migration) {
+		$dependencies = $Migration->dependencies;
+		$Graph = new MigrationDependencyGraph($dependencies);
+		$count = count($dependencies);
+		for ($i = 0; $i < $count; $i++) {
+			$dependency = $dependencies[$i];
+			list($type, $name) = $this->__extractName($dependency);
+
+			$mapping = $this->getMapping($type);
+			if (!empty($mapping)) {
+				foreach ($mapping as $migration) {
+					$dependent = ($migration['type'] == 'app') ? 'app.' . $migration['name'] : 'plugin.' . $migration['type'] . '.' . $migration['name'];
+					$dependentMigration = $this->getMigration($migration['name'], $migration['class'], $migration['type']);
+
+					if (!in_array($dependent, $dependencies)) {
+						$Graph->addVertex($dependent);
+						$dependencies[] = $dependent;
+						$count++;
+					}
+					$Graph->addEdge($dependency, $dependent);
+
+					foreach ($dependentMigration->dependencies as $_dependent) {
+						if (!in_array($_dependent, $dependencies)) {
+							$Graph->addVertex($_dependent);
+							$dependencies[] = $_dependent;
+							$count++;
+						}
+						$Graph->addEdge($dependent, $_dependent);
+					}
+					if ($migration['name'] == $name) {
+						break;
+					}
+				}
+			}
+		}
+
+		$dependencies = $Graph->dfs();
+		foreach ($dependencies as &$dependency) {
+			list($type, $name) = $this->__extractName($dependency);
+			$mapping = $this->getMapping($type);
+
+			foreach ($mapping as $migration) {
+				if ($migration['name'] == $name) {
+					$dependency = $migration;
+					break;
+				}
+			}
+		}
+		return array_reverse($dependencies);
+	}
+
+/**
+ * Extracts the type and name from the full dependency name
+ *
+ * @param string $dependency
+ * @return array
+ * @access private
+ */
+	private function __extractName($dependency) {
+		if (preg_match('/^plugin\.([^.]+)\.([^$]+)$/', $dependency, $matches)) {
+			return array($matches[1], $matches[2]);
+		} else if (preg_match('/^app\.([^$]+)$/', $dependency, $matches)) {
+			return array('app', $matches[1]);
+		}
+		return false;
 	}
 
 /**

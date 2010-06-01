@@ -33,6 +33,14 @@ class CakeMigration extends Object {
 	public $description = '';
 
 /**
+ * Migration dependencies
+ *
+ * @var array
+ * @access public
+ */
+	public $dependencies = array();
+
+/**
  * Migration information
  *
  * This variable will be set while the migration is running and contains:
