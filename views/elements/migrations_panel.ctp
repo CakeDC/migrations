@@ -14,16 +14,27 @@
 <div class="code-table">
 	<?php
 	foreach ($content as $type => $migration) {
+		if (empty($migration['map'])) {
+			continue;
+		}
 		$migration = array_reverse($migration);
 		?>
 		<br/>
 		<h4><?php echo Inflector::humanize($type); ?></h4>
 		<?php
 		foreach ($migration['map'] as $index => $info) {
-			$color = empty($info['migrated']) ? '#fcc' : '#cfc';
+			if (empty($info['migrated'])) {
+				$status = array(
+					'color' => '#fcc',
+					'image' => 'http://cakephp.org/img/test-fail-icon.png');
+			} else {
+				$status = array(
+					'color' => '#cfc',
+					'image' => 'http://cakephp.org/img/test-pass-icon.png');
+			}
 			?>
-			<div style="background-color: <?php echo $color; ?>; border-bottom: solid #ccc 1px; line-height: 1.75em; padding-left: 0.5em;">
-				<?php echo '[' . $info['version'] . '] ' . $info['name']; ?>
+			<div style="background: <?php echo $status['color']; ?> url(<?php echo $status['image']; ?>) 5px 3px no-repeat; border-bottom: solid #ccc 1px; line-height: 1.75em; padding-left: 27px;">
+				<?php echo sprintf('[%s] %s', $info['version'], $info['name']); ?>
 			</div>
 			<?php
 		}
