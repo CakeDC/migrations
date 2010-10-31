@@ -1,7 +1,17 @@
+# Migrations Plugin for CakePHP #
+
+This migrations plugin enables developers to quickly and easily manage and migrate between database schema versions.
+
+As an application is developed, changes to the database may be required, and managing that in teams can get extremely difficult. Migrations enables you to share and co-ordinate database changes in an iterative manner, removing the complexity of handling these changes.
+
+## Usage ##
+
+For detailed usage information, please see the [documentation online](http://cakedc.com/eng/downloads/view/cakephp_migrations_plugin).
+
 ## Requirements ##
 
 * PHP version: PHP 5.2+
-* CakePHP version: Cakephp 1.3 Stable
+* CakePHP version: 1.3 Stable
 
 ## Support ##
 
