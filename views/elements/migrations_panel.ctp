@@ -12,21 +12,19 @@
 <h2><?php __d('migrations', 'Migration Status') ?></h2>
 <div class="code-table">
 	<?php
-	foreach ($content as $plugin => $migrationSet):
-		$pluginName = Inflector::humanize($plugin);
+	foreach ($content as $type => $migration) {
+		$migration = array_reverse($migration);
 		?>
-		<h4><?php echo $pluginName; ?></h4>
+		<h4><?php echo Inflector::humanize($type); ?></h4>
 		<?php
-		$migrationSet = array_reverse($migrationSet);
-		//echo $toolbar->makeNeatArray($migrationSet);
-		foreach ($migrationSet as $index => $info):
+		foreach ($migration['map'] as $index => $info) {
 			$color = $info['migrated'] === true ? '#cfc' : '#fcc';
 			?>
 			<div style="background-color: <?php echo $color; ?>; border-bottom: solid #ccc 1px; line-height: 1.75em; padding-left: 0.5em;">
-				<?php echo '[' . $info['id'] . '] ' . $info['name']; ?>
+				<?php echo '[' . $info['version'] . '] ' . $info['name']; ?>
 			</div>
 			<?php
-		endforeach;
-	endforeach;
+		}
+	}
 	?>
 </div>
