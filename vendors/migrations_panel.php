@@ -83,9 +83,6 @@ class MigrationsPanel extends DebugPanel {
 				// Skip if we get an error.
 			}
 		}
-		debug($map);
-		//$migrationVersion->info();
-		//return $migrationVersion->migrations;
 		return $map;
 	}
 

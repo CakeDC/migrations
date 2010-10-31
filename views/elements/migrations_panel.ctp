@@ -18,7 +18,7 @@
 		<h4><?php echo Inflector::humanize($type); ?></h4>
 		<?php
 		foreach ($migration['map'] as $index => $info) {
-			$color = $info['migrated'] === true ? '#cfc' : '#fcc';
+			$color = empty($info['migrated']) ? '#fcc' : '#cfc';
 			?>
 			<div style="background-color: <?php echo $color; ?>; border-bottom: solid #ccc 1px; line-height: 1.75em; padding-left: 0.5em;">
 				<?php echo '[' . $info['version'] . '] ' . $info['name']; ?>
