@@ -8,6 +8,7 @@
  * @copyright Copyright 2010, Cake Development Corporation (http://cakedc.com)
  * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
 ?>
 <h2><?php __d('migrations', 'Migration Status') ?></h2>
 <div class="code-table">
@@ -15,6 +16,7 @@
 	foreach ($content as $type => $migration) {
 		$migration = array_reverse($migration);
 		?>
+		<br/>
 		<h4><?php echo Inflector::humanize($type); ?></h4>
 		<?php
 		foreach ($migration['map'] as $index => $info) {

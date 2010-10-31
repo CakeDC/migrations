@@ -71,7 +71,7 @@ class MigrationsPanel extends DebugPanel {
  * @return array
  */
 	function beforeRender(&$controller) {
-		$v = new MigrationVersion(); //'default', array('out' => array($this, 'out')));
+		$v = new MigrationVersion();
 		$map = array();
 		foreach (App::objects('plugin') as $plugin) {
 			try {
@@ -84,14 +84,5 @@ class MigrationsPanel extends DebugPanel {
 			}
 		}
 		return $map;
-	}
-
-/**
- * Generate output
- *
- * @return void
- */
-	function out() {
-		$this->output .= json_encode(func_get_args());
 	}
 }
