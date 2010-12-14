@@ -310,6 +310,9 @@ class MigrationShell extends Shell {
 			try {
 				$type = Inflector::underscore($name);
 				$mapping = $this->Version->getMapping($type);
+				if ($mapping === false) {
+					continue;
+				}
 				$version = $this->Version->getVersion($type);
 				$latest = end($mapping);
 				if ($outdated && $latest['version'] == $version) {
