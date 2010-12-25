@@ -1,4 +1,4 @@
-<?php
+	<?php
 App::import('Model', 'Migrations.CakeMigration', false);
 
 /**
@@ -13,9 +13,8 @@ class TestCakeMigration extends CakeMigration {
  * Connection used
  *
  * @var string
- * @access public
  */
-	public $connection = 'test_suite';
+	public $connection = 'test';
 }
 
 /**
@@ -30,14 +29,12 @@ class TestCallbackCakeMigration {
  * calls property
  *
  * @var array
- * @access public
  */
 	public $calls = array();
 
 /**
  * beforeMigration method
  *
- * @access public
  * @return void
  */
 	public function beforeMigration(&$Migration, $type) {
@@ -47,7 +44,6 @@ class TestCallbackCakeMigration {
 /**
  * afterMigration method
  *
- * @access public
  * @return void
  */
 	public function afterMigration(&$Migration, $type) {
@@ -57,7 +53,6 @@ class TestCallbackCakeMigration {
 /**
  * beforeAction method
  *
- * @access public
  * @return void
  */
 	public function beforeAction(&$Migration, $type, $data) {
@@ -67,7 +62,6 @@ class TestCallbackCakeMigration {
 /**
  * afterAction method
  *
- * @access public
  * @return void
  */
 	public function afterAction(&$Migration, $type, $data) {
@@ -87,17 +81,14 @@ class CakeMigrationTest extends CakeTestCase {
  * fixtures property
  *
  * @var array
- * @access public
  */
 	public $fixtures = array(
-		'core.user', 'core.post'
-	);
+		'core.user', 'core.post');
 
 /**
  * autoFixtures property
  *
  * @var array
- * @access public
  */
 	public $autoFixtures = false;
 
@@ -105,7 +96,6 @@ class CakeMigrationTest extends CakeTestCase {
  * tables property
  *
  * @var array
- * @access public
  */
 	public $tables = array(
 		'users' => array(
@@ -129,10 +119,9 @@ class CakeMigrationTest extends CakeTestCase {
 /**
  * testCreateTable method
  *
- * @access public
  * @return void
  */
-	function testCreateDropTable() {
+	public function testCreateDropTable() {
 		$migration = new TestCakeMigration(array(
 			'up' => array('create_table' => array('migration_posts' => $this->tables['posts'], 'migration_users' => $this->tables['users'])),
 			'down' => array('drop_table' => array('migration_posts', 'migration_users'))
@@ -172,10 +161,9 @@ class CakeMigrationTest extends CakeTestCase {
 /**
  * testRenameTable method
  *
- * @access public
  * @return void
  */
-	function testRenameTable() {
+	public function testRenameTable() {
 		$this->loadFixtures('User', 'Post');
 
 		$migration = new TestCakeMigration(array(
@@ -208,10 +196,9 @@ class CakeMigrationTest extends CakeTestCase {
 /**
  * testCreateDropField method
  *
- * @access public
  * @return void
  */
-	function testCreateDropField() {
+	public function testCreateDropField() {
 		$this->loadFixtures('User', 'Post');
 		$model = new Model(array('table' => 'posts', 'ds' => 'test_suite'));
 
@@ -256,10 +243,9 @@ class CakeMigrationTest extends CakeTestCase {
 /**
  * testCreateDropIndex method
  *
- * @access public
  * @return void
  */
-	function testCreateDropIndex() {
+	public function testCreateDropIndex() {
 		$this->loadFixtures('User', 'Post');
 		$model = new Model(array('table' => 'posts', 'ds' => 'test_suite'));
 
@@ -292,7 +278,7 @@ class CakeMigrationTest extends CakeTestCase {
 			$migration->run('up');
 			$this->fail('No exception triggered');
 		} catch (MigrationException $e) {
-			$this->pass('Exception caught');
+			//$this->pass('Exception caught');
 		}
 
 		$this->assertTrue($migration->run('down'));
@@ -303,17 +289,16 @@ class CakeMigrationTest extends CakeTestCase {
 			$migration->run('down');
 			$this->fail('No exception triggered');
 		} catch (MigrationException $e) {
-			$this->pass('Exception caught');
+			//$this->pass('Exception caught');
 		}
 	}
 
 /**
  * testAlterField method
  *
- * @access public
  * @return void
  */
-	function testAlterField() {
+	public function testAlterField() {
 		$this->loadFixtures('User', 'Post');
 		$model = new Model(array('table' => 'posts', 'ds' => 'test_suite'));
 
@@ -353,10 +338,9 @@ class CakeMigrationTest extends CakeTestCase {
 /**
  * testAlterAndRenameField method
  *
- * @access public
  * @return void
  */
-	function testAlterAndRenameField() {
+	public function testAlterAndRenameField() {
 		$this->loadFixtures('User', 'Post');
 		$model = new Model(array('table' => 'posts', 'ds' => 'test_suite'));
 
@@ -394,10 +378,9 @@ class CakeMigrationTest extends CakeTestCase {
 /**
  * testRenameField method
  *
- * @access public
  * @return void
  */
-	function testRenameField() {
+	public function testRenameField() {
 		$this->loadFixtures('User', 'Post');
 		$model = new Model(array('table' => 'posts', 'ds' => 'test_suite'));
 
@@ -438,10 +421,9 @@ class CakeMigrationTest extends CakeTestCase {
 /**
  * testCallbacks method
  *
- * @access public
  * @return void
  */
-	function testCallbacks() {
+	public function testCallbacks() {
 		$this->loadFixtures('User');
 
 		$callback = new TestCallbackCakeMigration();
@@ -494,19 +476,18 @@ class CakeMigrationTest extends CakeTestCase {
 /**
  * testGenerateModel method
  *
- * @access public
  * @return void
  */
-	function testGenerateModel() {
+	public function testGenerateModel() {
 		$migration = new TestCakeMigration();
 
 		$return = $migration->generateModel('Post');
-		$this->assertIsA($return, 'AppModel');
+		$this->assertInstanceOf('AppModel', $return);
 		$this->assertEqual($return->name, 'Post');
 		$this->assertEqual($return->table, 'posts');
 
 		$return = $migration->generateModel('Post', 'users');
-		$this->assertIsA($return, 'AppModel');
+		$this->assertInstanceOf('AppModel', $return);
 		$this->assertEqual($return->name, 'Post');
 		$this->assertEqual($return->table, 'users');
 	}
@@ -514,10 +495,9 @@ class CakeMigrationTest extends CakeTestCase {
 /**
  * Test run method with invalid syntaxes
  *
- * @access public
  * @return void
  */
-	function testRunInvalidSyntaxes() {
+	public function testRunInvalidSyntaxes() {
 		$migration = new TestCakeMigration(array(
 			'up' => array('do_something' => array('posts' => array('updated' => 'renamed_updated'))),
 			'down' => array('undo_something' => array('posts' => array('renamed_updated' => 'updated'))),
@@ -538,4 +518,3 @@ class CakeMigrationTest extends CakeTestCase {
 		}
 	}
 }
-?>

@@ -28,7 +28,6 @@ class MigrationVersion {
  * Connection used
  *
  * @var string
- * @access public
  */
 	public $connection = 'default';
 
@@ -36,7 +35,6 @@ class MigrationVersion {
  * Instance of SchemaMigrations model
  *
  * @var Model
- * @access public
  */
 	public $Version;
 
@@ -44,7 +42,6 @@ class MigrationVersion {
  * Mapping cache
  *
  * @var array
- * @access private
  */
 	private $__mapping = array();
 
@@ -66,7 +63,6 @@ class MigrationVersion {
  *
  * @param string $type Can be 'app' or a plugin name
  * @return integer Last version migrated
- * @access public
  */
 	public function getVersion($type) {
 		$version = $this->Version->find('first', array(
@@ -91,7 +87,6 @@ class MigrationVersion {
  * @param boolean $migrated If true, will add the record to the database
  * 		If false, will remove the record from the database
  * @return boolean
- * @access public
  */
 	public function setVersion($version, $type, $migrated = true) {
 		if ($migrated) {
@@ -113,7 +108,6 @@ class MigrationVersion {
  *
  * @param string $type Can be 'app' or a plugin name
  * @return mixed False in case of no file found or empty mapping, array with mapping
- * @access public
  */
 	public function getMapping($type) {
 		if (!empty($this->__mapping[$type])) {
@@ -158,12 +152,11 @@ class MigrationVersion {
  * @param string $type Can be 'app' or a plugin name
  * @param array $options Extra options to send to CakeMigration class
  * @return boolean|CakeMigration False in case of no file found, instance of the migration
- * @access public
  */
 	public function getMigration($name, $class, $type, $options = array()) {
 		if (!class_exists($class) && (!$this->__loadFile($name, $type) || !class_exists($class))) {
 			throw new MigrationVersionException(sprintf(
-				__d('migrations', 'Class `%1$s` not found on file `%2$s` for %3$s.', true),
+				__d('migrations', 'Class `%1$s` not found on file `%2$s` for %3$s.'),
 				$class, $name . '.php', (($type == 'app') ? 'Application' : Inflector::camelize($type) . ' Plugin')
 			));
 		}
@@ -184,7 +177,6 @@ class MigrationVersion {
  *
  * @param array $options An array with options.
  * @return boolean
- * @access public
  */
 	public function run($options) {
 		$targetVersion = $latestVersion = $this->getVersion($options['type']);
@@ -228,7 +220,6 @@ class MigrationVersion {
  * Initialize the migrations schema and keep it up-to-date
  *
  * @return void
- * @access private
  */
 	private function __initMigrations() {
 		$options = array(
@@ -236,6 +227,7 @@ class MigrationVersion {
 			'ds' => $this->connection
 		);
 
+		debug($options);
 		$db =& ConnectionManager::getDataSource($this->connection);
 		if (!in_array($db->fullTableName('schema_migrations', false), $db->listSources())) {
 			$map = $this->__loadFile('map', 'migrations');
@@ -263,7 +255,6 @@ class MigrationVersion {
  * @param string $name File name to be loaded
  * @param string $type Can be 'app' or a plugin name
  * @return mixed Throw an exception in case of no file found, array with mapping
- * @access private
  */
 	private function __loadFile($name, $type) {
 		$path = CONFIGS . 'migrations' . DS;
@@ -272,7 +263,7 @@ class MigrationVersion {
 		}
 		if (!file_exists($path . $name . '.php')) {
 			throw new MigrationVersionException(sprintf(
-				__d('migrations', 'File `%1$s` not found in the %2$s.', true),
+				__d('migrations', 'File `%1$s` not found in the %2$s.'),
 				$name . '.php', (($type == 'app') ? 'Application' : Inflector::camelize($type) . ' Plugin')
 			));
 		}
@@ -282,7 +273,7 @@ class MigrationVersion {
 				return $map;
 			}
 			throw new MigrationVersionException(sprintf(
-				__d('migrations', '%2$s does not contain a proper map.php file.', true),
+				__d('migrations', '%2$s does not contain a proper map.php file.'),
 				(($type == 'app') ? 'Application' : Inflector::camelize($type) . ' Plugin')
 			));
 		}
@@ -298,4 +289,3 @@ class MigrationVersion {
  */
 class MigrationVersionException extends Exception {}
 
-?>
