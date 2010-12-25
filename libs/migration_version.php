@@ -224,10 +224,8 @@ class MigrationVersion {
 	private function __initMigrations() {
 		$options = array(
 			'class' => 'Migrations.SchemaMigration',
-			'ds' => $this->connection
-		);
+			'ds' => $this->connection);
 
-		debug($options);
 		$db =& ConnectionManager::getDataSource($this->connection);
 		if (!in_array($db->fullTableName('schema_migrations', false), $db->listSources())) {
 			$map = $this->__loadFile('map', 'migrations');
