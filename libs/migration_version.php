@@ -195,7 +195,7 @@ class MigrationVersion {
 				$targetVersion++;
 			}
 		}
-		//debug($mapping);
+
 		if ($direction == 'down') {
 			krsort($mapping);
 		}

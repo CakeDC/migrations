@@ -190,18 +190,13 @@ class MigrationVersionTest extends CakeTestCase {
 			->method('getMigration')
 			->will($this->returnValue(new CakeMigration($options))); 
 			
-		// $this->Version->setReturnValue('getMigration', new CakeMigration($options));
-		$this->Version->Version =& ClassRegistry::init(array(
+		$this->Version->Version = ClassRegistry::init(array(
 			'class' => 'schema_migrations', 'ds' => 'test'));
 
-		// Variable used on setReturValueAt method
-		$mappingCount = 0;
-
 		// direction => up
-		// $Version->setReturnValueAt($mappingCount++, 'getMapping', );
-		$this->Version->expects($this->at($mappingCount++))
+		$this->Version->expects($this->at(0))
 			->method('getMapping')
-			->will($this->returnValue($this->__mapping())); 
+			->will($this->returnValue($this->__mapping()));
 
 		$this->assertEqual($Version->getVersion('mocks'), 0);
 		$this->assertTrue($Version->run(array('direction' => 'up', 'type' => 'mocks')));
@@ -209,14 +204,11 @@ class MigrationVersionTest extends CakeTestCase {
 		$this->assertEqual($Version->getVersion('mocks'), 1);
 
 		// direction => down
-		//$Version->setReturnValueAt($mappingCount++, 'getMapping', $this->__mapping(1, 1));
-		$this->Version->expects($this->at($mappingCount++))
+		$this->Version->expects($this->at(0))
 			->method('getMapping')
-			->will($this->returnValue($this->__mapping(1, 1))); 
+			->will($this->returnValue($this->__mapping(1, 1)));
 
-		$this->assertEqual($Version->getVersion('mocks'), 1);
 		$this->assertTrue($Version->run(array('direction' => 'down', 'type' => 'mocks')));
-return;
 		$this->assertEqual($this->__migrated(), array());
 		$this->assertEqual($Version->getVersion('mocks'), 0);
 		// Set 1, 2, 3 versions applied
@@ -225,11 +217,9 @@ return;
 		$this->Version->setVersion(3, 'mocks');
 
 		// direction => up
-		//$Version->setReturnValueAt($mappingCount++, 'getMapping', $this->__mapping(1, 3));
-		$this->Version->expects($this->at($mappingCount++))
+		$this->Version->expects($this->at(0))
 			->method('getMapping')
-			->will($this->returnValue($this->__mapping(1, 3))); 
-
+			->will($this->returnValue($this->__mapping(1, 3)));
 
 		$this->assertEqual($Version->getVersion('mocks'), 3);
 		$this->assertTrue($Version->run(array('direction' => 'up', 'type' => 'mocks')));
@@ -237,57 +227,47 @@ return;
 		$this->assertEqual($Version->getVersion('mocks'), 4);
 
 		// direction => down
-		//$Version->setReturnValueAt($mappingCount++, 'getMapping', $this->__mapping(1, 4));
-		$this->Version->expects($this->at($mappingCount++))
+		$this->Version->expects($this->at(0))
 			->method('getMapping')
-			->will($this->returnValue($this->__mapping(1, 4))); 
+			->will($this->returnValue($this->__mapping(1, 4)));
 
-		$this->assertEqual($Version->getVersion('mocks'), 4);
 		$this->assertTrue($Version->run(array('direction' => 'down', 'type' => 'mocks')));
 		$this->assertEqual($this->__migrated(), range(1, 3));
 		$this->assertEqual($Version->getVersion('mocks'), 3);
 
 		// version => 7
-		//$Version->setReturnValueAt($mappingCount++, 'getMapping', $this->__mapping(1, 3));
-		$this->Version->expects($this->at($mappingCount++))
+		$this->Version->expects($this->at(0))
 			->method('getMapping')
-			->will($this->returnValue($this->__mapping(1, 3))); 
+			->will($this->returnValue($this->__mapping(1, 3)));
 
-		$this->assertEqual($Version->getVersion('mocks'), 3);
 		$this->assertTrue($Version->run(array('version' => 7, 'type' => 'mocks')));
 		$this->assertEqual($this->__migrated(), range(1, 7));
 		$this->assertEqual($Version->getVersion('mocks'), 7);
 
 		// version => 3
-		//$Version->setReturnValueAt($mappingCount++, 'getMapping', $this->__mapping(1, 7));
-		$this->Version->expects($this->at($mappingCount++))
+		$this->Version->expects($this->at(0))
 			->method('getMapping')
-			->will($this->returnValue($this->__mapping(1, 7))); 
+			->will($this->returnValue($this->__mapping(1, 7)));
 
-		$this->assertEqual($Version->getVersion('mocks'), 7);
 		$this->assertTrue($Version->run(array('version' => 3, 'type' => 'mocks')));
 		$this->assertEqual($this->__migrated(), range(1, 3));
 		$this->assertEqual($Version->getVersion('mocks'), 3);
 
 		// version => 10 (top version)
-		//$Version->setReturnValueAt($mappingCount++, 'getMapping', $this->__mapping(1, 3));
-		$this->Version->expects($this->at($mappingCount++))
+		$this->Version->expects($this->at(0))
 			->method('getMapping')
-			->will($this->returnValue($this->__mapping(1, 3))); 
+			->will($this->returnValue($this->__mapping(1, 3)));
 
-		$this->assertEqual($Version->getVersion('mocks'), 3);
 		$this->assertTrue($Version->run(array('version' => 10, 'type' => 'mocks')));
 		$this->assertEqual($this->__migrated(), range(1, 10));
 		$this->assertEqual($Version->getVersion('mocks'), 10);
 
 		// version => 0 (run down all migrations)
 		//$Version->setReturnValueAt($mappingCount++, 'getMapping', $this->__mapping(1, 10));
-		$this->Version->expects($this->at($mappingCount++))
+		$this->Version->expects($this->at(0))
 			->method('getMapping')
 			->will($this->returnValue($this->__mapping(1, 10))); 
-		
 
-		$this->assertEqual($Version->getVersion('mocks'), 10);
 		$this->assertTrue($Version->run(array('version' => 0, 'type' => 'mocks')));
 		$this->assertEqual($this->__migrated(), array());
 		$this->assertEqual($Version->getVersion('mocks'), 0);
@@ -295,6 +275,7 @@ return;
 		// Changing values back
 		$this->Version = $back;
 		unset($back);
+		
 	}
 
 /**
@@ -316,7 +297,6 @@ return;
 				$mapping[$i]['migrated'] = date('r');
 			}
 		}
-		debug($mapping);
 		return $mapping;
 	}
 
