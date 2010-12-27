@@ -29,7 +29,6 @@ class MigrationShell extends Shell {
  * Connection used
  *
  * @var string
- * @access public
  */
 	public $connection = 'default';
 
@@ -37,7 +36,6 @@ class MigrationShell extends Shell {
  * Current path to load and save migrations
  *
  * @var string
- * @access public
  */
 	public $path;
 
@@ -45,7 +43,6 @@ class MigrationShell extends Shell {
  * Type of migration, can be 'app' or a plugin name
  *
  * @var string
- * @access public
  */
 	public $type = 'app';
 
@@ -53,7 +50,6 @@ class MigrationShell extends Shell {
  * MigrationVersion instance
  *
  * @var MigrationVersion
- * @access public
  */
 	public $Version;
 
@@ -61,7 +57,6 @@ class MigrationShell extends Shell {
  * Messages used to display action being performed
  *
  * @var array
- * @access private
  */
 	private $__messages = array();
 
@@ -69,7 +64,6 @@ class MigrationShell extends Shell {
  * Override startup
  *
  * @return void
- * @access public
  */
 	public function startup() {
 		$this->_welcome();
@@ -102,10 +96,83 @@ class MigrationShell extends Shell {
 	}
 
 /**
+ * get the option parser.
+ *
+ * @return void
+ */
+	public function getOptionParser() {
+		$parser = parent::getOptionParser();
+		return $parser->description(
+			'The Migration shell.' . 
+			'')
+			->addOption('plugin', array(
+					'short' => 'p', 
+					'help' => __('Plugin name to be used')))
+			->addOption('force', array(
+					'short' => 'f', 
+					'help' => __('Force \'generate\' to compare all tables.')))
+			->addOption('connection', array(
+					'short' => 'c', 
+					'default' => 'default',
+					'help' => __('Set db config <config>. Uses \'default\' if none is specified.')))
+			->addSubcommand('status', array(
+				'help' => __('Displays a status of all plugin and app migrations.')))
+			->addSubcommand('all', array(
+				'help' => __('Bake a complete MVC. optional <name> of a Model')))
+			->addSubcommand('run', array(
+				'help' => __('Run a migration to given direction or version.')))
+			->addSubcommand('generate', array(
+				'help' => __('Generates a migration file.')))
+			->addSubcommand('add', array(
+				'help' => __('Generates a migration file.')))
+			// ->addSubcommand('help', array(
+				// 'help' => __('Run a migration to given direction or version.')))
+			// )->addArgument('name', array(
+				// 'help' => __('Name of the model to bake. Can use Plugin.name to bake plugin models.')
+			// )->addArgument('outdated', array(
+				// 'help' => __('')
+			;
+/*
+
+The Migration database management for CakePHP
+---------------------------------------------------------------
+Usage: cake migration <command> <param1> <param2>...
+---------------------------------------------------------------
+Params:
+	-connection <config>
+		Set db config <config>. Uses 'default' if none is specified.
+
+	-plugin
+		Plugin name to be used
+
+	-f
+		Force 'generate' to compare all tables.
+
+Commands:
+	migration help
+		Shows this help message.
+
+	migration run <up|down|all|reset|version>
+		Run a migration to given direction or version.
+		Provide a version number to get directly to the version.
+		You can also use all to apply all migrations or reset to unapply all.
+
+	migration <generate|add>
+		Generates a migration file.
+		To force generation of all tables when making a comparison/dump, use the -f param.
+
+	migration status <outdated>
+		Displays a status of all plugin and app migrations.
+
+
+*/		
+		
+	}
+
+/**
  * Override main
  *
  * @return void
- * @access public
  */
 	public function main() {
 		$this->run();
@@ -115,7 +182,6 @@ class MigrationShell extends Shell {
  * Run the migrations
  *
  * @return void
- * @access public
  */
 	public function run() {
 		try {
@@ -206,7 +272,6 @@ class MigrationShell extends Shell {
  * Generate a new migration file
  *
  * @return void
- * @access public
  */
 	public function generate() {
 		while (true) {
@@ -288,7 +353,6 @@ class MigrationShell extends Shell {
  * Generate a new migration file
  *
  * @see generate
- * @access public
  */
 	public function add() {
 		return $this->generate();
@@ -297,7 +361,6 @@ class MigrationShell extends Shell {
 /**
  * Displays a status of all plugin and app migrations
  *
- * @access public
  * @return void
  */
 	public function status() {
@@ -342,7 +405,6 @@ class MigrationShell extends Shell {
  * Displays help contents
  *
  * @return void
- * @access public
  */
 	public function help() {
 		$help = <<<TEXT
@@ -387,7 +449,6 @@ TEXT;
  * @param array $mapping Migration mapping
  * @param string $type Can be 'app' or a plugin name
  * @return void
- * @access protected
  */
 	protected function _showInfo($mapping, $type = null) {
 		if ($type === null) {
@@ -419,7 +480,6 @@ TEXT;
  * Clear the console
  *
  * @return void
- * @access public
  */
 	protected function _clear() {
 		$this->Dispatch->clear();
@@ -433,7 +493,6 @@ TEXT;
  * @param array $oldTables List of tables on schema.php file
  * @param array $currentTables List of current tables on database
  * @return array
- * @access protected
  */
 	protected function _fromComparison($migration, $comparison, $oldTables, $currentTables) {
 		foreach ($comparison as $table => $actions) {
@@ -485,7 +544,6 @@ TEXT;
  *
  * @param string $type Can be 'app' or a plugin name
  * @return mixed False in case of no file found, schema object
- * @access protected
  */
 	protected function _getSchema($type = null) {
 		if ($type === null) {
@@ -512,7 +570,6 @@ TEXT;
  * Reads the schema data
  *
  * @return array
- * @access protected
  */
 	protected function _readSchema() {
 		$read = $this->Schema->read(array('models' => !isset($this->params['f'])));
@@ -529,7 +586,6 @@ TEXT;
  * @param string $class Class name of migration
  * @param array $migration Migration instructions array
  * @return boolean
- * @access protected
  */
 	protected function _writeMigration($name, $class, $migration) {
 		$content = '';
@@ -590,7 +646,6 @@ TEXT;
  *
  * @param array $map List of migrations
  * @return boolean
- * @access protected
  */
 	protected function _writeMap($map) {
 		$content = "<?php\n";
@@ -612,7 +667,6 @@ TEXT;
  *
  * @param array $values Array to be converted
  * @return string
- * @access private
  */
 	private function __values($values) {
 		$_values = array();
@@ -635,7 +689,6 @@ TEXT;
  * @param string $template Template file name
  * @param array $vars List of variables to be used on tempalte
  * @return string
- * @access private
  */
 	private function __generateTemplate($template, $vars) {
 		extract($vars);
@@ -652,7 +705,6 @@ TEXT;
  *
  * @param string $type Can be 'app' or a plugin name
  * @return string Path used
- * @access private
  */
 	private function __getPath($type = null) {
 		if ($type === null) {
@@ -670,7 +722,6 @@ TEXT;
  * @param CakeMigration $Migration Migration being performed
  * @param string $direction Direction being runned
  * @return void
- * @access public
  */
 	public function beforeMigration(&$Migration, $direction) {
 		$this->out('  [' . number_format($Migration->info['version'] / 100, 2, '', '') . '] ' . $Migration->info['name']);
@@ -682,7 +733,6 @@ TEXT;
  * @param CakeMigration $Migration Migration being performed
  * @param string $direction Direction being runned
  * @return void
- * @access public
  */
 	public function afterMigration(&$Migration, $direction) {
 		$this->out('');
@@ -695,7 +745,6 @@ TEXT;
  * @param string $type Type of action. i.e: create_table, drop_table, etc.
  * @param array $data Data to send to the callback
  * @return void
- * @access public
  */
 	public function beforeAction(&$Migration, $type, $data) {
 		if (isset($this->__messages[$type])) {

@@ -58,4 +58,3 @@ class <?php echo $class; ?> extends CakeMigration {
 		return true;
 	}
 }
-<?php echo "?>"; ?>
