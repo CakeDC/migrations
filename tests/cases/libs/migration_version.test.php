@@ -23,7 +23,7 @@ class MigrationVersionTest extends CakeTestCase {
  * @return void
  **/
 	public function setUp() {
-		$this->Version =& new MigrationVersion(array(
+		$this->Version = new MigrationVersion(array(
 			'connection' => 'test'));
 
 		$plugins = $this->plugins = App::path('plugins');
@@ -47,13 +47,15 @@ class MigrationVersionTest extends CakeTestCase {
  * @return void
  */
 	public function testInitialTableCreation() {
-		$db =& ConnectionManager::getDataSource('test');
-		$Schema =& new CakeSchema(array('connection' => 'test'));
+		$db = ConnectionManager::getDataSource('test');
+		$db->cacheSources = false;
+		$Schema = new CakeSchema(array('connection' => 'test'));
 		$Schema->tables = array('schema_migrations' => array());
+
 		$db->execute($db->dropSchema($Schema));
 		$this->assertFalse(in_array($db->fullTableName('schema_migrations', false), $db->listSources()));
 
-		$this->Version =& new MigrationVersion(array('connection' => 'test'));
+		$this->Version = new MigrationVersion(array('connection' => 'test'));
 		$this->assertTrue(in_array($db->fullTableName('schema_migrations', false), $db->listSources()));
 	}
 
