@@ -16,7 +16,7 @@
  */
 echo "<?php\n";
 ?>
-class <?php echo $class; ?> extends CakeMigration {
+class <?php echo $name; ?> extends CakeMigration {
 
 /**
  * Migration description
