@@ -119,7 +119,7 @@ class MigrationVersion {
 		if (!empty($this->__mapping[$type])) {
 			return $this->__mapping[$type];
 		}
-		$mapping = $this->__loadFile('map', $type);
+		$mapping = $this->__enumerateMigrations($type);
 
 		$migrated = $this->Version->find('all', array(
 			'fields' => array('version', 'created'),
@@ -234,7 +234,7 @@ class MigrationVersion {
 
 		$db =& ConnectionManager::getDataSource($this->connection);
 		if (!in_array($db->fullTableName('schema_migrations', false), $db->listSources())) {
-			$map = $this->__loadFile('map', 'migrations');
+			$map = $this->__enumerateMigrations('migrations');
 
 			list($name, $class) = each($map[1]);
 			$migration = $this->getMigration($name, $class, 'migrations');
@@ -273,16 +273,40 @@ class MigrationVersion {
 			));
 		}
 		include $path . $name . '.php';
-		if ($name == 'map') {
-			if (isset($map) && is_array($map)) {
-				return $map;
-			}
-			throw new MigrationVersionException(sprintf(
-				__d('migrations', '%2$s does not contain a proper map.php file.', true),
-				(($type == 'app') ? 'Application' : Inflector::camelize($type) . ' Plugin')
-			));
-		}
 		return true;
+	}
+
+/**
+ * Enumerate available migrations
+ *
+ * @param string $type Can be 'app' or a plugin name
+ * @return array with mapping
+ * @access private
+ */
+	private function __enumerateMigrations($type) {
+		$mapping = array();
+
+		$path = CONFIGS . 'migrations' . DS;
+		if ($type != 'app') {
+			$path = App::pluginPath($type) . 'config' . DS . 'migrations' . DS;
+		}
+		if (!file_exists($path)) {
+			return $mapping;
+		}
+		if ($handle = opendir($path)) {
+			while (false !== ($file = readdir($handle))) {
+				$pos = strpos($file, '_');
+				if ($pos > 0 && substr($file, -4) == '.php') {
+					$version = (int) substr($file, 0, $pos);
+					$class = Inflector::camelize(substr($file, $pos + 1, -4));
+					if ($version > 0 && strlen($class) > 0) {
+						$mapping[$version] = array(substr($file, 0, -4) => $class);
+					}
+				}
+			}
+			closedir($handle);
+		}
+		return $mapping;
 	}
 }
 
