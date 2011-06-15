@@ -202,6 +202,7 @@ class MigrationShell extends Shell {
 		return true;
 	}
 
+
 /**
  * Generate a new migration file
  *
@@ -209,17 +210,6 @@ class MigrationShell extends Shell {
  * @access public
  */
 	public function generate() {
-		while (true) {
-			$name = $this->in(__d('migrations', 'Please enter the descriptive name of the migration to generate:', true));
-			if (!preg_match('/^([a-z0-9_]+|\s)+$/', $name)) {
-				$this->out('');
-				$this->err(sprintf(__d('migrations', 'Migration name (%s) is invalid. It must only contain alphanumeric characters.', true), $name));
-			} else {
-				$name = str_replace(' ', '_', trim($name));
-				break;
-			}
-		}
-
 		$fromSchema = false;
 		$this->Schema = $this->_getSchema();
 		$migration = array('up' => array(), 'down' => array());
@@ -257,8 +247,24 @@ class MigrationShell extends Shell {
 			}
 		}
 
-		$this->out(__d('migrations', 'Generating Migration...', true));
 		$class = 'M' . str_replace('-', '', String::uuid());
+		$response = $this->in(__d('migrations', 'Do you want to preview the file before generation?', true), array('y', 'n'), 'y');
+		if (strtolower($response) === 'y') {
+			$this->out($this->_generateMigration('',$class,$migration));
+		}
+
+		while (true) {
+			$name = $this->in(__d('migrations', 'Please enter the descriptive name of the migration to generate:', true));
+			if (!preg_match('/^([A-Za-z0-9_]+|\s)+$/', $name)) {
+				$this->out('');
+				$this->err(sprintf(__d('migrations', 'Migration name (%s) is invalid. It must only contain alphanumeric characters.', true), $name));
+			} else {
+				$name = str_replace(' ', '_', trim($name));
+				break;
+			}
+		}
+
+		$this->out(__d('migrations', 'Generating Migration...', true));
 		$this->_writeMigration($name, $class, $migration);
 
 		$version = 1;
@@ -523,16 +529,12 @@ TEXT;
 	}
 
 /**
- * Generate and write a migration with given name
  *
- * @param string $name Name of migration
- * @param string $class Class name of migration
- * @param array $migration Migration instructions array
- * @return boolean
- * @access protected
+ *
+ *
  */
-	protected function _writeMigration($name, $class, $migration) {
-		$content = '';
+	protected function _generateMigration($name, $class, $migration) {
+			$content = '';
 		foreach ($migration as $direction => $actions) {
 			$content .= "\t\t'" . $direction . "' => array(\n";
 			foreach ($actions as $type => $tables) {
@@ -580,7 +582,21 @@ TEXT;
 			$content .= "\t\t),\n";
 		}
 		$content = $this->__generateTemplate('migration', array('name' => $name, 'class' => $class, 'migration' => $content));
+		return $content;
+	}
 
+/**
+ * Write a migration with given name
+ *
+ * @param string $name Name of migration
+ * @param string $class Class name of migration
+ * @param array $migration Migration instructions array
+ * @return boolean
+ * @access protected
+ */
+	protected function _writeMigration($name, $class, $migration) {
+		$content = '';
+		$content = $this->_generateMigration($name, $class, $migration);
 		$File = new File($this->path . $name . '.php', true);
 		return $File->write($content);
 	}
@@ -705,3 +721,4 @@ TEXT;
 	}
 }
 ?>
+
