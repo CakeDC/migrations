@@ -126,6 +126,8 @@ class CakeMigrationTest extends CakeTestCase {
 		)
 	);
 
+
+
 /**
  * testCreateTable method
  *
@@ -151,7 +153,7 @@ class CakeMigrationTest extends CakeTestCase {
 			$migration->run('up');
 			$this->fail('No exception triggered');
 		} catch (MigrationException $e) {
-			$this->assertEqual('Table "migration_posts" already exists in database.', $e->getMessage());
+			$this->assertEqual('Table "' . $this->db->fullTableName('migration_posts', false) . '" already exists in database.', $e->getMessage());
 		}
 
 		$this->assertTrue($migration->run('down'));
@@ -164,7 +166,7 @@ class CakeMigrationTest extends CakeTestCase {
 				$migration->run('down');
 				$this->fail('No exception triggered');
 			} catch (MigrationException $e) {
-				$this->assertEqual('Table "migration_posts" does not exists in database.', $e->getMessage());
+				$this->assertEqual('Table "' . $this->db->fullTableName('migration_posts', false) . '" does not exists in database.', $e->getMessage());
 			}
 		}
 	}
@@ -196,7 +198,7 @@ class CakeMigrationTest extends CakeTestCase {
 			$migration->run('up');
 			$this->fail('No exception triggered');
 		} catch (MigrationException $e) {
-			$this->assertEqual('Table "posts" does not exists in database.', $e->getMessage());
+			$this->assertEqual('Table "' . $this->db->fullTableName('posts', false) . '" does not exists in database.', $e->getMessage());
 		}
 
 		$this->assertTrue($migration->run('down'));
@@ -539,3 +541,4 @@ class CakeMigrationTest extends CakeTestCase {
 	}
 }
 ?>
+

@@ -231,9 +231,9 @@ class CakeMigration extends Object {
  */
 	protected function _createTable($type, $tables) {
 		foreach ($tables as $table => $fields) {
-			if (in_array($table, $this->db->listSources())) {
+			if (in_array($this->db->fullTableName($table,false), $this->db->listSources())) {
 				throw new MigrationException($this, sprintf(
-					__d('migrations', 'Table "%s" already exists in database.', true), $table
+					__d('migrations', 'Table "%s" already exists in database.', true), $this->db->fullTableName($table,false)
 				));
 			}
 			$this->Schema->tables = array($table => $fields);
@@ -257,9 +257,9 @@ class CakeMigration extends Object {
  */
 	protected function _dropTable($type, $tables) {
 		foreach ($tables as $table) {
-			if (!in_array($table, $this->db->listSources())) {
+			if (!in_array($this->db->fullTableName($table,false) , $this->db->listSources())) {
 				throw new MigrationException($this, sprintf(
-					__d('migrations', 'Table "%s" does not exists in database.', true), $table
+					__d('migrations', 'Table "%s" does not exists in database.', true), $this->db->fullTableName($table,false)
 				));
 			}
 			$this->Schema->tables = array($table => array());
@@ -284,13 +284,13 @@ class CakeMigration extends Object {
 	protected function _renameTable($type, $tables) {
 		foreach ($tables as $oldName => $newName) {
 			$sources = $this->db->listSources();
-			if (!in_array($oldName, $sources)) {
+			if (!in_array($this->db->fullTableName($oldName,false), $sources)) {
 				throw new MigrationException($this, sprintf(
-					__d('migrations', 'Table "%s" does not exists in database.', true), $oldName
+					__d('migrations', 'Table "%s" does not exists in database.', true), $this->db->fullTableName($oldName,false)
 				));
-			} else if (in_array($newName, $sources)) {
+			} else if (in_array($this->db->fullTableName($newName,false), $sources)) {
 				throw new MigrationException($this, sprintf(
-					__d('migrations', 'Table "%s" already exists in database.', true), $newName
+					__d('migrations', 'Table "%s" already exists in database.', true), $this->db->fullTableName($newName,false)
 				));
 			}
 			$sql = 'RENAME TABLE ' . $this->db->fullTableName($oldName) . ' TO ' . $this->db->fullTableName($newName) . ';';
@@ -491,3 +491,4 @@ class MigrationException extends Exception {
 }
 
 ?>
+
