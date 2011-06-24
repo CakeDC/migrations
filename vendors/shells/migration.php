@@ -512,7 +512,7 @@ TEXT;
  * @return boolean
  * @access protected
  */
-	protected function _writeMigration($name, $version, $migration) {
+	protected function _writeMigration($name, $version, $migration, $return = false) {
 		$content = '';
 		foreach ($migration as $direction => $actions) {
 			$content .= "\t\t'" . $direction . "' => array(\n";
@@ -561,6 +561,10 @@ TEXT;
 			$content .= "\t\t),\n";
 		}
 		$content = $this->__generateTemplate('migration', array('name' => $name, 'migration' => $content));
+
+		if ($return) {
+			return $content;
+		}
 
 		$File = new File($this->path . $version . '_' . Inflector::underscore($name) . '.php', true);
 		return $File->write($content);
