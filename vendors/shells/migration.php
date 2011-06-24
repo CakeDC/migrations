@@ -210,12 +210,11 @@ class MigrationShell extends Shell {
  */
 	public function generate() {
 		while (true) {
-			$name = $this->in(__d('migrations', 'Please enter the descriptive name of the migration to generate:', true));
-			if (!preg_match('/^([a-z0-9_]+|\s)+$/', $name)) {
+			$name = $this->in(__d('migrations', 'Please enter the class name of the migration to generate: (example: AddTableUsers)', true));
+			if (!preg_match('/^[a-zA-Z0-9]+$/', $name)) {
 				$this->out('');
 				$this->err(sprintf(__d('migrations', 'Migration name (%s) is invalid. It must only contain alphanumeric characters.', true), $name));
 			} else {
-				$name = str_replace(' ', '_', trim($name));
 				break;
 			}
 		}
@@ -258,23 +257,8 @@ class MigrationShell extends Shell {
 		}
 
 		$this->out(__d('migrations', 'Generating Migration...', true));
-		$class = 'M' . str_replace('-', '', String::uuid());
-		$this->_writeMigration($name, $class, $migration);
-
-		$version = 1;
-		$map = array();
-		if (file_exists($this->path . 'map.php')) {
-			include $this->path . 'map.php';
-			ksort($map);
-			end($map);
-
-			list($version) = each($map);
-			$version++;
-		}
-		$map[$version] = array($name => $class);
-
-		$this->out(__d('migrations', 'Mapping Migrations...', true));
-		$this->_writeMap($map);
+		$version = (int) gmdate('U'); //UTC timestamp
+		$this->_writeMigration($name, $version, $migration);
 
 		if ($fromSchema) {
 			$this->Version->setVersion($version, $this->type);
@@ -522,13 +506,13 @@ TEXT;
 /**
  * Generate and write a migration with given name
  *
- * @param string $name Name of migration
- * @param string $class Class name of migration
+ * @param string $name Class Name of the migration
+ * @param string $version Version of the migration in the form YYYYMMDDHHMMSS
  * @param array $migration Migration instructions array
  * @return boolean
  * @access protected
  */
-	protected function _writeMigration($name, $class, $migration) {
+	protected function _writeMigration($name, $version, $migration) {
 		$content = '';
 		foreach ($migration as $direction => $actions) {
 			$content .= "\t\t'" . $direction . "' => array(\n";
@@ -576,31 +560,9 @@ TEXT;
 			}
 			$content .= "\t\t),\n";
 		}
-		$content = $this->__generateTemplate('migration', array('name' => $name, 'class' => $class, 'migration' => $content));
+		$content = $this->__generateTemplate('migration', array('name' => $name, 'migration' => $content));
 
-		$File = new File($this->path . $name . '.php', true);
-		return $File->write($content);
-	}
-
-/**
- * Generate and write the map file
- *
- * @param array $map List of migrations
- * @return boolean
- * @access protected
- */
-	protected function _writeMap($map) {
-		$content = "<?php\n";
-		$content .= "\$map = array(\n";
-		foreach ($map as $version => $info) {
-			list($name, $class) = each($info);
-			$content .= "\t" . $version . " => array(\n";
-			$content .= "\t\t'" . $name . "' => '" . $class . "'),\n";
-		}
-		$content .= ");\n";
-		$content .= "?>";
-
-		$File = new File($this->path . 'map.php', true);
+		$File = new File($this->path . $version . '_' . Inflector::underscore($name) . '.php', true);
 		return $File->write($content);
 	}
 
