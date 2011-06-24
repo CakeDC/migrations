@@ -3,16 +3,16 @@
  * CakePHP Migrations
  *
  * Copyright 2009 - 2010, Cake Development Corporation
- *                        1785 E. Sahara Avenue, Suite 490-423
- *                        Las Vegas, Nevada 89104
+ *						  1785 E. Sahara Avenue, Suite 490-423
+ *						  Las Vegas, Nevada 89104
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
  * @copyright 2009 - 2010, Cake Development Corporation
- * @link      http://codaset.com/cakedc/migrations/
- * @package   plugns.migrations
- * @license   MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @link	  http://codaset.com/cakedc/migrations/
+ * @package	  plugns.migrations
+ * @license	  MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Model', 'CakeSchema', false);
 App::import('Lib', 'Migrations.MigrationVersion');
@@ -20,8 +20,8 @@ App::import('Lib', 'Migrations.MigrationVersion');
 /**
  * Migration shell.
  *
- * @package       migrations
- * @subpackage    migrations.vendors.shells
+ * @package		  migrations
+ * @subpackage	  migrations.vendors.shells
  */
 class MigrationShell extends Shell {
 
@@ -82,7 +82,7 @@ class MigrationShell extends Shell {
 		if (!empty($this->params['plugin'])) {
 			$this->type = Inflector::underscore($this->params['plugin']);
 		}
-		$this->path = $this->__getPath() . 'config' . DS . 'migrations' . DS;
+		$this->path = $this->_getPath() . 'config' . DS . 'migrations' . DS;
 
 		$this->Version =& new MigrationVersion(array(
 			'connection' => $this->connection
@@ -395,7 +395,7 @@ TEXT;
 		if ($version != 0) {
 			$info = $mapping[$version];
 			$this->out(__d('migrations', 'Current migration version:', true));
-			$this->out('  #' . number_format($version / 100, 2, '', '') . '  ' . $info['name']);
+			$this->out('  #' . number_format($version / 100, 2, '', '') . '	 ' . $info['name']);
 			$this->hr();
 		}
 
@@ -403,7 +403,7 @@ TEXT;
 		foreach ($mapping as $version => $info) {
 			$this->out('  [' . number_format($version / 100, 2, '', '') . '] ' . $info['name']);
 
-			$this->out('        ', false);
+			$this->out('		', false);
 			if ($info['migrated'] !== null) {
 				$this->out(__d('migrations', 'applied', true) . ' ' . date('r', strtotime($info['migrated'])));
 			} else {
@@ -489,7 +489,7 @@ TEXT;
 			$plugin = ($this->type === 'app') ? null : $this->type;
 			return new CakeSchema(array('connection' => $this->connection, 'plugin' => $plugin));
 		}
-		$file = $this->__getPath($type) . 'config' . DS . 'schema' . DS . 'schema.php';
+		$file = $this->_getPath($type) . 'config' . DS . 'schema' . DS . 'schema.php';
 		if (!file_exists($file)) {
 			return false;
 		}
@@ -616,7 +616,7 @@ TEXT;
 		if (is_array($values)) {
 			foreach ($values as $key => $value) {
 				if (is_array($value)) {
-					$_values[] = "'" . $key . "' => array('" . implode("', '",  $value) . "')";
+					$_values[] = "'" . $key . "' => array('" . implode("', '",	$value) . "')";
 				} else if (!is_numeric($key)) {
 					$value = var_export($value, true);
 					$_values[] = "'" . $key . "' => " . $value;
@@ -649,9 +649,9 @@ TEXT;
  *
  * @param string $type Can be 'app' or a plugin name
  * @return string Path used
- * @access private
+ * @access protected
  */
-	private function __getPath($type = null) {
+	protected function _getPath($type = null) {
 		if ($type === null) {
 			$type = $this->type;
 		}
@@ -697,7 +697,7 @@ TEXT;
 	public function beforeAction(&$Migration, $type, $data) {
 		if (isset($this->__messages[$type])) {
 			$message = String::insert($this->__messages[$type], $data);
-			$this->out('      > ' . $message);
+			$this->out('	  > ' . $message);
 		}
 	}
 }
