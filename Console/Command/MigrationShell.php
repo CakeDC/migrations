@@ -67,7 +67,7 @@ class MigrationShell extends Shell {
  */
 	public function startup() {
 		$this->_welcome();
-		$this->out(__d('migrations', 'Cake Migration Shell'));
+		$this->out(__d('Migrations', 'Cake Migration Shell'));
 		$this->hr();
 
 		if (!empty($this->params['connection'])) {
@@ -76,22 +76,22 @@ class MigrationShell extends Shell {
 		if (!empty($this->params['plugin'])) {
 			$this->type = Inflector::underscore($this->params['plugin']);
 		}
-		$this->path = $this->__getPath() . 'config' . DS . 'migrations' . DS;
+		$this->path = $this->__getPath() . 'Config' . DS . 'Migration' . DS;
 
 		$this->Version =& new MigrationVersion(array(
 			'connection' => $this->connection
 		));
 
 		$this->__messages = array(
-			'create_table' => __d('migrations', 'Creating table :table.'),
-			'drop_table' => __d('migrations', 'Dropping table :table.'),
-			'rename_table' => __d('migrations', 'Renaming table :old_name to :new_name.'),
-			'add_field' => __d('migrations', 'Adding field :field to :table.'),
-			'drop_field' => __d('migrations', 'Dropping field :field from :table.'),
-			'change_field' => __d('migrations', 'Changing field :field from :table.'),
-			'rename_field' => __d('migrations', 'Renaming field :old_name to :new_name on :table.'),
-			'add_index' => __d('migrations', 'Adding index :index to :table.'),
-			'drop_index' => __d('migrations', 'Dropping index :index from :table.'),
+			'create_table' => __d('Migrations', 'Creating table :table.'),
+			'drop_table' => __d('Migrations', 'Dropping table :table.'),
+			'rename_table' => __d('Migrations', 'Renaming table :old_name to :new_name.'),
+			'add_field' => __d('Migrations', 'Adding field :field to :table.'),
+			'drop_field' => __d('Migrations', 'Dropping field :field from :table.'),
+			'change_field' => __d('Migrations', 'Changing field :field from :table.'),
+			'rename_field' => __d('Migrations', 'Renaming field :old_name to :new_name on :table.'),
+			'add_index' => __d('Migrations', 'Adding index :index to :table.'),
+			'drop_index' => __d('Migrations', 'Dropping index :index from :table.'),
 		);
 	}
 
@@ -192,7 +192,7 @@ Commands:
 		}
 
 		if ($mapping === false) {
-			$this->out(__d('migrations', 'No migrations available.'));
+			$this->out(__d('Migrations', 'No migrations available.'));
 			return $this->_stop();
 		}
 		$latestVersion = $this->Version->getVersion($this->type);
@@ -208,7 +208,7 @@ Commands:
 				$latestVersion++;
 			}
 			if (!isset($mapping[$latestVersion])) {
-				$this->out(__d('migrations', 'Not a valid migration version.'));
+				$this->out(__d('Migrations', 'Not a valid migration version.'));
 				return $this->_stop();
 			}
 		} else if (isset($this->args[0]) && $this->args[0] == 'all') {
@@ -222,7 +222,7 @@ Commands:
 
 				$valid = isset($mapping[$options['version']]) || ($options['version'] === 0 && $latestVersion > 0);
 				if (!$valid) {
-					$this->out(__d('migrations', 'Not a valid migration version.'));
+					$this->out(__d('Migrations', 'Not a valid migration version.'));
 					return $this->_stop();
 				}
 			} else {
@@ -230,7 +230,7 @@ Commands:
 				$this->hr();
 
 				while (true) {
-					$response = $this->in(__d('migrations', 'Please, choose what version you want to migrate to. [q]uit or [c]lean.'));
+					$response = $this->in(__d('Migrations', 'Please, choose what version you want to migrate to. [q]uit or [c]lean.'));
 					if (strtolower($response) === 'q') {
 						return $this->_stop();
 					} else if (strtolower($response) === 'c') {
@@ -244,26 +244,26 @@ Commands:
 						$options['version'] = (int) $response;
 						break;
 					} else {
-						$this->out(__d('migrations', 'Not a valid migration version.'));
+						$this->out(__d('Migrations', 'Not a valid migration version.'));
 					}
 				}
 				$this->hr();
 			}
 		}
 
-		$this->out(__d('migrations', 'Running migrations:'));
+		$this->out(__d('Migrations', 'Running migrations:'));
 		try {
 			$this->Version->run($options);
 		} catch (MigrationException $e) {
-			$this->out(__d('migrations', 'An error occurred when processing the migration:'));
-			$this->out('  ' . sprintf(__d('migrations', 'Migration: %s'), $e->Migration->info['name']));
-			$this->out('  ' . sprintf(__d('migrations', 'Error: %s'), $e->getMessage()));
+			$this->out(__d('Migrations', 'An error occurred when processing the migration:'));
+			$this->out('  ' . sprintf(__d('Migrations', 'Migration: %s'), $e->Migration->info['name']));
+			$this->out('  ' . sprintf(__d('Migrations', 'Error: %s'), $e->getMessage()));
 
 			$this->out('');
 			return false;
 		}
 
-		$this->out(__d('migrations', 'All migrations have completed.'));
+		$this->out(__d('Migrations', 'All migrations have completed.'));
 		$this->out('');
 		return true;
 	}
@@ -275,10 +275,10 @@ Commands:
  */
 	public function generate() {
 		while (true) {
-			$name = $this->in(__d('migrations', 'Please enter the descriptive name of the migration to generate:'));
+			$name = $this->in(__d('Migrations', 'Please enter the descriptive name of the migration to generate:'));
 			if (!preg_match('/^([a-z0-9_]+|\s)+$/', $name)) {
 				$this->out('');
-				$this->err(sprintf(__d('migrations', 'Migration name (%s) is invalid. It must only contain alphanumeric characters.'), $name));
+				$this->err(sprintf(__d('Migrations', 'Migration name (%s) is invalid. It must only contain alphanumeric characters.'), $name));
 			} else {
 				$name = str_replace(' ', '_', trim($name));
 				break;
@@ -291,10 +291,10 @@ Commands:
 
 		$oldSchema = $this->_getSchema($this->type);
 		if ($oldSchema !== false) {
-			$response = $this->in(__d('migrations', 'Do you want compare the schema.php file to the database?'), array('y', 'n'), 'y');
+			$response = $this->in(__d('Migrations', 'Do you want compare the schema.php file to the database?'), array('y', 'n'), 'y');
 			if (strtolower($response) === 'y') {
 				$this->hr();
-				$this->out(__d('migrations', 'Comparing schema.php to the database...'));
+				$this->out(__d('Migrations', 'Comparing schema.php to the database...'));
 
 				if ($this->type !== 'migrations') {
 					unset($oldSchema->tables['schema_migrations']);
@@ -302,13 +302,14 @@ Commands:
 				$newSchema = $this->_readSchema();
 				$comparison = $this->Schema->compare($oldSchema, $newSchema);
 				$migration = $this->_fromComparison($migration, $comparison, $oldSchema->tables, $newSchema['tables']);
+				
 				$fromSchema = true;
 			}
 		} else {
-			$response = $this->in(__d('migrations', 'Do you want generate a dump from current database?'), array('y', 'n'), 'y');
+			$response = $this->in(__d('Migrations', 'Do you want generate a dump from current database?'), array('y', 'n'), 'y');
 			if (strtolower($response) === 'y') {
 				$this->hr();
-				$this->out(__d('migrations', 'Generating dump from current database...'));
+				$this->out(__d('Migrations', 'Generating dump from current database...'));
 
 				$dump = $this->_readSchema();
 				$dump = $dump['tables'];
@@ -322,7 +323,7 @@ Commands:
 			}
 		}
 
-		$this->out(__d('migrations', 'Generating Migration...'));
+		$this->out(__d('Migrations', 'Generating Migration...'));
 		$class = 'M' . str_replace('-', '', String::uuid());
 		$this->_writeMigration($name, $class, $migration);
 
@@ -338,7 +339,7 @@ Commands:
 		}
 		$map[$version] = array($name => $class);
 
-		$this->out(__d('migrations', 'Mapping Migrations...'));
+		$this->out(__d('Migrations', 'Mapping Migrations...'));
 		$this->_writeMap($map);
 
 		if ($fromSchema) {
@@ -346,7 +347,7 @@ Commands:
 		}
 
 		$this->out('');
-		$this->out(__d('migrations', 'Done.'));
+		$this->out(__d('Migrations', 'Done.'));
 	}
 
 /**
@@ -384,15 +385,15 @@ Commands:
 
 				$this->out(($type == 'app') ? 'Application' : $name . ' Plugin');
 				$this->out('');
-				$this->out(__d('migrations', 'Current version:'));
+				$this->out(__d('Migrations', 'Current version:'));
 				if ($version != 0) {
 					$info = $mapping[$version];
 					$this->out('  #' . number_format($info['version'] / 100, 2, '', '') . ' ' . $info['name']);
 				} else {
-					$this->out('  ' . __d('migrations', 'None applied.'));
+					$this->out('  ' . __d('Migrations', 'None applied.'));
 				}
 
-				$this->out(__d('migrations', 'Latest version:'));
+				$this->out(__d('Migrations', 'Latest version:'));
 				$this->out('  #' . number_format($latest['version'] / 100, 2, '', '') . ' ' . $latest['name']);
 				$this->hr();
 			} catch (MigrationVersionException $e) {
@@ -458,20 +459,20 @@ TEXT;
 		$version = $this->Version->getVersion($type);
 		if ($version != 0) {
 			$info = $mapping[$version];
-			$this->out(__d('migrations', 'Current migration version:'));
+			$this->out(__d('Migrations', 'Current migration version:'));
 			$this->out('  #' . number_format($version / 100, 2, '', '') . '  ' . $info['name']);
 			$this->hr();
 		}
 
-		$this->out(__d('migrations', 'Available migrations:'));
+		$this->out(__d('Migrations', 'Available migrations:'));
 		foreach ($mapping as $version => $info) {
 			$this->out('  [' . number_format($version / 100, 2, '', '') . '] ' . $info['name']);
 
 			$this->out('        ', false);
 			if ($info['migrated'] !== null) {
-				$this->out(__d('migrations', 'applied') . ' ' . date('r', strtotime($info['migrated'])));
+				$this->out(__d('Migrations', 'applied') . ' ' . date('r', strtotime($info['migrated'])));
 			} else {
-				$this->out(__d('migrations', 'not applied'));
+				$this->out(__d('Migrations', 'not applied'));
 			}
 		}
 	}
@@ -550,7 +551,7 @@ TEXT;
 			$plugin = ($this->type === 'app') ? null : $this->type;
 			return new CakeSchema(array('connection' => $this->connection, 'plugin' => $plugin));
 		}
-		$file = $this->__getPath($type) . 'config' . DS . 'schema' . DS . 'schema.php';
+		$file = $this->__getPath($type) . 'Config' . DS . 'Schema' . DS . 'schema.php';
 		if (!file_exists($file)) {
 			return false;
 		}
@@ -558,7 +559,7 @@ TEXT;
 
 		$name = Inflector::camelize($type) . 'Schema';
 		if ($type == 'app' && !class_exists($name)) {
-			$name = Inflector::camelize($this->params['app']) . 'Schema';
+			$name = APP_DIR . 'Schema';
 		}
 
 		$plugin = ($type === 'app') ? null : $type;
@@ -636,7 +637,6 @@ TEXT;
 			$content .= "\t\t),\n";
 		}
 		$content = $this->__generateTemplate('migration', array('name' => $name, 'class' => $class, 'migration' => $content));
-
 		$File = new File($this->path . $name . '.php');
 		return $File->write($content);
 	}
@@ -675,7 +675,7 @@ TEXT;
 				if (is_array($value)) {
 					$_values[] = "'" . $key . "' => array('" . implode("', '",  $value) . "')";
 				} else if (!is_numeric($key)) {
-					$value = var_export($value);
+					$value = var_export($value, true);					
 					$_values[] = "'" . $key . "' => " . $value;
 				}
 			}
@@ -694,7 +694,7 @@ TEXT;
 		extract($vars);
 		ob_start();
 		ob_implicit_flush(0);
-		include(dirname(__FILE__) . DS . 'templates' . DS . $template . '.ctp');
+		include(dirname(__FILE__) . DS . 'Templates' . DS . $template . '.ctp');
 		$content = ob_get_clean();
 
 		return $content;

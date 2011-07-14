@@ -114,7 +114,6 @@ class MigrationVersion {
 			return $this->__mapping[$type];
 		}
 		$mapping = $this->__loadFile('map', $type);
-
 		if (empty($mapping)) {
 			return false;
 		}
@@ -156,7 +155,7 @@ class MigrationVersion {
 	public function getMigration($name, $class, $type, $options = array()) {
 		if (!class_exists($class) && (!$this->__loadFile($name, $type) || !class_exists($class))) {
 			throw new MigrationVersionException(sprintf(
-				__d('migrations', 'Class `%1$s` not found on file `%2$s` for %3$s.'),
+				__d('Migrations', 'Class `%1$s` not found on file `%2$s` for %3$s.'),
 				$class, $name . '.php', (($type == 'app') ? 'Application' : Inflector::camelize($type) . ' Plugin')
 			));
 		}
@@ -229,19 +228,19 @@ class MigrationVersion {
 
 		$db =& ConnectionManager::getDataSource($this->connection);
 		if (!in_array($db->fullTableName('schema_migrations', false), $db->listSources())) {
-			$map = $this->__loadFile('map', 'migrations');
+			$map = $this->__loadFile('map', 'Migrations');
 
 			list($name, $class) = each($map[1]);
-			$migration = $this->getMigration($name, $class, 'migrations');
+			$migration = $this->getMigration($name, $class, 'Migrations');
 			$migration->run('up');
 
 			$this->Version =& ClassRegistry::init($options);
-			$this->setVersion(1, 'migrations');
+			$this->setVersion(1, 'Migrations');
 		} else {
 			$this->Version =& ClassRegistry::init($options);
 		}
 
-		$mapping = $this->getMapping('migrations');
+		$mapping = $this->getMapping('Migrations');
 		if (count($mapping) > 1) {
 			end($mapping);
 			$this->run(array('version' => key($mapping)));
@@ -256,13 +255,13 @@ class MigrationVersion {
  * @return mixed Throw an exception in case of no file found, array with mapping
  */
 	private function __loadFile($name, $type) {
-		$path = CONFIGS . 'migrations' . DS;
+		$path = 'Config' . DS . 'Migration' . DS;
 		if ($type != 'app') {
-			$path = App::pluginPath($type) . 'config' . DS . 'migrations' . DS;
+			$path = App::pluginPath($type) . 'Config' . DS . 'Migration' . DS;
 		}
 		if (!file_exists($path . $name . '.php')) {
 			throw new MigrationVersionException(sprintf(
-				__d('migrations', 'File `%1$s` not found in the %2$s.'),
+				__d('Migrations', 'File `%1$s` not found in the %2$s.'),
 				$name . '.php', (($type == 'app') ? 'Application' : Inflector::camelize($type) . ' Plugin')
 			));
 		}
@@ -272,7 +271,7 @@ class MigrationVersion {
 				return $map;
 			}
 			throw new MigrationVersionException(sprintf(
-				__d('migrations', '%2$s does not contain a proper map.php file.'),
+				__d('Migrations', '%2$s does not contain a proper map.php file.'),
 				(($type == 'app') ? 'Application' : Inflector::camelize($type) . ' Plugin')
 			));
 		}
