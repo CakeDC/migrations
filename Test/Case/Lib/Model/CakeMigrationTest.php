@@ -147,8 +147,7 @@ class CakeMigrationTest extends CakeTestCase {
 		$sources = $this->db->listSources();
 		$this->assertFalse(in_array($this->db->fullTableName('migration_users', false), $sources));
 		$this->assertFalse(in_array($this->db->fullTableName('migration_posts', false), $sources));
-
-		if ($this->db->config['driver'] != 'mysql' && $this->db->config['driver'] != 'mysqli') {
+		if ($this->db->config['datasource'] != 'Database/Mysql') { // && $this->db->config['driver'] != 'mysqli') {
 			try {
 				$migration->run('down');
 				$this->fail('No exception triggered');

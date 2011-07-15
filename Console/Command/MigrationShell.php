@@ -14,6 +14,7 @@
  * @package   plugns.migrations
  * @license   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+App::uses('Shell', 'Console');
 App::import('Model', 'CakeSchema', false);
 App::import('Lib', 'Migrations.MigrationVersion');
 
@@ -74,7 +75,7 @@ class MigrationShell extends Shell {
 			$this->connection = $this->params['connection'];
 		}
 		if (!empty($this->params['plugin'])) {
-			$this->type = Inflector::underscore($this->params['plugin']);
+			$this->type = $this->params['plugin'];
 		}
 		$this->path = $this->__getPath() . 'Config' . DS . 'Migration' . DS;
 

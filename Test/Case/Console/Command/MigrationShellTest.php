@@ -1,7 +1,5 @@
 <?php
-App::import('Shell', 'Shell', false);
-App::import('Vendor', 'Migrations.MigrationShell', array('file' => 'shells' . DS . 'migration.php'));
-
+App::uses('MigrationShell', 'Migrations.Console/Command');
 if (!defined('DISABLE_AUTO_DISPATCH')) {
 	define('DISABLE_AUTO_DISPATCH', true);
 }
@@ -12,19 +10,6 @@ if (!class_exists('ShellDispatcher')) {
 	require CAKE . 'console' .  DS . 'cake.php';
 	ob_end_clean();
 }
-
-Mock::generatePartial(
-	'ShellDispatcher', 'TestMigrationShellMockShellDispatcher',
-	array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment')
-);
-Mock::generatePartial(
-	'MigrationShell', 'TestMigrationShellMockMigrationShell',
-	array('in', 'out', 'err', 'hr', '_welcome', '_stop', '_showInfo')
-);
-Mock::generatePartial(
-	'MigrationVersion', 'TestMigrationShellMockMigrationVersion',
-	array('getMapping', 'getVersion', 'run')
-);
 
 /**
  * Custom class to test expectation
@@ -164,6 +149,61 @@ class MigrationShellTest extends CakeTestCase {
 	public $fixtures = array('plugin.migrations.schema_migrations', 'core.article');
 
 /**
+* setup test
+*
+* @return void
+*/
+	public function setUp() {
+		parent::setUp();
+		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
+		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
+	
+		$this->Shell = $this->getMock(
+			'ShellDispatcher',
+			array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment'),
+			array($out, $out, $in),
+			'TestMigrationShellMockShellDispatcher'
+		);
+		
+		$this->Shell = $this->getMock(
+			'MigrationShell',
+			array('in', 'out', 'err', 'hr', '_welcome', '_stop', '_showInfo'),
+			array($out, $out, $in),
+			'TestMigrationShellMockMigrationShell'
+		);
+		
+		$this->Shell = $this->getMock(
+			'MigrationVersion',
+			array('getMapping', 'getVersion', 'run'),
+			array($out, $out, $in),
+			'TestMigrationShellMockMigrationVersion'
+		);
+		
+		$this->Dispatcher =& new TestMigrationShellMockShellDispatcher();
+		$this->Shell =& new TestMigrationShell($this->Dispatcher);
+		$this->Shell->Version =& new MigrationVersion(array('connection' => 'test_suite'));
+		$this->Shell->type = 'test_migration_plugin';
+		$this->Shell->path = TMP . 'tests' . DS;
+		$this->Shell->connection = 'test_suite';
+		
+		$plugins = $this->plugins = App::path('plugins');
+		$plugins[] = dirname(dirname(dirname(dirname(__FILE__)))) . DS . 'test_app' . DS . 'plugins' . DS;
+		App::build(array('plugins' => $plugins), true);
+	}
+
+/**
+ * teardown method
+ *
+ * @return void
+ */
+	public function tearDown() {
+		parent::tearDown();
+		App::build(array('plugins' => $this->plugins), true);
+		unset($this->Dispatcher, $this->Shell, $this->plugins);
+	}
+	
+	
+/**
  * tables property
  *
  * @var array
@@ -188,33 +228,6 @@ class MigrationShellTest extends CakeTestCase {
 		)
 	);
 
-/**
- * start test
- *
- * @return void
- **/
-	function startTest() {
-		$this->Dispatcher =& new TestMigrationShellMockShellDispatcher();
-		$this->Shell =& new TestMigrationShell($this->Dispatcher);
-		$this->Shell->Version =& new MigrationVersion(array('connection' => 'test_suite'));
-		$this->Shell->type = 'test_migration_plugin';
-		$this->Shell->path = TMP . 'tests' . DS;
-		$this->Shell->connection = 'test_suite';
-
-		$plugins = $this->plugins = App::path('plugins');
-		$plugins[] = dirname(dirname(dirname(dirname(__FILE__)))) . DS . 'test_app' . DS . 'plugins' . DS;
-		App::build(array('plugins' => $plugins), true);
-	}
-
-/**
- * endTest method
- *
- * @return void
- **/
-	function endTest() {
-		App::build(array('plugins' => $this->plugins), true);
-		unset($this->Dispatcher, $this->Shell, $this->plugins);
-	}
 
 /**
  * testStartup method
