@@ -27,8 +27,9 @@ class MigrationVersionTest extends CakeTestCase {
 			'connection' => 'test'));
 
 		$plugins = $this->plugins = App::path('plugins');
-		$plugins[] = dirname(dirname(dirname(__FILE__))) . DS . 'test_app' . DS . 'plugins' . DS;
+		$plugins[] = dirname(dirname(dirname(__FILE__))) . DS . 'test_app' . DS . 'Plugin' . DS;
 		App::build(array('plugins' => $plugins), true);
+		CakePlugin::loadAll();
 	}
 
 /**
@@ -65,13 +66,6 @@ class MigrationVersionTest extends CakeTestCase {
  * @return void
  */
 	public function testGetMapping() {
-		try {
-			$this->Version->getMapping('inexistent_plugin');
-			$this->fail('No exception triggered');
-		} catch (MigrationVersionException $e) {
-			$this->assertEqual('File `map.php` not found in the InexistentPlugin Plugin.', $e->getMessage());
-		}
-
 		$result = $this->Version->getMapping('test_migration_plugin');
 		$expected = array(
 			1 => array(

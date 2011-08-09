@@ -257,7 +257,7 @@ class MigrationVersion {
 	private function __loadFile($name, $type) {
 		$path = 'Config' . DS . 'Migration' . DS;
 		if ($type != 'app') {
-			$path = App::pluginPath($type) . 'Config' . DS . 'Migration' . DS;
+			$path = App::pluginPath(Inflector::camelize($type)) . 'Config' . DS . 'Migration' . DS;
 		}
 		if (!file_exists($path . $name . '.php')) {
 			throw new MigrationVersionException(sprintf(
