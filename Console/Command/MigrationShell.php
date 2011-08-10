@@ -559,8 +559,9 @@ TEXT;
 		require_once $file;
 
 		$name = Inflector::camelize($type) . 'Schema';
+
 		if ($type == 'app' && !class_exists($name)) {
-			$name = APP_DIR . 'Schema';
+			$name = Inflector::camelize(APP_DIR) . 'Schema';
 		}
 
 		$plugin = ($type === 'app') ? null : $type;
