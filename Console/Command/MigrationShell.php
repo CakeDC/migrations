@@ -639,7 +639,7 @@ TEXT;
 			$content .= "\t\t),\n";
 		}
 		$content = $this->__generateTemplate('migration', array('name' => $name, 'class' => $class, 'migration' => $content));
-		$File = new File($this->path . $name . '.php');
+		$File = new File($this->path . $name . '.php', true);
 		return $File->write($content);
 	}
 
@@ -660,8 +660,8 @@ TEXT;
 		$content .= ");\n";
 		$content .= "?>";
 
-		$File = new File($this->path . 'map.php');
-		return $File->write($content);
+		$File = new File($this->path . 'map.php', true);
+		$result = $File->write($content);
 	}
 
 /**
