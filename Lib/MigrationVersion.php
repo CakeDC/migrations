@@ -255,7 +255,7 @@ class MigrationVersion {
  * @return mixed Throw an exception in case of no file found, array with mapping
  */
 	private function __loadFile($name, $type) {
-		$path = 'Config' . DS . 'Migration' . DS;
+		$path = APP . 'Config' . DS . 'Migration' . DS;
 		if ($type != 'app') {
 			$path = App::pluginPath(Inflector::camelize($type)) . 'Config' . DS . 'Migration' . DS;
 		}
