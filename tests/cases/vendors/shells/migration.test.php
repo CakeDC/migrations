@@ -726,12 +726,12 @@ TEXT;
 		// Adding other migration to it
 		$this->Shell->expectCallCount('err', 1);
 		$this->Shell->setReturnValueAt(2, 'in', '002-invalid-name');
-		$this->Shell->setReturnValueAt(3, 'in', '002 create some sample_data');
+		$this->Shell->setReturnValueAt(3, 'in', '002 created table for UserProfile model');
 		$this->Shell->setReturnValueAt(4, 'in', 'n');
 
-		$this->assertFalse(file_exists(TMP . 'tests' . DS . '002_create_some_sample_data.php'));
+		$this->assertFalse(file_exists(TMP . 'tests' . DS . '002_created_table_for_UserProfile_model.php'));
 		$this->Shell->generate();
-		$this->assertTrue(file_exists(TMP . 'tests' . DS . '002_create_some_sample_data.php'));
+		$this->assertTrue(file_exists(TMP . 'tests' . DS . '002_created_table_for_UserProfile_model.php'));
 
 		$result = file_get_contents(TMP . 'tests' . DS . 'map.php');
 		$pattern = <<<TEXT
@@ -740,7 +740,7 @@ TEXT;
 	1 => array\(
 		'001_initial_schema' => 'M([a-zA-Z0-9]+)'\),
 	2 => array\(
-		'002_create_some_sample_data' => 'M([a-zA-Z0-9]+)'\),
+		'002_created_table_for_UserProfile_model' => 'M([a-zA-Z0-9]+)'\),
 \);
 \?>$/
 TEXT;
@@ -748,7 +748,7 @@ TEXT;
 
 		// Remove created files
 		@unlink(TMP . 'tests' . DS . '001_initial_schema.php');
-		@unlink(TMP . 'tests' . DS . '002_create_some_sample_data.php');
+		@unlink(TMP . 'tests' . DS . '002_created_table_for_UserProfile_model.php');
 		@unlink(TMP . 'tests' . DS . 'map.php');
 	}
 

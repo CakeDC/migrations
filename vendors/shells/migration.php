@@ -211,7 +211,7 @@ class MigrationShell extends Shell {
 	public function generate() {
 		while (true) {
 			$name = $this->in(__d('migrations', 'Please enter the descriptive name of the migration to generate:', true));
-			if (!preg_match('/^([a-z0-9_]+|\s)+$/', $name)) {
+			if (!preg_match('/^([a-z0-9_]+|\s)+$/i', $name)) {
 				$this->out('');
 				$this->err(sprintf(__d('migrations', 'Migration name (%s) is invalid. It must only contain alphanumeric characters.', true), $name));
 			} else {
