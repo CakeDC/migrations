@@ -32,13 +32,15 @@ class MigrationShellTest extends CakeTestCase {
                        array('getMapping', 'getVersion', 'run'),
                        array(array('connection' => 'test')));
 		
-		$this->Shell->type = 'test_migration_plugin';
+		$this->Shell->type = 'TestMigrationPlugin';
 		$this->Shell->path = TMP . 'tests' . DS;
-		$this->Shell->connection = 'test_suite';
-		
+		$this->Shell->connection = 'test';
+
 		$plugins = $this->plugins = App::path('plugins');
 		$plugins[] = dirname(dirname(dirname(dirname(__FILE__)))) . DS . 'test_app' . DS . 'Plugin' . DS;
+
 		App::build(array('plugins' => $plugins), true);
+		CakePlugin::loadAll();
 	}
 
 /**
@@ -51,8 +53,7 @@ class MigrationShellTest extends CakeTestCase {
 		App::build(array('plugins' => $this->plugins), true);
 		unset($this->Dispatcher, $this->Shell, $this->plugins);
 	}
-	
-	
+
 /**
  * tables property
  *
@@ -84,17 +85,17 @@ class MigrationShellTest extends CakeTestCase {
  *
  * @return void
  **/
-	function testStartup() {
+	public function testStartup() {
 		$this->Shell->startup();
 		$this->assertEqual($Shell->connection, 'default');
 		$this->assertEqual($Shell->type, 'app');
 
 		$Shell->params = array(
-			'connection' => 'test_suite',
+			'connection' => 'test',
 			'plugin' => 'migrations'
 		);
 		$Shell->startup();
-		$this->assertEqual($Shell->connection, 'test_suite');
+		$this->assertEqual($Shell->connection, 'test');
 		$this->assertEqual($Shell->type, 'migrations');
 	}
 
@@ -103,7 +104,7 @@ class MigrationShellTest extends CakeTestCase {
  *
  * @return void
  **/
-	function testRun() {
+	public function testRun() {
 		$back = $this->Shell->Version;
 
 		$Version = $this->getMock(
@@ -215,7 +216,7 @@ class MigrationShellTest extends CakeTestCase {
  *
  * @return void
  **/
-	function testRunWithFailures() {
+	public function testRunWithFailures() {
 		$back = $this->Shell->Version;
 
 		$Version = $this->getMock(
@@ -254,7 +255,7 @@ TEXT;
  *
  * @return void
  **/
-/*	function testFromComparisonTableActions() {
+/*	public function testFromComparisonTableActions() {
 		$comparison = array(
 			'users' => array('add' => $this->tables['users']),
 			'posts' => array('add' => $this->tables['posts'])
@@ -470,7 +471,7 @@ TEXT;
  *
  * @return void
  **/
-/*	function testWriteMigration() {
+/*	public function testWriteMigration() {
 		$users = $this->tables['users'];
 		$users['indexes'] = array('UNIQUE_USER' => array('column' => 'user', 'unique' => true));
 
@@ -539,7 +540,7 @@ TEXT;
  *
  * @return void
  **/
-/*	function testWriteMap() {
+/*	public function testWriteMap() {
 		$map = array(
 			1 => array('001_schema_dump' => 'M4af9d151e1484b74ad9d007058157726'),
 			2 => array('002_create_some_sample_data' => 'M4af9d15154844819b7a0007058157726'),
@@ -571,7 +572,7 @@ TEXT;
  *
  * @return void
  */
-	function testGenerate() {
+	public function testGenerate() {
 		$this->Shell->expects($this->at(0))->method('in')->will($this->returnValue('001 initial schema'));
 		$this->Shell->expects($this->at(1))->method('in')->will($this->returnValue('n'));
 
@@ -627,7 +628,7 @@ TEXT;
  *
  * @return void
  */
-	function testGenerateComparison() {
+	public function testGenerateComparison() {
 		$this->Shell->expects($this->at(0))->method('in')->will($this->returnValue('002 drop slug field'));
 		$this->Shell->expects($this->at(1))->method('in')->will($this->returnValue('y'));
 		
@@ -667,13 +668,13 @@ TEXT;
  *
  * @return void
  */
-	function testGenerateDump() {
+	public function testGenerateDump() {
 		$this->Shell->expects($this->at(0))->method('in')->will($this->returnValue('001 schema dump'));
 		$this->Shell->expects($this->at(1))->method('in')->will($this->returnValue('y'));
 		
 		$this->assertFalse(file_exists(TMP . 'tests' . DS . '001_schema_dump.php'));
 		$this->assertFalse(file_exists(TMP . 'tests' . DS . 'map.php'));
-		$this->Shell->type = 'test_migration_plugin2';
+		$this->Shell->type = 'TestMigrationPlugin2';
 		$this->Shell->params['f'] = true;
 		$this->Shell->generate();
 		$this->assertTrue(file_exists(TMP . 'tests' . DS . '001_schema_dump.php'));
@@ -722,7 +723,7 @@ TEXT;
  *
  * @return void
  */
-	function testStatus() {
+	public function testStatus() {
 		$this->Shell->status();
 		$result = $this->Shell->output;
 		$pattern = <<<TEXT
@@ -764,7 +765,7 @@ TEXT;
  * @param string $file
  * @return string
  */
-	function __getMigrationVariable($file) {
+	public function __getMigrationVariable($file) {
 		$result = array();
 		$array = explode("\n", str_replace("\r\n", "\n", file_get_contents($file)));
 		foreach ($array as $line) {
@@ -779,5 +780,5 @@ TEXT;
 		}
 		return implode("\n", $result);
 	}
+
 }
-?>
