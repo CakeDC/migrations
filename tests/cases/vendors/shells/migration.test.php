@@ -594,6 +594,35 @@ TEXT;
 			)
 		);
 		$this->assertEqual($result, $expected);
+
+		// Change field with/out length
+		$oldTables = array('users' => $this->tables['users']);
+		$newTables = array('users' => array());
+		$oldTables['users']['last_login'] = array('type' => 'integer', 'null' => false, 'length' => 11);
+
+		$comparison = array(
+			'users' => array('change' => array(
+				'last_login' => array('type' => 'datetime', 'null' => false),
+			))
+		);
+		$result = $this->Shell->fromComparison(array(), $comparison, $oldTables, $newTables);
+		$expected = array(
+			'up' => array(
+				'alter_field' => array(
+					'users' => array(
+						'last_login' => array('type' => 'datetime', 'null' => false, 'length' => null)
+					)
+				)
+			),
+			'down' => array(
+				'alter_field' => array(
+					'users' => array(
+						'last_login' => array('type' => 'integer', 'null' => false, 'length' => 11)
+					)
+				)
+			)
+		);
+		$this->assertEqual($result, $expected);
 	}
 
 /**

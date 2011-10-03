@@ -464,6 +464,11 @@ TEXT;
 						$migration['down']['drop_field'][$table]['indexes'] = array_keys($indexes['indexes']);
 					}
 				} else if ($type == 'change') {
+					foreach ($fields as $name => $col) {
+						if (!empty($oldTables[$table][$name]['length']) && substr($col['type'], 0, 4) == 'date') {
+							$fields[$name]['length'] = null;
+						}
+					}
 					$migration['up']['alter_field'][$table] = $fields;
 					$migration['down']['alter_field'][$table] = array_intersect_key($oldTables[$table], $fields);
 				} else {
