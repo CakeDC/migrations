@@ -350,8 +350,12 @@ class CakeMigration extends Object {
 						));
 						break;
 					case 'change':
+						$def = array_merge($tableFields[$field], $col);
+						if (!empty($def['length']) && !empty($col['type']) && substr($col['type'], 0, 4) == 'date') {
+							$def['length'] = null;
+						}
 						$sql = $this->db->alterSchema(array(
-							$table => array('change' => array($field => array_merge($tableFields[$field], $col)))
+							$table => array('change' => array($field => $def))
 						));
 						break;
 					case 'rename':

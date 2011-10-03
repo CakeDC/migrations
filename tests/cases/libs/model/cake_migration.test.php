@@ -353,6 +353,44 @@ class CakeMigrationTest extends CakeTestCase {
 	}
 
 /**
+ * testAlterFieldLength method
+ *
+ * @access public
+ * @return void
+ */
+	function testAlterFieldLength() {
+		$this->loadFixtures('User', 'Post');
+		$model = new Model(array('table' => 'posts', 'ds' => 'test_suite'));
+
+		$migration = new TestCakeMigration(array(
+			'up' => array(
+				'alter_field' => array(
+					'posts' => array('created' => array('type' => 'integer', 'length' => 11))
+				)
+			),
+			'down' => array(
+				'alter_field' => array(
+					'posts' => array('created' => array('type' => 'datetime'))
+				)
+			)
+		));
+
+		$fields = $this->db->describe($model);
+		$this->assertEqual($fields['created']['type'], 'datetime');
+		$this->assertNull($fields['created']['length']);
+
+		$this->assertTrue($migration->run('up'));
+		$fields = $this->db->describe($model);
+		$this->assertEqual($fields['created']['type'], 'integer');
+		$this->assertEqual($fields['created']['length'], 11);
+
+		$this->assertTrue($migration->run('down'));
+		$fields = $this->db->describe($model);
+		$this->assertEqual($fields['created']['type'], 'datetime');
+		$this->assertNull($fields['created']['length']);
+	}
+
+/**
  * testAlterAndRenameField method
  *
  * @access public
