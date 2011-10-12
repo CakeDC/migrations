@@ -14,7 +14,7 @@
  * @package   plugns.migrations
  * @license   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('CakeMigration', 'Migration.Lib');
+App::uses('CakeMigration', 'Migrations.Lib');
 App::uses('ConnectionManager', 'Model');
 
 /**
@@ -224,24 +224,24 @@ class MigrationVersion {
  */
 	private function __initMigrations() {
 		$options = array(
-			'class' => 'Migration.SchemaMigration',
+			'class' => 'Migrations.SchemaMigration',
 			'ds' => $this->connection);
 
 		$db =& ConnectionManager::getDataSource($this->connection);
 		if (!in_array($db->fullTableName('schema_migrations', false), $db->listSources())) {
-			$map = $this->__loadFile('map', 'Migration');
+			$map = $this->__loadFile('map', 'Migrations');
 
 			list($name, $class) = each($map[1]);
-			$migration = $this->getMigration($name, $class, 'Migration');
+			$migration = $this->getMigration($name, $class, 'Migrations');
 			$migration->run('up');
 
 			$this->Version =& ClassRegistry::init($options);
-			$this->setVersion(1, 'Migration');
+			$this->setVersion(1, 'Migrations');
 		} else {
 			$this->Version =& ClassRegistry::init($options);
 		}
 
-		$mapping = $this->getMapping('Migration');
+		$mapping = $this->getMapping('Migrations');
 		if (count($mapping) > 1) {
 			end($mapping);
 			$this->run(array('version' => key($mapping)));

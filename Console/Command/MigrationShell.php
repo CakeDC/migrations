@@ -16,7 +16,7 @@
  */
 App::uses('Shell', 'Console');
 App::uses('CakeSchema', 'Model');
-App::uses('MigrationVersion', 'Migration.Lib');
+App::uses('MigrationVersion', 'Migrations.Lib');
 
 /**
  * Migration shell.
