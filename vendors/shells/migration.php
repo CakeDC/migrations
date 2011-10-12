@@ -82,7 +82,7 @@ class MigrationShell extends Shell {
 		if (!empty($this->params['plugin'])) {
 			$this->type = Inflector::underscore($this->params['plugin']);
 		}
-		$this->path = $this->__getPath() . 'config' . DS . 'migrations' . DS;
+		$this->path = $this->_getPath() . 'config' . DS . 'migrations' . DS;
 
 		$this->Version =& new MigrationVersion(array(
 			'connection' => $this->connection
@@ -503,7 +503,7 @@ TEXT;
 			$plugin = ($this->type === 'app') ? null : $this->type;
 			return new CakeSchema(array('connection' => $this->connection, 'plugin' => $plugin));
 		}
-		$file = $this->__getPath($type) . 'config' . DS . 'schema' . DS . 'schema.php';
+		$file = $this->_getPath($type) . 'config' . DS . 'schema' . DS . 'schema.php';
 		if (!file_exists($file)) {
 			return false;
 		}
@@ -675,7 +675,7 @@ TEXT;
  * @return string Path used
  * @access private
  */
-	private function __getPath($type = null) {
+	protected function _getPath($type = null) {
 		if ($type === null) {
 			$type = $this->type;
 		}
