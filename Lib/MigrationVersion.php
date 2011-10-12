@@ -14,7 +14,8 @@
  * @package   plugns.migrations
  * @license   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Model', 'Migrations.CakeMigration', false);
+App::uses('CakeMigration', 'Migration.Lib');
+App::uses('ConnectionManager', 'Model');
 
 /**
  * Migration version management.
@@ -155,7 +156,7 @@ class MigrationVersion {
 	public function getMigration($name, $class, $type, $options = array()) {
 		if (!class_exists($class) && (!$this->__loadFile($name, $type) || !class_exists($class))) {
 			throw new MigrationVersionException(sprintf(
-				__d('Migrations', 'Class `%1$s` not found on file `%2$s` for %3$s.'),
+				__d('Migration', 'Class `%1$s` not found on file `%2$s` for %3$s.'),
 				$class, $name . '.php', (($type == 'app') ? 'Application' : Inflector::camelize($type) . ' Plugin')
 			));
 		}
@@ -223,24 +224,24 @@ class MigrationVersion {
  */
 	private function __initMigrations() {
 		$options = array(
-			'class' => 'Migrations.SchemaMigration',
+			'class' => 'Migration.SchemaMigration',
 			'ds' => $this->connection);
 
 		$db =& ConnectionManager::getDataSource($this->connection);
 		if (!in_array($db->fullTableName('schema_migrations', false), $db->listSources())) {
-			$map = $this->__loadFile('map', 'Migrations');
+			$map = $this->__loadFile('map', 'Migration');
 
 			list($name, $class) = each($map[1]);
-			$migration = $this->getMigration($name, $class, 'Migrations');
+			$migration = $this->getMigration($name, $class, 'Migration');
 			$migration->run('up');
 
 			$this->Version =& ClassRegistry::init($options);
-			$this->setVersion(1, 'Migrations');
+			$this->setVersion(1, 'Migration');
 		} else {
 			$this->Version =& ClassRegistry::init($options);
 		}
 
-		$mapping = $this->getMapping('Migrations');
+		$mapping = $this->getMapping('Migration');
 		if (count($mapping) > 1) {
 			end($mapping);
 			$this->run(array('version' => key($mapping)));

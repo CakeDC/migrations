@@ -15,8 +15,8 @@
  * @license   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('Shell', 'Console');
-App::import('Model', 'CakeSchema', false);
-App::import('Lib', 'Migrations.MigrationVersion');
+App::uses('CakeSchema', 'Model');
+App::uses('MigrationVersion', 'Migration.Lib');
 
 /**
  * Migration shell.

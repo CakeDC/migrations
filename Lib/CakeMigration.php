@@ -14,7 +14,7 @@
  * @package   plugns.migrations
  * @license   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Model', 'CakeSchema', false);
+App::uses('CakeSchema', 'Model');
 
 /**
  * Base Class for Migration management
