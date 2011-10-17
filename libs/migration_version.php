@@ -112,7 +112,7 @@ class MigrationVersion {
  * Get mapping for the given type
  *
  * @param string $type Can be 'app' or a plugin name
- * @return mixed False in case of no file found, array with mapping
+ * @return mixed False in case of no file found or empty mapping, array with mapping
  * @access public
  */
 	public function getMapping($type) {
@@ -120,6 +120,10 @@ class MigrationVersion {
 			return $this->__mapping[$type];
 		}
 		$mapping = $this->__loadFile('map', $type);
+
+		if (empty($mapping)) {
+			return false;
+		}
 
 		$migrated = $this->Version->find('all', array(
 			'fields' => array('version', 'created'),
