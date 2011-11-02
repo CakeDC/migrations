@@ -218,16 +218,16 @@ class CakeMigration extends Object {
  */
 	protected function _createTable($type, $tables) {
 		foreach ($tables as $table => $fields) {
-			if (in_array($table, $this->db->listSources())) {
-				throw new MigrationException($this, sprintf(
-					__d('migrations', 'Table "%s" already exists in database.'), $table
-				));
+			if (in_array($this->db->fullTableName($table, false), $this->db->listSources())) {
+				throw new MigrationException($this,
+					__d('migrations', 'Table "%s" already exists in database.', $this->db->fullTableName($table, false))
+				);
 			}
 			$this->Schema->tables = array($table => $fields);
 
 			$this->_invokeCallbacks('beforeAction', 'create_table', array('table' => $table));
 			if (@$this->db->execute($this->db->createSchema($this->Schema)) === false) {
-				throw new MigrationException($this, sprintf(__d('migrations', 'SQL Error: %s'), $this->db->error));
+				throw new MigrationException($this, __d('migrations', 'SQL Error: %s', $this->db->error));
 			}
 			$this->_invokeCallbacks('afterAction', 'create_table', array('table' => $table));
 		}
@@ -243,10 +243,10 @@ class CakeMigration extends Object {
  */
 	protected function _dropTable($type, $tables) {
 		foreach ($tables as $table) {
-			if (!in_array($table, $this->db->listSources())) {
-				throw new MigrationException($this, sprintf(
-					__d('migrations', 'Table "%s" does not exists in database.'), $table
-				));
+			if (!in_array($this->db->fullTableName($table, false), $this->db->listSources())) {
+				throw new MigrationException($this,
+					__d('migrations', 'Table "%s" does not exists in database.', $this->db->fullTableName($table, false))
+				);
 			}
 			$this->Schema->tables = array($table => array());
 
@@ -269,20 +269,20 @@ class CakeMigration extends Object {
 	protected function _renameTable($type, $tables) {
 		foreach ($tables as $oldName => $newName) {
 			$sources = $this->db->listSources();
-			if (!in_array($oldName, $sources)) {
-				throw new MigrationException($this, sprintf(
-					__d('migrations', 'Table "%s" does not exists in database.'), $oldName
-				));
-			} else if (in_array($newName, $sources)) {
-				throw new MigrationException($this, sprintf(
-					__d('migrations', 'Table "%s" already exists in database.'), $newName
-				));
+			if (!in_array($this->db->fullTableName($oldName, false), $sources)) {
+				throw new MigrationException($this,
+					__d('migrations', 'Table "%s" does not exists in database.', $this->db->fullTableName($oldName, false))
+				);
+			} else if (in_array($this->db->fullTableName($newName, false), $sources)) {
+				throw new MigrationException($this,
+					__d('migrations', 'Table "%s" already exists in database.', $this->db->fullTableName($newName, false))
+				);
 			}
 			$sql = 'RENAME TABLE ' . $this->db->fullTableName($oldName) . ' TO ' . $this->db->fullTableName($newName) . ';';
 
 			$this->_invokeCallbacks('beforeAction', 'rename_table', array('old_name' => $oldName, 'new_name' => $newName));
 			if (@$this->db->execute($sql) === false) {
-				throw new MigrationException($this, sprintf(__d('migrations', 'SQL Error: %s'), $this->db->error));
+				throw new MigrationException($this, __d('migrations', 'SQL Error: %s', $this->db->error));
 			}
 			$this->_invokeCallbacks('afterAction', 'rename_table', array('old_name' => $oldName, 'new_name' => $newName));
 		}
@@ -334,8 +334,12 @@ class CakeMigration extends Object {
 						));
 						break;
 					case 'change':
+						$def = array_merge($tableFields[$field], $col);
+						if (!empty($def['length']) && !empty($col['type']) && substr($col['type'], 0, 4) == 'date') {
+							$def['length'] = null;
+						}
 						$sql = $this->db->alterSchema(array(
-							$table => array('change' => array($field => array_merge($tableFields[$field], $col)))
+							$table => array('change' => array($field => $def))
 						));
 						break;
 					case 'rename':
