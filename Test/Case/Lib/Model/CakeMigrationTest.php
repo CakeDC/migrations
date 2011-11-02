@@ -117,6 +117,8 @@ class CakeMigrationTest extends CakeTestCase {
 		)
 	);
 
+
+
 /**
  * testCreateTable method
  *
@@ -141,7 +143,7 @@ class CakeMigrationTest extends CakeTestCase {
 			$migration->run('up');
 			$this->fail('No exception triggered');
 		} catch (MigrationException $e) {
-			$this->assertEqual('Table "migration_posts" already exists in database.', $e->getMessage());
+			$this->assertEqual('Table "' . $this->db->fullTableName('migration_posts', false) . '" already exists in database.', $e->getMessage());
 		}
 
 		$this->assertTrue($migration->run('down'));
@@ -153,7 +155,7 @@ class CakeMigrationTest extends CakeTestCase {
 				$migration->run('down');
 				$this->fail('No exception triggered');
 			} catch (MigrationException $e) {
-				$this->assertEqual('Table "migration_posts" does not exists in database.', $e->getMessage());
+				$this->assertEqual('Table "' . $this->db->fullTableName('migration_posts', false) . '" does not exists in database.', $e->getMessage());
 			}
 		}
 	}
@@ -184,7 +186,7 @@ class CakeMigrationTest extends CakeTestCase {
 			$migration->run('up');
 			$this->fail('No exception triggered');
 		} catch (MigrationException $e) {
-			$this->assertEqual('Table "posts" does not exists in database.', $e->getMessage());
+			$this->assertEqual('Table "' . $this->db->fullTableName('posts', false) . '" does not exists in database.', $e->getMessage());
 		}
 
 		$this->assertTrue($migration->run('down'));
@@ -333,6 +335,44 @@ class CakeMigrationTest extends CakeTestCase {
 		$this->assertTrue($migration->run('down'));
 		$fields = $this->db->describe($model);
 		$this->assertEqual($fields['published']['default'], 'N');
+	}
+
+/**
+ * testAlterFieldLength method
+ *
+ * @access public
+ * @return void
+ */
+	function testAlterFieldLength() {
+		$this->loadFixtures('User', 'Post');
+		$model = new Model(array('table' => 'posts', 'ds' => 'test_suite'));
+
+		$migration = new TestCakeMigration(array(
+			'up' => array(
+				'alter_field' => array(
+					'posts' => array('created' => array('type' => 'integer', 'length' => 11))
+				)
+			),
+			'down' => array(
+				'alter_field' => array(
+					'posts' => array('created' => array('type' => 'datetime'))
+				)
+			)
+		));
+
+		$fields = $this->db->describe($model);
+		$this->assertEqual($fields['created']['type'], 'datetime');
+		$this->assertNull($fields['created']['length']);
+
+		$this->assertTrue($migration->run('up'));
+		$fields = $this->db->describe($model);
+		$this->assertEqual($fields['created']['type'], 'integer');
+		$this->assertEqual($fields['created']['length'], 11);
+
+		$this->assertTrue($migration->run('down'));
+		$fields = $this->db->describe($model);
+		$this->assertEqual($fields['created']['type'], 'datetime');
+		$this->assertNull($fields['created']['length']);
 	}
 
 /**
