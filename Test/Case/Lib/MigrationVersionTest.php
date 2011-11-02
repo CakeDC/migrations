@@ -1,5 +1,6 @@
 <?php
-App::import('Lib', 'Migrations.MigrationVersion');
+App::uses('CakeMigration', 'Migrations.Lib');
+App::uses('MigrationVersion', 'Migrations.Lib');
 
 class MigrationVersionTest extends CakeTestCase {
 
@@ -28,7 +29,7 @@ class MigrationVersionTest extends CakeTestCase {
 
 		$plugins = $this->plugins = App::path('plugins');
 		$plugins[] = dirname(dirname(dirname(__FILE__))) . DS . 'test_app' . DS . 'Plugin' . DS;
-		App::build(array('plugins' => $plugins), true);
+		App::build(array('plugins' => $plugins), App::RESET);
 		CakePlugin::loadAll();
 	}
 

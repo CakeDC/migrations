@@ -1,5 +1,6 @@
-	<?php
-App::import('Model', 'Migrations.CakeMigration', false);
+<?php
+App::uses('CakeMigration', 'Migrations.Lib');
+App::uses('MigrationVersion', 'Migrations.Lib');
 
 /**
  * TestCakeMigration

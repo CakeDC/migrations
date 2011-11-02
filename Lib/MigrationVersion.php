@@ -258,15 +258,18 @@ class MigrationVersion {
 	private function __loadFile($name, $type) {
 		$path = APP . 'Config' . DS . 'Migration' . DS;
 		if ($type != 'app') {
-			$path = App::pluginPath(Inflector::camelize($type)) . 'Config' . DS . 'Migration' . DS;
+			$path = CakePlugin::path(Inflector::camelize($type)) . 'Config' . DS . 'Migration' . DS;
 		}
+
 		if (!file_exists($path . $name . '.php')) {
 			throw new MigrationVersionException(sprintf(
 				__d('Migrations', 'File `%1$s` not found in the %2$s.'),
 				$name . '.php', (($type == 'app') ? 'Application' : Inflector::camelize($type) . ' Plugin')
 			));
 		}
+
 		include $path . $name . '.php';
+
 		if ($name == 'map') {
 			if (isset($map) && is_array($map)) {
 				return $map;
@@ -276,6 +279,7 @@ class MigrationVersion {
 				(($type == 'app') ? 'Application' : Inflector::camelize($type) . ' Plugin')
 			));
 		}
+
 		return true;
 	}
 }

@@ -110,13 +110,13 @@ class MigrationShellTest extends CakeTestCase {
 		$this->Shell = $this->getMock(
 			'MigrationShell',
 			array('in', 'out', 'hr', 'createFile', 'error', 'err', '_stop'),
-			array($out, $out, $in), 'TestMigrationShellMockMigrationShell'
-		);
+			array($out, $out, $in), 'TestMigrationShellMockMigrationShell');
+
 		$this->Shell->Version = $this->getMock(
-                       'MigrationVersion',
-                       array('getMapping', 'getVersion', 'run'),
-                       array(array('connection' => 'test')), 'TestMigrationShellMockMigrationVersion');
-		
+			'MigrationVersion',
+			array('getMapping', 'getVersion', 'run'),
+			array(array('connection' => 'test')), 'TestMigrationShellMockMigrationVersion');
+
 		$this->Shell->type = 'TestMigrationPlugin';
 		$this->Shell->path = TMP . 'tests' . DS;
 		$this->Shell->connection = 'test';
