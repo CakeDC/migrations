@@ -6,6 +6,25 @@ Mock::generatePartial(
 	array('getMapping', 'getMigration')
 );
 
+class TestMigrationVersionDependencyMigrationA1 extends CakeMigration {}
+class TestMigrationVersionDependencyMigrationB1 extends CakeMigration {}
+class TestMigrationVersionDependencyMigrationB2 extends CakeMigration {}
+class TestMigrationVersionDependencyMigrationC1 extends CakeMigration {
+	public $dependencies = array('plugin.test_plugin_a.migration_a1');
+}
+class TestMigrationVersionDependencyMigrationC2 extends CakeMigration {
+	public $dependencies = array('plugin.test_plugin_b.migration_b1');
+}
+class TestMigrationVersionDependencyMigrationD1 extends CakeMigration {
+	public $dependencies = array('plugin.test_plugin_c.migration_c1');
+}
+class TestMigrationVersionDependencyMigrationD2 extends CakeMigration {
+	public $dependencies = array('plugin.test_plugin_b.migration_b2', 'plugin.test_plugin_c.migration_c2');
+}
+class TestMigrationVersionDependencyMigrationE1 extends CakeMigration {
+	public $dependencies = array('plugin.test_plugin_d.migration_d1');
+}
+
 class MigrationVersionTest extends CakeTestCase {
 
 /**
@@ -175,6 +194,72 @@ class MigrationVersionTest extends CakeTestCase {
 		$result = $this->Version->getVersion('inexistent_plugin');
 		$expected = 1;
 		$this->assertEqual($result, $expected);
+	}
+
+/**
+ * testGetDependencies method
+ *
+ * @return void
+ */
+	function testGetDependencies() {
+		$back = $this->Version;
+		$options = array('connection' => 'test_suite');
+
+		$Version =& new TestMigrationVersionMockMigrationVersion($options);
+		$this->Version = $Version;
+
+		$map = array('a' => 1, 'b' => 2, 'c' => 2, 'd' => 2, 'e' => 1);
+		foreach ($map as $letter => $limit) {
+			$upper = strtoupper($letter);
+			${'TestPlugin' . $upper} = array();
+			for ($i = 1; $i <= $limit; $i++) {
+				$class = 'TestMigrationVersionDependencyMigration' . $upper . $i;
+				${'Migration' . $upper . $i} = new $class($options);
+				${'TestPlugin' . $upper}[$i] = array(
+					'version' => $i, 'name' => 'migration_' . $letter . $i, 'class' => $class,
+					'type' => 'test_plugin_' . $letter, 'migrated' => null
+				);
+				$this->Version->setReturnValue('getMigration', ${'Migration' . $upper . $i}, array(
+					'migration_' . $letter . $i, $class, 'test_plugin_' . $letter));
+			}
+			$this->Version->setReturnValue('getMapping', ${'TestPlugin' . $upper}, array('test_plugin_' . $letter));
+		}
+
+		$result = $this->Version->getDependencies($MigrationA1);
+		$expected = array();
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Version->getDependencies($MigrationB1);
+		$expected = array();
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Version->getDependencies($MigrationB2);
+		$expected = array();
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Version->getDependencies($MigrationC1);
+		$expected = array($TestPluginA[1]);
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Version->getDependencies($MigrationC2);
+		$expected = array($TestPluginB[1]);
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Version->getDependencies($MigrationD1);
+		$expected = array($TestPluginA[1], $TestPluginC[1]);
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Version->getDependencies($MigrationD2);
+		$expected = array($TestPluginB[1], $TestPluginB[2], $TestPluginA[1], $TestPluginC[1], $TestPluginC[2]);
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Version->getDependencies($MigrationE1);
+		$expected = array($TestPluginA[1], $TestPluginC[1], $TestPluginD[1]);
+		$this->assertEqual($result, $expected);
+
+		// Changing values back
+		$this->Version = $back;
+		unset($back);
 	}
 
 /**
