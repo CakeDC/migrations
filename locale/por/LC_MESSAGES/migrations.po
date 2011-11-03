@@ -1,0 +1,204 @@
+# LANGUAGE translation of the CakePHP Migrations plugin
+#
+# Copyright 2010, Cake Development Corporation (http://cakedc.com)
+#
+# Licensed under The MIT License
+# Redistributions of files must retain the above copyright notice.
+#
+# @copyright Copyright 2010, Cake Development Corporation (http://cakedc.com)
+# @license MIT License (http://www.opensource.org/licenses/mit-license.php)
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: CakePHP Migrations Plugin\n"
+"POT-Creation-Date: 2010-09-15 15:20+0200\n"
+"PO-Revision-Date: 2010-09-23 16:49-0300\n"
+"Last-Translator: Renan Gonçalves <renan.saddam@gmail.com>\n"
+"Language-Team: CakeDC <renan.saddam@gmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2;plural=n>1;\n"
+"X-Poedit-Language: Portuguese\n"
+"X-Poedit-Country: BRAZIL\n"
+
+#: /libs/migration_version.php:162
+msgid "Class `%1$s` not found on file `%2$s` for %3$s."
+msgstr "Classe `%1$s` não encontrado no arquivo `%2$s` para %3$s."
+
+#: /libs/migration_version.php:271
+msgid "File `%1$s` not found in the %2$s."
+msgstr "Arquivo `%1$s` não encontrada no %2$s."
+
+#: /libs/migration_version.php:281
+msgid "%2$s does not contain a proper map.php file."
+msgstr "%2$s não contém um arquivo map.php apropriado."
+
+#: /libs/model/cake_migration.php:156
+msgid "Migration direction (%s) is not one of valid directions."
+msgstr "Direção da Migração (%s) não é uma das direções válidas."
+
+#: /libs/model/cake_migration.php:216
+msgid "Migration action type (%s) is not one of valid actions type."
+msgstr "Tipo de ação (%s) da Migração não é um dos tipos de ações válidos."
+
+#: /libs/model/cake_migration.php:236;293
+msgid "Table \"%s\" already exists in database."
+msgstr "Tabela \"%s\" já existe no banco de dados."
+
+#: /libs/model/cake_migration.php:243;269;300;372;388
+msgid "SQL Error: %s"
+msgstr "Erro SQL: %s"
+
+#: /libs/model/cake_migration.php:262;289
+msgid "Table \"%s\" does not exists in database."
+msgstr "Table \"%s\" não existe no banco de dados."
+
+#: /libs/model/cake_migration.php:332
+msgid "Field \"%s\" does not exists in \"%s\"."
+msgstr "Coluna \"%s\" não existe em \"%s\"."
+
+#: /libs/model/cake_migration.php:340
+msgid "Field \"%s\" already exists in \"%s\"."
+msgstr "Coluna \"%s\" já existe em \"%s\"."
+
+#: /libs/model/cake_migration.php:423
+msgid "Interrupted when running \"%s\" callback."
+msgstr "Interrompido enquanto rodava o callback \"%s\"."
+
+#: /vendors/shells/migration.php:76
+msgid "Cake Migration Shell"
+msgstr "Cake Migration Shell"
+
+#: /vendors/shells/migration.php:92
+msgid "Creating table :table."
+msgstr "Criando tabela :table."
+
+#: /vendors/shells/migration.php:93
+msgid "Dropping table :table."
+msgstr "Removindo tabela :table."
+
+#: /vendors/shells/migration.php:94
+msgid "Renaming table :old_name to :new_name."
+msgstr "Renomeando tabela :old_name para :new_name."
+
+#: /vendors/shells/migration.php:95
+msgid "Adding field :field to :table."
+msgstr "Adicionando coluna :field para :table."
+
+#: /vendors/shells/migration.php:96
+msgid "Dropping field :field from :table."
+msgstr "Removendo coluna :field de :table."
+
+#: /vendors/shells/migration.php:97
+msgid "Changing field :field from :table."
+msgstr "Alterando coluna :field de :table."
+
+#: /vendors/shells/migration.php:98
+msgid "Renaming field :old_name to :new_name on :table."
+msgstr "Renomeando coluna :old_name para :new_name em :table."
+
+#: /vendors/shells/migration.php:99
+msgid "Adding index :index to :table."
+msgstr "Adicionar chave :index para :table."
+
+#: /vendors/shells/migration.php:100
+msgid "Dropping index :index from :table."
+msgstr "Removendo chave :index de :table."
+
+#: /vendors/shells/migration.php:129
+msgid "No migrations available."
+msgstr "Nenhuma migração disponível."
+
+#: /vendors/shells/migration.php:145;159;181
+msgid "Not a valid migration version."
+msgstr "Não é uma versão de migração válida,"
+
+#: /vendors/shells/migration.php:167
+msgid "Please, choose what version you want to migrate to. [q]uit or [c]lean."
+msgstr "Por favor, escolha para qual versão você deseja migrar. [q]uit ou [c]lean."
+
+#: /vendors/shells/migration.php:188
+msgid "Running migrations:"
+msgstr "Rodando migrações:"
+
+#: /vendors/shells/migration.php:192
+msgid "An error occurred when processing the migration:"
+msgstr "Aconteceu um erro enquanto processava a migração:"
+
+#: /vendors/shells/migration.php:193
+msgid "Migration: %s"
+msgstr "Migração: %s"
+
+#: /vendors/shells/migration.php:194
+msgid "Error: %s"
+msgstr "Erro: %s"
+
+#: /vendors/shells/migration.php:200
+msgid "All migrations have completed."
+msgstr "Todas as migrações foram completas."
+
+#: /vendors/shells/migration.php:213
+msgid "Please enter the descriptive name of the migration to generate:"
+msgstr "Por favor entre com um nome descritivo para a migração a ser gerada:"
+
+#: /vendors/shells/migration.php:216
+msgid "Migration name (%s) is invalid. It must only contain alphanumeric characters."
+msgstr "Nome de Migração (%s) inválida. Ele deve conter apenas caracteres alfanuméricos."
+
+#: /vendors/shells/migration.php:229
+msgid "Do you want compare the schema.php file to the database?"
+msgstr "Você deseja comparar o arquivo schema.php com o banco de dados?"
+
+#: /vendors/shells/migration.php:232
+msgid "Comparing schema.php to the database..."
+msgstr "Comparando schema.php com o banco de dados..."
+
+#: /vendors/shells/migration.php:243
+msgid "Do you want generate a dump from current database?"
+msgstr "Você deseja gerar um dump do banco de dados atual?"
+
+#: /vendors/shells/migration.php:246
+msgid "Generating dump from current database..."
+msgstr "Gerando dump do banco de dados atual..."
+
+#: /vendors/shells/migration.php:260
+msgid "Generating Migration..."
+msgstr "Gerando Migração..."
+
+#: /vendors/shells/migration.php:276
+msgid "Mapping Migrations..."
+msgstr "Mapeando Migrações..."
+
+#: /vendors/shells/migration.php:284
+msgid "Done."
+msgstr "Feito."
+
+#: /vendors/shells/migration.php:321
+msgid "Current version:"
+msgstr "Versão atual:"
+
+#: /vendors/shells/migration.php:326
+msgid "None applied."
+msgstr "Nenhuma aplicada."
+
+#: /vendors/shells/migration.php:329
+msgid "Latest version:"
+msgstr "Última versão:"
+
+#: /vendors/shells/migration.php:397
+msgid "Current migration version:"
+msgstr "Versão de Migração atual:"
+
+#: /vendors/shells/migration.php:402
+msgid "Available migrations:"
+msgstr "Migrações disponíveis:"
+
+#: /vendors/shells/migration.php:408
+msgid "applied"
+msgstr "aplicada"
+
+#: /vendors/shells/migration.php:410
+msgid "not applied"
+msgstr "não aplicada"
+

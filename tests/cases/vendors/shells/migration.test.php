@@ -594,6 +594,35 @@ TEXT;
 			)
 		);
 		$this->assertEqual($result, $expected);
+
+		// Change field with/out length
+		$oldTables = array('users' => $this->tables['users']);
+		$newTables = array('users' => array());
+		$oldTables['users']['last_login'] = array('type' => 'integer', 'null' => false, 'length' => 11);
+
+		$comparison = array(
+			'users' => array('change' => array(
+				'last_login' => array('type' => 'datetime', 'null' => false),
+			))
+		);
+		$result = $this->Shell->fromComparison(array(), $comparison, $oldTables, $newTables);
+		$expected = array(
+			'up' => array(
+				'alter_field' => array(
+					'users' => array(
+						'last_login' => array('type' => 'datetime', 'null' => false, 'length' => null)
+					)
+				)
+			),
+			'down' => array(
+				'alter_field' => array(
+					'users' => array(
+						'last_login' => array('type' => 'integer', 'null' => false, 'length' => 11)
+					)
+				)
+			)
+		);
+		$this->assertEqual($result, $expected);
 	}
 
 /**
@@ -703,13 +732,14 @@ TEXT;
  * @return void
  */
 	function testGenerate() {
-		$this->Shell->setReturnValueAt(0, 'in', '001 initial schema');
+		$this->Shell->setReturnValueAt(0, 'in', 'n');
 		$this->Shell->setReturnValueAt(1, 'in', 'n');
+		$this->Shell->setReturnValueAt(2, 'in', '001 Initial Schema');
 
-		$this->assertFalse(file_exists(TMP . 'tests' . DS . '001_initial_schema.php'));
+		$this->assertFalse(file_exists(TMP . 'tests' . DS . '001_Initial_Schema.php'));
 		$this->assertFalse(file_exists(TMP . 'tests' . DS . 'map.php'));
 		$this->Shell->generate();
-		$this->assertTrue(file_exists(TMP . 'tests' . DS . '001_initial_schema.php'));
+		$this->assertTrue(file_exists(TMP . 'tests' . DS . '001_Initial_Schema.php'));
 		$this->assertTrue(file_exists(TMP . 'tests' . DS . 'map.php'));
 
 		$result = file_get_contents(TMP . 'tests' . DS . 'map.php');
@@ -717,18 +747,18 @@ TEXT;
 /^<\?php
 \\\$map = array\(
 	1 => array\(
-		'001_initial_schema' => 'M([a-zA-Z0-9]+)'\),
+		'001_Initial_Schema' => 'M([a-zA-Z0-9]+)'\),
 \);
 \?>$/
 TEXT;
 		$this->assertPattern(str_replace("\r\n", "\n", $pattern), str_replace("\r\n", "\n", $result));
 
 		// Adding other migration to it
-		$this->Shell->expectCallCount('err', 1);
-		$this->Shell->setReturnValueAt(2, 'in', '002-invalid-name');
-		$this->Shell->setReturnValueAt(3, 'in', '002 create some sample_data');
+		$this->Shell->setReturnValueAt(3, 'in', 'n');
 		$this->Shell->setReturnValueAt(4, 'in', 'n');
-
+		$this->Shell->expectCallCount('err', 1);
+		$this->Shell->setReturnValueAt(5, 'in', '002-invalid-name');
+		$this->Shell->setReturnValueAt(6, 'in', '002 create some sample_data');
 		$this->assertFalse(file_exists(TMP . 'tests' . DS . '002_create_some_sample_data.php'));
 		$this->Shell->generate();
 		$this->assertTrue(file_exists(TMP . 'tests' . DS . '002_create_some_sample_data.php'));
@@ -738,7 +768,7 @@ TEXT;
 /^<\?php
 \\\$map = array\(
 	1 => array\(
-		'001_initial_schema' => 'M([a-zA-Z0-9]+)'\),
+		'001_Initial_Schema' => 'M([a-zA-Z0-9]+)'\),
 	2 => array\(
 		'002_create_some_sample_data' => 'M([a-zA-Z0-9]+)'\),
 \);
@@ -747,7 +777,7 @@ TEXT;
 		$this->assertPattern(str_replace("\r\n", "\n", $pattern), str_replace("\r\n", "\n", $result));
 
 		// Remove created files
-		@unlink(TMP . 'tests' . DS . '001_initial_schema.php');
+		@unlink(TMP . 'tests' . DS . '001_Initial_Schema.php');
 		@unlink(TMP . 'tests' . DS . '002_create_some_sample_data.php');
 		@unlink(TMP . 'tests' . DS . 'map.php');
 	}
@@ -758,8 +788,9 @@ TEXT;
  * @return void
  */
 	function testGenerateComparison() {
-		$this->Shell->setReturnValueAt(0, 'in', '002 drop slug field');
-		$this->Shell->setReturnValueAt(1, 'in', 'y');
+		$this->Shell->setReturnValueAt(0, 'in', 'y');
+		$this->Shell->setReturnValueAt(1, 'in', 'n');
+		$this->Shell->setReturnValueAt(2, 'in', '002 drop slug field');
 
 		$this->assertFalse(file_exists(TMP . 'tests' . DS . '002_drop_slug_field.php'));
 		$this->assertFalse(file_exists(TMP . 'tests' . DS . 'map.php'));
@@ -798,8 +829,9 @@ TEXT;
  * @return void
  */
 	function testGenerateDump() {
-		$this->Shell->setReturnValueAt(0, 'in', '001 schema dump');
-		$this->Shell->setReturnValueAt(1, 'in', 'y');
+		$this->Shell->setReturnValueAt(0, 'in', 'y');
+		$this->Shell->setReturnValueAt(1, 'in', 'n');
+		$this->Shell->setReturnValueAt(2, 'in', '001 schema dump');
 
 		$this->assertFalse(file_exists(TMP . 'tests' . DS . '001_schema_dump.php'));
 		$this->assertFalse(file_exists(TMP . 'tests' . DS . 'map.php'));
@@ -911,3 +943,4 @@ TEXT;
 	}
 }
 ?>
+

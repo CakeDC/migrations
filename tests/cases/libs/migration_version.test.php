@@ -123,6 +123,24 @@ class MigrationVersionTest extends CakeTestCase {
 	}
 
 /**
+ * testGetMapping method on a plugin having an empty map.php file, or not
+ * having this file at all
+ *
+ * @return void
+ */
+	function testGetMappingEmptyMap() {
+		try {
+			$this->Version->getMapping('test_migration_plugin2');
+			$this->fail('No exception triggered');
+		} catch (MigrationVersionException $e) {
+			$this->assertEqual('File `map.php` not found in the TestMigrationPlugin2 Plugin.', $e->getMessage());
+		}
+
+		$result = $this->Version->getMapping('test_migration_plugin3');
+		$this->assertIdentical($result, false);
+	}
+
+/**
  * testGetMigration method
  *
  * @return void
