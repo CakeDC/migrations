@@ -110,7 +110,8 @@ class MigrationShell extends Shell {
 					'short' => 'p', 
 					'help' => __('Plugin name to be used')))
 			->addOption('force', array(
-					'short' => 'f', 
+					'short' => 'f',
+					'boolean' => true,
 					'help' => __('Force \'generate\' to compare all tables.')))
 			->addOption('connection', array(
 					'short' => 'c', 
@@ -586,7 +587,7 @@ TEXT;
  * @return array
  */
 	protected function _readSchema() {
-		$read = $this->Schema->read(array('models' => !isset($this->params['f'])));
+		$read = $this->Schema->read(array('models' => !$this->params['force']));
 		if ($this->type !== 'migrations') {
 			unset($read['tables']['schema_migrations']);
 		}
