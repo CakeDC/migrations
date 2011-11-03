@@ -27,10 +27,7 @@ class MigrationVersionTest extends CakeTestCase {
 		$this->Version = new MigrationVersion(array(
 			'connection' => 'test'));
 
-		$plugins = $this->plugins = App::path('plugins');
-		$plugins[] = dirname(dirname(dirname(__FILE__))) . DS . 'test_app' . DS . 'Plugin' . DS;
-		App::build(array('plugins' => $plugins), App::RESET);
-		CakePlugin::loadAll();
+		App::build(array('plugins' => CakePlugin::path('Migrations') . 'Test' .  DS . 'test_app' . DS . 'Plugin' . DS));
 	}
 
 /**
@@ -39,7 +36,7 @@ class MigrationVersionTest extends CakeTestCase {
  * @return void
  **/
 	public function tearDown() {
-		App::build(array('plugins' => $this->plugins), true);
+		//App::build(array('plugins' => $this->plugins), true);
 		unset($this->Version, $this->plugins);
 	}
 
@@ -67,6 +64,7 @@ class MigrationVersionTest extends CakeTestCase {
  * @return void
  */
 	public function testGetMapping() {
+		CakePlugin::load('TestMigrationPlugin');
 		$result = $this->Version->getMapping('test_migration_plugin');
 		$expected = array(
 			1 => array(
@@ -99,6 +97,9 @@ class MigrationVersionTest extends CakeTestCase {
  * @return void
  */
 	public function testGetMappingEmptyMap() {
+		CakePlugin::load('TestMigrationPlugin2');
+		CakePlugin::load('TestMigrationPlugin3');
+
 		try {
 			$this->Version->getMapping('test_migration_plugin2');
 			$this->fail('No exception triggered');
