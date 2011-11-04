@@ -573,7 +573,8 @@ TEXT;
 		$name = Inflector::camelize($type) . 'Schema';
 
 		if ($type == 'app' && !class_exists($name)) {
-			$name = Inflector::camelize(APP_DIR) . 'Schema';
+			$appDir = str_replace('-', '', APP_DIR);
+			$name = Inflector::camelize($appDir) . 'Schema';
 		}
 
 		$plugin = ($type === 'app') ? null : $type;
