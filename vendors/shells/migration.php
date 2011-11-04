@@ -511,6 +511,7 @@ TEXT;
 
 		$name = Inflector::camelize($type) . 'Schema';
 		if ($type == 'app' && !class_exists($name)) {
+			$this->params['app'] = str_replace('-', '', $this->params['app']);
 			$name = Inflector::camelize($this->params['app']) . 'Schema';
 		}
 
