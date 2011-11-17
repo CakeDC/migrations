@@ -688,7 +688,7 @@ TEXT;
 		$content .= "?>";
 
 		$File = new File($this->path . 'map.php', true);
-		$result = $File->write($content);
+		return $File->write($content);
 	}
 
 /**

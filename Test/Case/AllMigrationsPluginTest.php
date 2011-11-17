@@ -1,7 +1,4 @@
 <?php
-App::build(array('plugins' => $plugins), true);
-CakePlugin::loadAll();
-
 class AllMigrationsPluginTest extends PHPUnit_Framework_TestSuite {
 
 /**
@@ -16,7 +13,7 @@ class AllMigrationsPluginTest extends PHPUnit_Framework_TestSuite {
 
 		// Libs
 		$suite->addTestFile($basePath . 'Lib' . DS . 'MigrationVersionTest.php');
-		$suite->addTestFile($basePath . 'Lib' . DS . 'Model' . DS . 'UserDetailsControllerTest.php');
+		$suite->addTestFile($basePath . 'Lib' . DS . 'Model' . DS . 'CakeMigrationTest.php');
 
 		// Console
 		$suite->addTestFile($basePath . 'Console' . DS . 'Command' . DS . 'MigrationShellTest.php');
