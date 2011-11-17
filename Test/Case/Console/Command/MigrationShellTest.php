@@ -706,7 +706,7 @@ TEXT;
  *
  * @return void
  */
-	public function _testGenerate() {
+	public function testGenerate() {
 		$this->Shell->expects($this->at(0))->method('in')->will($this->returnValue('n'));
 		$this->Shell->expects($this->at(1))->method('in')->will($this->returnValue('n'));
 		$this->Shell->expects($this->at(2))->method('in')->will($this->returnValue('001 Initial Schema'));
@@ -729,11 +729,11 @@ TEXT;
 		$this->assertPattern(str_replace("\r\n", "\n", $pattern), str_replace("\r\n", "\n", $result));
 
 		// Adding other migration to it
-		$this->Shell->expectCallCount('err', 1);
-		$this->Shell->expects($this->at(3))->method('in')->will($this->returnValue('n'));
-		$this->Shell->expects($this->at(4))->method('in')->will($this->returnValue('n'));
-		$this->Shell->expects($this->at(5))->method('in')->will($this->returnValue('002-invalid-name'));
-		$this->Shell->expects($this->at(6))->method('in')->will($this->returnValue('002 create some sample_data'));
+		$this->Shell->expects($this->atLeastOnce())->method('err');
+		$this->Shell->expects($this->at(0))->method('in')->will($this->returnValue('n'));
+		$this->Shell->expects($this->at(1))->method('in')->will($this->returnValue('n'));
+		$this->Shell->expects($this->at(2))->method('in')->will($this->returnValue('002-invalid-name'));
+		$this->Shell->expects($this->at(4))->method('in')->will($this->returnValue('002 create some sample_data'));
 
 		$this->assertFalse(file_exists(TMP . 'tests' . DS . '002_create_some_sample_data.php'));
 		$this->Shell->generate();
@@ -763,14 +763,14 @@ TEXT;
  *
  * @return void
  */
-	public function _testGenerateComparison() {
+	public function testGenerateComparison() {
 		$this->Shell->expects($this->at(0))->method('in')->will($this->returnValue('y'));
-		$this->Shell->expects($this->at(1))->method('in')->will($this->returnValue('n'));
-		$this->Shell->expects($this->at(2))->method('in')->will($this->returnValue('002 drop slug field'));
+		$this->Shell->expects($this->at(2))->method('in')->will($this->returnValue('n'));
+		$this->Shell->expects($this->at(3))->method('in')->will($this->returnValue('002 drop slug field'));
 		
 		$this->assertFalse(file_exists(TMP . 'tests' . DS . '002_drop_slug_field.php'));
 		$this->assertFalse(file_exists(TMP . 'tests' . DS . 'map.php'));
-		$this->Shell->params['f'] = true;
+		$this->Shell->params['force'] = true;
 		$this->Shell->generate();
 		$this->assertTrue(file_exists(TMP . 'tests' . DS . '002_drop_slug_field.php'));
 		$this->assertTrue(file_exists(TMP . 'tests' . DS . 'map.php'));
@@ -804,15 +804,15 @@ TEXT;
  *
  * @return void
  */
-	public function _testGenerateDump() {
+	public function testGenerateDump() {
 		$this->Shell->expects($this->at(0))->method('in')->will($this->returnValue('y'));
-		$this->Shell->expects($this->at(1))->method('in')->will($this->returnValue('n'));
-		$this->Shell->expects($this->at(2))->method('in')->will($this->returnValue('001 schema dump'));
+		$this->Shell->expects($this->at(2))->method('in')->will($this->returnValue('n'));
+		$this->Shell->expects($this->at(3))->method('in')->will($this->returnValue('001 schema dump'));
 		
 		$this->assertFalse(file_exists(TMP . 'tests' . DS . '001_schema_dump.php'));
 		$this->assertFalse(file_exists(TMP . 'tests' . DS . 'map.php'));
 		$this->Shell->type = 'TestMigrationPlugin2';
-		$this->Shell->params['f'] = true;
+		$this->Shell->params['force'] = true;
 		$this->Shell->generate();
 		$this->assertTrue(file_exists(TMP . 'tests' . DS . '001_schema_dump.php'));
 		$this->assertTrue(file_exists(TMP . 'tests' . DS . 'map.php'));
