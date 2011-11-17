@@ -585,6 +585,9 @@ TEXT;
  * @return void
  **/
 	public function testWriteMigration() {
+		// Remove if exists
+		$this->__unlink('migration_test_file.php');
+
 		$users = $this->tables['users'];
 		$users['indexes'] = array('UNIQUE_USER' => array('column' => 'user', 'unique' => true));
 
@@ -645,7 +648,7 @@ TEXT;
 	);
 TEXT;
 		$this->assertEqual($result, str_replace("\r\n", "\n", $expected));
-		@unlink(TMP . 'tests' . DS . 'migration_test_file.php');
+		$this->__unlink('migration_test_file.php');
 	}
 
 /**
@@ -654,6 +657,9 @@ TEXT;
  * @return void
  **/
 	public function testWriteMap() {
+		// Remove if exists
+		$this->__unlink('map.php');
+
 		$map = array(
 			1 => array('001_schema_dump' => 'M4af9d151e1484b74ad9d007058157726'),
 			2 => array('002_create_some_sample_data' => 'M4af9d15154844819b7a0007058157726'),
@@ -677,7 +683,7 @@ TEXT;
 ?>
 TEXT;
 		$this->assertEqual($result, str_replace("\r\n", "\n", $expected));
-		@unlink(TMP . 'tests' . DS . 'map.php');
+		$this->__unlink('map.php');
 	}
 
 /**
@@ -686,6 +692,9 @@ TEXT;
  * @return void
  */
 	public function testGenerate() {
+		// Remove if exists
+		$this->__unlink('001_Initial_Schema.php', '002_create_some_sample_data.php', 'map.php');
+
 		$this->Shell->expects($this->at(0))->method('in')->will($this->returnValue('n'));
 		$this->Shell->expects($this->at(1))->method('in')->will($this->returnValue('n'));
 		$this->Shell->expects($this->at(2))->method('in')->will($this->returnValue('001 Initial Schema'));
@@ -732,9 +741,7 @@ TEXT;
 		$this->assertPattern(str_replace("\r\n", "\n", $pattern), str_replace("\r\n", "\n", $result));
 
 		// Remove created files
-		@unlink(TMP . 'tests' . DS . '001_Initial_Schema.php');
-		@unlink(TMP . 'tests' . DS . '002_create_some_sample_data.php');
-		@unlink(TMP . 'tests' . DS . 'map.php');
+		$this->__unlink('001_Initial_Schema.php', '002_create_some_sample_data.php', 'map.php');
 	}
 
 /**
@@ -743,6 +750,9 @@ TEXT;
  * @return void
  */
 	public function testGenerateComparison() {
+		// Remove if exists
+		$this->__unlink('002_drop_slug_field.php', 'map.php');
+
 		$this->Shell->expects($this->at(0))->method('in')->will($this->returnValue('y'));
 		$this->Shell->expects($this->at(2))->method('in')->will($this->returnValue('n'));
 		$this->Shell->expects($this->at(3))->method('in')->will($this->returnValue('002 drop slug field'));
@@ -774,8 +784,7 @@ TEXT;
 		$this->assertPattern(str_replace("\r\n", "\n", $pattern), $result);
 
 		// Remove created files
-		@unlink(TMP . 'tests' . DS . '002_drop_slug_field.php');
-		@unlink(TMP . 'tests' . DS . 'map.php');
+		$this->__unlink('002_drop_slug_field.php', 'map.php');
 	}
 
 /**
@@ -784,6 +793,9 @@ TEXT;
  * @return void
  */
 	public function testGenerateDump() {
+		// Remove if exists
+		$this->__unlink('001_schema_dump.php', 'map.php');
+
 		$this->Shell->expects($this->at(0))->method('in')->will($this->returnValue('y'));
 		$this->Shell->expects($this->at(2))->method('in')->will($this->returnValue('n'));
 		$this->Shell->expects($this->at(3))->method('in')->will($this->returnValue('001 schema dump'));
@@ -830,8 +842,7 @@ TEXT;
 		$this->assertPattern(str_replace("\r\n", "\n", $pattern), $result);
 
 		// Remove created files
-		@unlink(TMP . 'tests' . DS . '001_schema_dump.php');
-		@unlink(TMP . 'tests' . DS . 'map.php');
+		$this->__unlink('001_schema_dump.php', 'map.php');
 	}
 
 /**
@@ -882,7 +893,7 @@ TEXT;
  * @param string $file
  * @return string
  */
-	public function __getMigrationVariable($file) {
+	private function __getMigrationVariable($file) {
 		$result = array();
 		$array = explode("\n", str_replace("\r\n", "\n", file_get_contents($file)));
 		foreach ($array as $line) {
@@ -896,5 +907,18 @@ TEXT;
 			}
 		}
 		return implode("\n", $result);
+	}
+
+/**
+ * Unlink test files from filesystem
+ *
+ * @param mixed files
+ * @return void
+ */
+	private function __unlink() {
+		$files = func_get_args();
+		foreach ($files as $file) {
+			@unlink(TMP . 'tests' . DS . $file);
+		}
 	}
 }
