@@ -56,7 +56,9 @@ class MigrationVersion {
 			$this->connection = $options['connection'];
 		}
 
-		$this->__initMigrations();
+		if (!isset($options['autoinit']) || $options['autoinit'] !== false) {
+			$this->__initMigrations();
+		}
 	}
 
 /**
@@ -244,7 +246,10 @@ class MigrationVersion {
 		$mapping = $this->getMapping('Migrations');
 		if (count($mapping) > 1) {
 			end($mapping);
-			$this->run(array('version' => key($mapping)));
+			$this->run(array(
+				'version' => key($mapping),
+				'type' => 'Migrations'
+			));
 		}
 	}
 
