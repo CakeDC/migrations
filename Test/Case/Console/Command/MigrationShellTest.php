@@ -1,7 +1,6 @@
 <?php
 App::uses('MigrationShell', 'Migrations.Console/Command');
 
-
 /**
 * TestMigrationShell
 *
@@ -10,54 +9,54 @@ App::uses('MigrationShell', 'Migrations.Console/Command');
 */
 class TestMigrationShell extends MigrationShell {
 
-	/**
-	 * output property
-	 *
-	 * @var string
-	 */
+/**
+ * output property
+ *
+ * @var string
+ */
 	public $output = '';
 
-	/**
-	 * out method
-	 *
-	 * @param $string
-	 * @return void
-	 */
+/**
+ * out method
+ *
+ * @param $string
+ * @return void
+ */
 	function out($string = null) {
 		$this->output .= $string . "\n";
 	}
 
-	/**
-	 * fromComparison method
-	 *
-	 * @param $migration
-	 * @param $comparison
-	 * @param $oldTables
-	 * @param $currentTables
-	 * @return void
-	 */
+/**
+ * fromComparison method
+ *
+ * @param $migration
+ * @param $comparison
+ * @param $oldTables
+ * @param $currentTables
+ * @return void
+ */
 	function fromComparison($migration, $comparison, $oldTables, $currentTables) {
 		return $this->_fromComparison($migration, $comparison, $oldTables, $currentTables);
 	}
 
-	/**
-	 * writeMigration method
-	 *
-	 * @param $name
-	 * @param $class
-	 * @param $migration
-	 * @return void
-	 */
+/**
+ * writeMigration method
+ *
+ * @param $name
+ * @param $class
+ * @param $migration
+ * @return void
+ */
 	function writeMigration($name, $class, $migration) {
 		return $this->_writeMigration($name, $class, $migration);
 	}
 
-	/**
-	 * writeMap method
-	 *
-	 * @param $map
-	 * @return void
-	 */
+/**
+ * writeMap method
+ *
+ * @param $map
+ * @return void
+ */
 	function writeMap($map) {
 		return $this->_writeMap($map);
 	}
@@ -108,8 +107,8 @@ class MigrationShellTest extends CakeTestCase {
 		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
 		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
 		$this->Shell = $this->getMock(
-			'MigrationShell',
-			array('in', 'out', 'hr', 'createFile', 'error', 'err', '_stop', '_showInfo'),
+			'TestMigrationShell',
+			array('in', 'hr', 'createFile', 'error', 'err', '_stop', '_showInfo'),
 			array($out, $out, $in));
 
 		$this->Shell->Version = $this->getMock(
@@ -327,25 +326,24 @@ class MigrationShellTest extends CakeTestCase {
  *
  * @return void
  **/
-	public function _testRunWithFailures() {
-		$back = $this->Shell->Version;
-
-		$Version = $this->getMock(
-                       'MigrationVersion',
-                       array('getMapping', 'getVersion', 'run'),
-                       array(array('connection' => 'test')));
-		$this->Shell->Version = $Version;
-		$this->Shell->expects($this->once())->method('_stop')->will($this->returnValue(false));
+	public function testRunWithFailures() {
+		$this->Shell->expects($this->any())->method('_stop')->will($this->returnValue(false));
 
 		$mapping = array(1 => array(
 			'version' => 1, 'name' => '001_schema_dump',
 			'class' => 'M4af9d151e1484b74ad9d007058157726',
 			'type' => $this->Shell->type, 'migrated' => null
 		));
-		$Version->expects($this->once())->method('getMapping')->will($this->returnValue($mapping));
-		$Version->expects($this->once())->method('getVersion')->will($this->returnValue(0));
+
+		$migration = new CakeMigration();
+		$migration->info = $mapping[1];
+		$exception = new MigrationException($migration, 'Exception message');
+
+		$this->Shell->Version->expects($this->once())->method('getMapping')->will($this->returnValue($mapping));
+		$this->Shell->Version->expects($this->once())->method('getVersion')->will($this->returnValue(0));
+		$this->Shell->Version->expects($this->once())->method('run')->will($this->throwException($exception));
 		$this->Shell->args = array('up');
-		//$this->assertFalse($this->Shell->run());
+		$this->assertFalse($this->Shell->run());
 
 		$result = $this->Shell->output;
 		$pattern = <<<TEXT
@@ -355,10 +353,6 @@ An error occurred when processing the migration:
   Error: Exception message/
 TEXT;
 		$this->assertPattern(str_replace("\r\n", "\n", $pattern), str_replace("\r\n", "\n", $result));
-
-		// Changing values back
-		$this->Shell->Version = $back;
-		unset($back);
 	}
 
  /**
