@@ -360,7 +360,7 @@ TEXT;
  *
  * @return void
  **/
-/*	public function _testFromComparisonTableActions() {
+/*	public function testFromComparisonTableActions() {
 		$comparison = array(
 			'users' => array('add' => $this->tables['users']),
 			'posts' => array('add' => $this->tables['posts'])
@@ -406,7 +406,7 @@ TEXT;
  *
  * @return void
  **/
-	/*function _testFromComparisonFieldActions() {
+	/*function testFromComparisonFieldActions() {
 		// Add field/index
 		$oldTables = array('posts' => $this->tables['posts']);
 		$newTables = array('posts' => array());
@@ -605,7 +605,7 @@ TEXT;
  *
  * @return void
  **/
-/*	public function _testWriteMigration() {
+/*	public function testWriteMigration() {
 		$users = $this->tables['users'];
 		$users['indexes'] = array('UNIQUE_USER' => array('column' => 'user', 'unique' => true));
 
@@ -674,7 +674,7 @@ TEXT;
  *
  * @return void
  **/
-/*	public function _testWriteMap() {
+/*	public function testWriteMap() {
 		$map = array(
 			1 => array('001_schema_dump' => 'M4af9d151e1484b74ad9d007058157726'),
 			2 => array('002_create_some_sample_data' => 'M4af9d15154844819b7a0007058157726'),
@@ -860,7 +860,8 @@ TEXT;
  *
  * @return void
  */
-	public function _testStatus() {
+	public function testStatus() {
+		$this->Shell->Version = new MigrationVersion(array('connection' => 'test'));
 		$this->Shell->status();
 		$result = $this->Shell->output;
 		$pattern = <<<TEXT
