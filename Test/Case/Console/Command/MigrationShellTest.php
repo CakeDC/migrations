@@ -63,29 +63,6 @@ class TestMigrationShell extends MigrationShell {
 }
 
 /**
- * TestMigrationShellMockedRunMigrationVersion
- *
- * @package       migrations
- * @subpackage    migrations.tests.cases.shells
- */
-class TestMigrationShellMockedRunMigrationVersion extends MigrationVersion {
-
-	/**
-	 * run method
-	 *
-	 * @param $options
-	 * @return void
-	 */
-	public function run($options) {
-		$mapping = $this->getMapping();
-		$Migration = new CakeMigration();
-		$Migration->info = $mapping[1];
-
-		throw new MigrationException($Migration, 'Exception message');
-	}
-}
-
-/**
  * MigrationShellTest
  *
  * @package       migrations
@@ -97,11 +74,14 @@ class MigrationShellTest extends CakeTestCase {
  * fixtures property
  *
  * @var array
- * @access public
  */
 	public $fixtures = array('plugin.migrations.schema_migrations', 'core.article');
 
-
+/**
+ * setUp method
+ *
+ * @return void
+ */
 	public function setUp() {
 		parent::setUp();
 		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
@@ -131,7 +111,7 @@ class MigrationShellTest extends CakeTestCase {
 	}
 
 /**
- * teardown method
+ * tearDown method
  *
  * @return void
  */
@@ -149,7 +129,6 @@ class MigrationShellTest extends CakeTestCase {
  * tables property
  *
  * @var array
- * @access public
  */
 	public $tables = array(
 		'users' => array(
