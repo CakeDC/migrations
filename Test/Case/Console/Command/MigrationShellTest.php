@@ -355,12 +355,12 @@ TEXT;
 		$this->assertPattern(str_replace("\r\n", "\n", $pattern), str_replace("\r\n", "\n", $result));
 	}
 
- /**
+/**
  * testFromComparisonTableActions method
  *
  * @return void
  **/
-/*	public function testFromComparisonTableActions() {
+	public function testFromComparisonTableActions() {
 		$comparison = array(
 			'users' => array('add' => $this->tables['users']),
 			'posts' => array('add' => $this->tables['posts'])
@@ -400,13 +400,13 @@ TEXT;
 		);
 		$this->assertEqual($result, $expected);
 	}
-*/
+
 /**
  * testFromComparisonFieldActions method
  *
  * @return void
  **/
-	/*function testFromComparisonFieldActions() {
+	public function testFromComparisonFieldActions() {
 		// Add field/index
 		$oldTables = array('posts' => $this->tables['posts']);
 		$newTables = array('posts' => array());
@@ -599,13 +599,13 @@ TEXT;
 		);
 		$this->assertEqual($result, $expected);
 	}
- */
+
 /**
  * testWriteMigration method
  *
  * @return void
  **/
-/*	public function testWriteMigration() {
+	public function testWriteMigration() {
 		$users = $this->tables['users'];
 		$users['indexes'] = array('UNIQUE_USER' => array('column' => 'user', 'unique' => true));
 
@@ -667,14 +667,14 @@ TEXT;
 TEXT;
 		$this->assertEqual($result, str_replace("\r\n", "\n", $expected));
 		@unlink(TMP . 'tests' . DS . 'migration_test_file.php');
-	}*/
+	}
 
 /**
  * testWriteMap method
  *
  * @return void
  **/
-/*	public function testWriteMap() {
+	public function testWriteMap() {
 		$map = array(
 			1 => array('001_schema_dump' => 'M4af9d151e1484b74ad9d007058157726'),
 			2 => array('002_create_some_sample_data' => 'M4af9d15154844819b7a0007058157726'),
@@ -699,7 +699,7 @@ TEXT;
 TEXT;
 		$this->assertEqual($result, str_replace("\r\n", "\n", $expected));
 		@unlink(TMP . 'tests' . DS . 'map.php');
-	}*/
+	}
 
 /**
  * testGenerate method
