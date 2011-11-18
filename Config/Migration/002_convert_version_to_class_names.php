@@ -19,26 +19,18 @@ class M4ec50d1f7a284842b1b770fdcbdd56cb extends CakeMigration {
 		'up' => array(
 			'alter_field' => array(
 				'schema_migrations' => array(
-					'version' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 33)
+					'version' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 33, 'name' => 'class')
 				)
 			)
 		),
 		'down' => array(
 			'alter_field' => array(
 				'schema_migrations' => array(
-					'version' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 11)
+					'class' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 11, 'name' => 'version')
 				)
 			)
 		)
 	);
-
-/**
- * MigrationVersion instance
- *
- * @var MigrationVersion
- * @access public
- */
-	public $Version;
 
 /**
  * Records to be migrated
@@ -67,12 +59,6 @@ class M4ec50d1f7a284842b1b770fdcbdd56cb extends CakeMigration {
 		if ($direction == 'down') {
 			throw new InternalErrorException(__d('migrations', 'Sorry, I can\'t downgrade. Why would you want that anyways?'));
 		}
-
-		$this->Version = new MigrationVersion(array(
-			'connection' => $this->connection,
-			'autoinit' => false
-		));
-		$this->Version->Version = $this->generateModel('Version', 'schema_migrations');
 
 		$this->records = $this->Version->Version->find('all');
 
@@ -105,7 +91,7 @@ class M4ec50d1f7a284842b1b770fdcbdd56cb extends CakeMigration {
 		$schema = $this->Version->Version->schema();
 
 		// Needs upgrade
-		if ($schema['version']['type'] === 'integer') {
+		if (isset($schema['version'])) {
 			return;
 		}
 		
@@ -147,8 +133,8 @@ class M4ec50d1f7a284842b1b770fdcbdd56cb extends CakeMigration {
  */
 	public function checkRecords() {
 		foreach ($this->records as $record) {
-			$type = $record['Version']['type'];
-			$version = $record['Version']['version'];
+			$type = $record[$this->Version->Version->alias]['type'];
+			$version = $record[$this->Version->Version->alias]['version'];
 
 			if (!isset($this->mappings[$type])) {
 				$this->mappings[$type] = $this->Version->getMapping($type);
@@ -175,15 +161,22 @@ class M4ec50d1f7a284842b1b770fdcbdd56cb extends CakeMigration {
  * @return void
  */
 	public function upgradeRecords() {
+		// Refresh the model
+		$options = array(
+			'class' => 'Migrations.SchemaMigration',
+			'ds' => $this->connection);
+		$this->Version->Version =& ClassRegistry::init($options);
+
+		// Upgrade them
 		foreach ($this->records as $record) {
-			$type = $record['Version']['type'];
-			$version = $record['Version']['version'];
+			$type = $record[$this->Version->Version->alias]['type'];
+			$version = $record[$this->Version->Version->alias]['version'];
 
 			$mapping = $this->mappings[$type];
 			$migration = $mapping[$version];
 
-			$this->Version->Version->id = $record['Version']['id'];
-			$this->Version->Version->saveField('version', $migration['class']);
+			$this->Version->Version->id = $record[$this->Version->Version->alias]['id'];
+			$this->Version->Version->saveField('class', $migration['class']);
 		}
 	}
 }
