@@ -161,13 +161,6 @@ class M4ec50d1f7a284842b1b770fdcbdd56cb extends CakeMigration {
  * @return void
  */
 	public function upgradeRecords() {
-		// Refresh the model
-		$options = array(
-			'class' => 'Migrations.SchemaMigration',
-			'ds' => $this->connection);
-		$this->Version->Version =& ClassRegistry::init($options);
-
-		// Upgrade them
 		foreach ($this->records as $record) {
 			$type = $record[$this->Version->Version->alias]['type'];
 			$version = $record[$this->Version->Version->alias]['version'];

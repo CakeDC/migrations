@@ -228,6 +228,10 @@ class MigrationVersion {
 				$this->setVersion($version, $info['type'], ($direction == 'up'));
 			}
 		}
+
+		// Clear mapping cache
+		unset($this->__mapping['Migrations']);
+
 		return true;
 	}
 
@@ -255,6 +259,7 @@ class MigrationVersion {
 			$this->Version =& ClassRegistry::init($options);
 		}
 
+		unset($this->__mapping['Migrations']);
 		$mapping = $this->getMapping('Migrations');
 		if (count($mapping) > 1) {
 			end($mapping);
