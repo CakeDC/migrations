@@ -85,6 +85,13 @@ class MigrationVersionTest extends CakeTestCase {
 				'class' => 'M4af6e0f0a1284147a0b100ca58157726',
 				'type' => 'migrations',
 				'migrated' => '2009-11-10 00:55:34'
+			),
+			2 => array(
+				'version' => 2,
+				'name' => '002_convert_version_to_class_names',
+				'class' => 'M4ec50d1f7a284842b1b770fdcbdd56cb',
+				'type' => 'migrations',
+				'migrated' => '2011-11-18 13:53:32'
 			)
 		);
 		$this->assertEqual($result, $expected);

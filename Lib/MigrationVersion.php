@@ -98,7 +98,7 @@ class MigrationVersion {
 
 		if ($migrated) {
 			$this->Version->create();
-			return $this->Version->save(array(
+			$result = $this->Version->save(array(
 				$field => $value, 'type' => $type
 			));
 		} else {
@@ -106,8 +106,13 @@ class MigrationVersion {
 				$this->Version->alias . '.' . $field => $value,
 				$this->Version->alias . '.type' => $type
 			);
-			return $this->Version->deleteAll($conditions);
+			$result = $this->Version->deleteAll($conditions);
 		}
+
+		// Clear mapping cache
+		unset($this->__mapping[$type]);
+
+		return $result;
 	}
 
 /**
@@ -229,9 +234,6 @@ class MigrationVersion {
 			}
 		}
 
-		// Clear mapping cache
-		unset($this->__mapping['Migrations']);
-
 		return true;
 	}
 
@@ -259,7 +261,6 @@ class MigrationVersion {
 			$this->Version =& ClassRegistry::init($options);
 		}
 
-		unset($this->__mapping['Migrations']);
 		$mapping = $this->getMapping('Migrations');
 		if (count($mapping) > 1) {
 			end($mapping);
