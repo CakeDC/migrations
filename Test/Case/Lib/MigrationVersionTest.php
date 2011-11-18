@@ -154,22 +154,35 @@ class MigrationVersionTest extends CakeTestCase {
  * @return void
  */
 	public function testSetGetVersion() {
+		$this->Version = $this->getMock('MigrationVersion', array('getMapping'), array(array('connection' => 'test')));
+
+		// Checking current
+		$this->Version->expects($this->at(0))->method('getMapping')->will($this->returnValue($this->__mapping()));
 		$result = $this->Version->getVersion('inexistent_plugin');
 		$expected = 0;
 		$this->assertEqual($result, $expected);
 
+		// Setting as 1
+		$this->Version->expects($this->at(0))->method('getMapping')->will($this->returnValue($this->__mapping()));
+		$this->Version->expects($this->at(1))->method('getMapping')->will($this->returnValue($this->__mapping(1, 1)));
 		$setResult = $this->Version->setVersion(1, 'inexistent_plugin');
 		$this->assertTrue(!empty($setResult));
 		$result = $this->Version->getVersion('inexistent_plugin');
 		$expected = 1;
 		$this->assertEqual($result, $expected);
 
+		// Setting as 2
+		$this->Version->expects($this->at(0))->method('getMapping')->will($this->returnValue($this->__mapping(1, 1)));
+		$this->Version->expects($this->at(1))->method('getMapping')->will($this->returnValue($this->__mapping(1, 2)));
 		$setResult = $this->Version->setVersion(2, 'inexistent_plugin');
 		$this->assertTrue(!empty($setResult));
 		$result = $this->Version->getVersion('inexistent_plugin');
 		$expected = 2;
 		$this->assertEqual($result, $expected);
 
+		// Setting as 1
+		$this->Version->expects($this->at(0))->method('getMapping')->will($this->returnValue($this->__mapping(1, 2)));
+		$this->Version->expects($this->at(1))->method('getMapping')->will($this->returnValue($this->__mapping(1, 1)));
 		$setResult = $this->Version->setVersion(2, 'inexistent_plugin', false);
 		$this->assertTrue(!empty($setResult));
 		$result = $this->Version->getVersion('inexistent_plugin');
