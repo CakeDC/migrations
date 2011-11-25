@@ -56,7 +56,9 @@ class MigrationVersion {
 			$this->connection = $options['connection'];
 		}
 
-		$this->__initMigrations();
+		if (!isset($options['autoinit']) || $options['autoinit'] !== false) {
+			$this->__initMigrations();
+		}
 	}
 
 /**
@@ -66,18 +68,15 @@ class MigrationVersion {
  * @return integer Last version migrated
  */
 	public function getVersion($type) {
-		$version = $this->Version->find('first', array(
-			'fields' => array('version'),
-			'conditions' => array($this->Version->alias . '.type' => $type),
-			'order' => array($this->Version->alias . '.version' => 'DESC'),
-			'recursive' => -1,
-		));
+		$mapping = $this->getMapping($type);
+		krsort($mapping);
 
-		if (empty($version)) {
-			return 0;
-		} else {
-			return $version[$this->Version->alias]['version'];
+		foreach ($mapping as $version => $info) {
+			if ($info['migrated'] !== null) {
+				return $version;
+			}
 		}
+		return 0;
 	}
 
 /**
@@ -90,18 +89,30 @@ class MigrationVersion {
  * @return boolean
  */
 	public function setVersion($version, $type, $migrated = true) {
+		$mapping = $this->getMapping($type);
+
+		// For BC, 002 was not applied yet.
+		$bc = ($this->Version->schema('class') === null);
+		$field = $bc ? 'version' : 'class';
+		$value = $bc ? $version : $mapping[$version]['class'];
+
 		if ($migrated) {
 			$this->Version->create();
-			return $this->Version->save(array(
-				'version' => $version, 'type' => $type
+			$result = $this->Version->save(array(
+				$field => $value, 'type' => $type
 			));
 		} else {
 			$conditions = array(
-				$this->Version->alias . '.version' => $version,
+				$this->Version->alias . '.' . $field => $value,
 				$this->Version->alias . '.type' => $type
 			);
-			return $this->Version->deleteAll($conditions);
+			$result = $this->Version->deleteAll($conditions);
 		}
+
+		// Clear mapping cache
+		unset($this->__mapping[$type]);
+
+		return $result;
 	}
 
 /**
@@ -120,12 +131,17 @@ class MigrationVersion {
 		}
 
 		$migrated = $this->Version->find('all', array(
-			'fields' => array('version', 'created'),
 			'conditions' => array($this->Version->alias . '.type' => $type),
-			'order' => array($this->Version->alias . '.version' => 'ASC'),
 			'recursive' => -1,
 		));
-		$migrated = Set::combine($migrated, '/' . $this->Version->alias . '/version', '/' . $this->Version->alias . '/created');
+
+		// For BC, 002 was not applied yet.
+		$bc = ($this->Version->schema('class') === null);
+		if ($bc) {
+			$migrated = Set::combine($migrated, '/' . $this->Version->alias . '/version', '/' . $this->Version->alias . '/created');
+		} else {
+			$migrated = Set::combine($migrated, '/' . $this->Version->alias . '/class', '/' . $this->Version->alias . '/created');
+		}
 
 		ksort($mapping);
 		foreach ($mapping as $version => $migration) {
@@ -135,8 +151,10 @@ class MigrationVersion {
 				'version' => $version, 'name' => $name, 'class' => $class,
 				'type' => $type, 'migrated' => null
 			);
-			if (isset($migrated[$version])) {
+			if ($bc && isset($migrated[$version])) {
 				$mapping[$version]['migrated'] = $migrated[$version];
+			} else if (!$bc && isset($migrated[$class])) {
+				$mapping[$version]['migrated'] = $migrated[$class];
 			}
 		}
 
@@ -208,12 +226,14 @@ class MigrationVersion {
 				|| ($direction == 'down' && $info['migrated'] !== null)) {
 
 				$migration = $this->getMigration($info['name'], $info['class'], $info['type'], $options);
+				$migration->Version = $this;
 				$migration->info = $info;
 				$migration->run($direction);
 
 				$this->setVersion($version, $info['type'], ($direction == 'up'));
 			}
 		}
+
 		return true;
 	}
 
@@ -244,7 +264,10 @@ class MigrationVersion {
 		$mapping = $this->getMapping('Migrations');
 		if (count($mapping) > 1) {
 			end($mapping);
-			$this->run(array('version' => key($mapping)));
+			$this->run(array(
+				'version' => key($mapping),
+				'type' => 'Migrations'
+			));
 		}
 	}
 

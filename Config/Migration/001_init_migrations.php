@@ -20,7 +20,7 @@ class M4af6e0f0a1284147a0b100ca58157726 extends CakeMigration {
 			'create_table' => array(
 				'schema_migrations' => array(
 					'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
-					'version' => array('type' => 'integer', 'null' => false, 'default' => NULL),
+					'class' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 33),
 					'type' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 50),
 					'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 					'indexes' => array(
