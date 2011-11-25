@@ -373,7 +373,7 @@ Commands:
  * @return void
  */
 	public function status() {
-		$types = App::objects('plugin');
+		$types = CakePlugin::loaded();
 		ksort($types);
 		array_unshift($types, 'App');
 

@@ -756,6 +756,11 @@ TEXT;
 		$this->Shell->expects($this->at(0))->method('in')->will($this->returnValue('y'));
 		$this->Shell->expects($this->at(2))->method('in')->will($this->returnValue('n'));
 		$this->Shell->expects($this->at(3))->method('in')->will($this->returnValue('002 drop slug field'));
+
+		$mapping = array(
+			1 => array('class' => 'M4af9d15154844819b7a0007058157726')
+		);
+		$this->Shell->Version->expects($this->any())->method('getMapping')->will($this->returnValue($mapping));
 		
 		$this->assertFalse(file_exists(TMP . 'tests' . DS . '002_drop_slug_field.php'));
 		$this->assertFalse(file_exists(TMP . 'tests' . DS . 'map.php'));
@@ -799,6 +804,11 @@ TEXT;
 		$this->Shell->expects($this->at(0))->method('in')->will($this->returnValue('y'));
 		$this->Shell->expects($this->at(2))->method('in')->will($this->returnValue('n'));
 		$this->Shell->expects($this->at(3))->method('in')->will($this->returnValue('001 schema dump'));
+
+		$mapping = array(
+			1 => array('class' => 'M4af9d15154844819b7a0007058157726')
+		);
+		$this->Shell->Version->expects($this->any())->method('getMapping')->will($this->returnValue($mapping));
 		
 		$this->assertFalse(file_exists(TMP . 'tests' . DS . '001_schema_dump.php'));
 		$this->assertFalse(file_exists(TMP . 'tests' . DS . 'map.php'));
@@ -858,9 +868,9 @@ TEXT;
 /Migrations Plugin
 
 Current version:
-  #001 001_init_migrations
+  #002 002_convert_version_to_class_names
 Latest version:
-  #001 001_init_migrations/
+  #002 002_convert_version_to_class_names/
 TEXT;
 		$this->assertPattern(str_replace("\r\n", "\n", $pattern), $result);
 
@@ -870,7 +880,7 @@ TEXT;
 		$result = $this->Shell->output;
 		$this->assertNoPattern(str_replace("\r\n", "\n", $pattern), $result);
 
-		$this->Shell->Version->setVersion(1, 'migrations', false);
+		$this->Shell->Version->setVersion(2, 'migrations', false);
 		$this->Shell->output = '';
 		$this->Shell->args = array('outdated');
 		$this->Shell->status();
@@ -879,9 +889,9 @@ TEXT;
 /Migrations Plugin
 
 Current version:
-  None applied.
+  #001 001_init_migrations
 Latest version:
-  #001 001_init_migrations/
+  #002 002_convert_version_to_class_names/
 TEXT;
 		$this->assertPattern(str_replace("\r\n", "\n", $pattern), $result);
 		$this->Shell->Version->setVersion(1, 'migrations');

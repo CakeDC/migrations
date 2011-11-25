@@ -77,6 +77,13 @@ class CakeMigration extends Object {
 	public $db = null;
 
 /**
+ * MigrationVersion instance
+ *
+ * @var MigrationVersion
+ */
+	public $Version = null;
+
+/**
  * CakeSchema instance
  *
  * @var CakeSchema
@@ -422,8 +429,19 @@ class CakeMigration extends Object {
  * @return void
  */
 	protected function _clearCache() {
-		Cache::clear(false, '_cake_model_');
+		// Clear the cache
+		DboSource::$methodCache = array();
+		$keys = Cache::configured();
+		foreach ($keys as $key) {
+			Cache::clear(false, $key);
+		}
 		ClassRegistry::flush();
+
+		// Refresh the model, in case something changed
+		$options = array(
+			'class' => 'Migrations.SchemaMigration',
+			'ds' => $this->connection);
+		$this->Version->Version =& ClassRegistry::init($options);
 	}
 
 /**
