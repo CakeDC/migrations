@@ -205,7 +205,7 @@ Commands:
 		);
 		if (isset($this->args[0]) && in_array($this->args[0], array('up', 'down'))) {
 			$options['direction'] = $this->args[0];
-
+			$direction = $options['direction'];
 			if ($options['direction'] == 'up') {
 				$latestVersion++;
 			}
@@ -216,8 +216,10 @@ Commands:
 		} else if (isset($this->args[0]) && $this->args[0] == 'all') {
 			end($mapping);
 			$options['version'] = key($mapping);
+			$direction = 'up';
 		} else if (isset($this->args[0]) && $this->args[0] == 'reset') {
 			$options['version'] = 0;
+			$direction = 'down';
 		} else {
 			if (isset($this->args[0]) && is_numeric($this->args[0])) {
 				$options['version'] = (int) $this->args[0];
@@ -244,6 +246,11 @@ Commands:
 						(isset($mapping[(int) $response]) || ((int) $response === 0 && $latestVersion > 0));
 					if ($valid) {
 						$options['version'] = (int) $response;
+						if ((int) $response <= $latestVersion) {
+							$direction = 'down';
+						} else {
+							$direction = 'up';
+						}
 						break;
 					} else {
 						$this->out(__d('Migrations', 'Not a valid migration version.'));
@@ -254,6 +261,7 @@ Commands:
 		}
 
 		$this->out(__d('Migrations', 'Running migrations:'));
+		
 		try {
 			$this->Version->run($options);
 		} catch (MigrationException $e) {
@@ -261,8 +269,16 @@ Commands:
 			$this->out('  ' . sprintf(__d('Migrations', 'Migration: %s'), $e->Migration->info['name']));
 			$this->out('  ' . sprintf(__d('Migrations', 'Error: %s'), $e->getMessage()));
 
-			$this->out('');
-			return false;
+			$this->hr();
+			
+			$response = $this->in(__d('Migrations', 'Do you want to mark the migration as ran?. [y]es or [a]bort.'), array('y', 'a'));
+			if (strtolower($response) === 'y') {
+				$this->Version->setVersion($e->Migration->info['version'], $this->type, ($direction == 'up'));
+				return $this->run();
+			} else if (strtolower($response) === 'a') {
+				return $this->_stop();
+			}
+			$this->hr();
 		}
 
 		$this->out(__d('Migrations', 'All migrations have completed.'));
