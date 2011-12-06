@@ -135,9 +135,12 @@ class MigrationShell extends Shell {
 			'type' => $this->type,
 			'callback' => &$this
 		);
+		$once = false; //In case of exception run shell again (all, reset, migration number)
 		if (isset($this->args[0]) && in_array($this->args[0], array('up', 'down'))) {
 			$options['direction'] = $this->args[0];
-
+			$once = true; //Run shell only once (in case of exception)
+			$direction = $options['direction'];
+				
 			if ($options['direction'] == 'up') {
 				$latestVersion++;
 			}
@@ -148,8 +151,10 @@ class MigrationShell extends Shell {
 		} else if (isset($this->args[0]) && $this->args[0] == 'all') {
 			end($mapping);
 			$options['version'] = key($mapping);
+			$direction = 'up';
 		} else if (isset($this->args[0]) && $this->args[0] == 'reset') {
 			$options['version'] = 0;
+			$direction = 'down';
 		} else {
 			if (isset($this->args[0]) && is_numeric($this->args[0])) {
 				$options['version'] = (int) $this->args[0];
@@ -176,6 +181,11 @@ class MigrationShell extends Shell {
 						(isset($mapping[(int) $response]) || ((int) $response === 0 && $latestVersion > 0));
 					if ($valid) {
 						$options['version'] = (int) $response;
+						if ((int) $response <= $latestVersion) {
+							$direction = 'down';
+						} else {
+							$direction = 'up';
+						}
 						break;
 					} else {
 						$this->out(__d('migrations', 'Not a valid migration version.', true));
@@ -193,8 +203,24 @@ class MigrationShell extends Shell {
 			$this->out('  ' . sprintf(__d('migrations', 'Migration: %s', true), $e->Migration->info['name']));
 			$this->out('  ' . sprintf(__d('migrations', 'Error: %s', true), $e->getMessage()));
 
-			$this->out('');
-			return false;
+			$this->hr();
+			
+			while (true) {
+				$response = $this->in(__d('Migrations', 'Do you want to mark the migration as successful?. [y]es or [a]bort.'));
+				if (strtolower($response) === 'y') {
+					$this->Version->setVersion($e->Migration->info['version'], $this->type, ($direction == 'up'));
+					if ($once) {
+						return true;
+					} else {
+						return $this->run();
+					} 
+				} else if (strtolower($response) === 'a') {
+					return $this->_stop();
+				}
+			}
+			
+			$this->hr();
+			
 		}
 
 		$this->out(__d('migrations', 'All migrations have completed.', true));

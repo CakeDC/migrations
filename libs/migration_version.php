@@ -116,7 +116,7 @@ class MigrationVersion {
  * @return mixed False in case of no file found or empty mapping, array with mapping
  * @access public
  */
-	public function getMapping($type) {
+	public function getMapping($type, $cache = true) {
 		if (!empty($this->__mapping[$type])) {
 			return $this->__mapping[$type];
 		}
@@ -133,7 +133,6 @@ class MigrationVersion {
 			'recursive' => -1,
 		));
 		$migrated = Set::combine($migrated, '/' . $this->Version->alias . '/version', '/' . $this->Version->alias . '/created');
-
 		ksort($mapping);
 		foreach ($mapping as $version => $migration) {
 			list($name, $class) = each($migration);
@@ -263,7 +262,7 @@ class MigrationVersion {
  */
 	public function run($options) {
 		$targetVersion = $latestVersion = $this->getVersion($options['type']);
-		$mapping = $this->getMapping($options['type']);
+		$mapping = $this->getMapping($options['type'], false);
 
 		// Check direction and targetVersion
 		if (isset($options['version'])) {
@@ -281,7 +280,6 @@ class MigrationVersion {
 		if ($direction == 'down') {
 			krsort($mapping);
 		}
-
 		foreach ($mapping as $version => $info) {
 			if (($direction == 'up' && $version > $targetVersion)
 				|| ($direction == 'down' && $version < $targetVersion)) {
