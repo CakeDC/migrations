@@ -203,8 +203,10 @@ Commands:
 			'type' => $this->type,
 			'callback' => &$this
 		);
+		$once = false; //In case of exception run shell again (all, reset, migration number)
 		if (isset($this->args[0]) && in_array($this->args[0], array('up', 'down'))) {
 			$options['direction'] = $this->args[0];
+			$once = true; //Run shell only once (in case of exception)
 			$direction = $options['direction'];
 			if ($options['direction'] == 'up') {
 				$latestVersion++;
@@ -271,10 +273,14 @@ Commands:
 
 			$this->hr();
 			
-			$response = $this->in(__d('Migrations', 'Do you want to mark the migration as ran?. [y]es or [a]bort.'), array('y', 'a'));
+			$response = $this->in(__d('Migrations', 'Do you want to mark the migration as successful?. [y]es or [a]bort.'), array('y', 'a'));
 			if (strtolower($response) === 'y') {
 				$this->Version->setVersion($e->Migration->info['version'], $this->type, ($direction == 'up'));
-				return $this->run();
+				if ($once) {
+					return true;
+				} else {
+					return $this->run();
+				} 
 			} else if (strtolower($response) === 'a') {
 				return $this->_stop();
 			}
