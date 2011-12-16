@@ -274,11 +274,10 @@ Commands:
 			$this->hr();
 			
 			$response = $this->in(__d('Migrations', 'Do you want to mark the migration as successful?. [y]es or [a]bort.'), array('y', 'a'));
+				
 			if (strtolower($response) === 'y') {
 				$this->Version->setVersion($e->Migration->info['version'], $this->type, ($direction == 'up'));
-				if ($once) {
-					return true;
-				} else {
+				if (!$once) {
 					return $this->run();
 				} 
 			} else if (strtolower($response) === 'a') {
