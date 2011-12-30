@@ -1,4 +1,5 @@
 <?php
+App::uses('ShellDispatcher', 'Console');
 App::uses('MigrationShell', 'Migrations.Console/Command');
 
 /**
@@ -88,7 +89,7 @@ class MigrationShellTest extends CakeTestCase {
 		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
 		$this->Shell = $this->getMock(
 			'TestMigrationShell',
-			array('in', 'hr', 'createFile', 'error', 'err', '_stop', '_showInfo'),
+			array('in', 'hr', 'createFile', 'error', 'err', '_stop', '_showInfo', 'dispatchShell'),
 			array($out, $out, $in));
 
 		$this->Shell->Version = $this->getMock(
@@ -793,6 +794,8 @@ TEXT;
 		$this->Shell->expects($this->at(0))->method('in')->will($this->returnValue('y'));
 		$this->Shell->expects($this->at(2))->method('in')->will($this->returnValue('n'));
 		$this->Shell->expects($this->at(3))->method('in')->will($this->returnValue('002 drop slug field'));
+		$this->Shell->expects($this->at(4))->method('in')->will($this->returnValue('y'));
+		$this->Shell->expects($this->at(5))->method('dispatchShell')->with('schema generate --connection test --force');
 
 		$mapping = array(
 			1 => array('class' => 'M4af9d15154844819b7a0007058157726')
