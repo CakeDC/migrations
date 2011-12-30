@@ -202,7 +202,7 @@ class CakeMigrationTest extends CakeTestCase {
  */
 	public function testCreateDropField() {
 		$this->loadFixtures('User', 'Post');
-		$model = new Model(array('table' => 'posts', 'ds' => 'test_suite'));
+		$model = new Model(array('table' => 'posts', 'ds' => 'test'));
 
 		$migration = new TestCakeMigration(array(
 			'up' => array(
@@ -249,7 +249,7 @@ class CakeMigrationTest extends CakeTestCase {
  */
 	public function testCreateDropIndex() {
 		$this->loadFixtures('User', 'Post');
-		$model = new Model(array('table' => 'posts', 'ds' => 'test_suite'));
+		$model = new Model(array('table' => 'posts', 'ds' => 'test'));
 
 		$migration = new TestCakeMigration(array(
 			'up' => array(
@@ -302,7 +302,7 @@ class CakeMigrationTest extends CakeTestCase {
  */
 	public function testAlterField() {
 		$this->loadFixtures('User', 'Post');
-		$model = new Model(array('table' => 'posts', 'ds' => 'test_suite'));
+		$model = new Model(array('table' => 'posts', 'ds' => 'test'));
 
 		$migration = new TestCakeMigration(array(
 			'up' => array(
@@ -345,7 +345,7 @@ class CakeMigrationTest extends CakeTestCase {
  */
 	function testAlterFieldLength() {
 		$this->loadFixtures('User', 'Post');
-		$model = new Model(array('table' => 'posts', 'ds' => 'test_suite'));
+		$model = new Model(array('table' => 'posts', 'ds' => 'test'));
 
 		$migration = new TestCakeMigration(array(
 			'up' => array(
@@ -382,7 +382,7 @@ class CakeMigrationTest extends CakeTestCase {
  */
 	public function testAlterAndRenameField() {
 		$this->loadFixtures('User', 'Post');
-		$model = new Model(array('table' => 'posts', 'ds' => 'test_suite'));
+		$model = new Model(array('table' => 'posts', 'ds' => 'test'));
 
 		$migration = new TestCakeMigration(array(
 			'up' => array(
@@ -422,7 +422,7 @@ class CakeMigrationTest extends CakeTestCase {
  */
 	public function testRenameField() {
 		$this->loadFixtures('User', 'Post');
-		$model = new Model(array('table' => 'posts', 'ds' => 'test_suite'));
+		$model = new Model(array('table' => 'posts', 'ds' => 'test'));
 
 		$migration = new TestCakeMigration(array(
 			'up' => array('rename_field' => array('posts' => array('updated' => 'renamed_updated'))),
