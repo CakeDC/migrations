@@ -377,6 +377,13 @@ Commands:
 
 		$this->out('');
 		$this->out(__d('Migrations', 'Done.'));
+
+		if ($fromSchema && isset($comparison)) {
+			$response = $this->in(__d('Migrations', 'Do you want update the schema.php file?'), array('y', 'n'), 'y');
+			if (strtolower($response) === 'y') {
+				$this->_updateSchema();
+			}
+		}
 	}
 
 /**
@@ -614,6 +621,22 @@ TEXT;
 			unset($read['tables']['schema_migrations']);
 		}
 		return $read;
+	}
+
+/**
+ * Update the schema, making a call to schema shell
+ *
+ * @return void
+ */
+	protected function _updateSchema() {
+		$command = 'schema generate --connection ' . $this->connection;
+		if (!empty($this->params['plugin'])) {
+			$command .= ' --plugin ' . $this->params['plugin'];
+		}
+		if ($this->params['force']) {
+			$command .= ' --force';
+		}
+		$this->dispatchShell($command);
 	}
 
 /**
