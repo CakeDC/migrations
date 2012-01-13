@@ -80,6 +80,7 @@ class MigrationShell extends Shell {
 		$this->path = $this->_getPath() . 'Config' . DS . 'Migration' . DS;
 
 		$this->Version =& new MigrationVersion(array(
+			'precheck' => $this->params['precheck'],
 			'connection' => $this->connection
 		));
 
@@ -108,6 +109,11 @@ class MigrationShell extends Shell {
 			'')
 			->addOption('plugin', array(
 					'short' => 'p', 
+					'help' => __('Plugin name to be used')))
+			->addOption('precheck', array(
+					'short' => 'm', 
+					'default' => 'exception', 
+					'choices' => array('exception', 'condition'),
 					'help' => __('Plugin name to be used')))
 			->addOption('force', array(
 					'short' => 'f',
@@ -200,6 +206,7 @@ Commands:
 		$latestVersion = $this->Version->getVersion($this->type);
 
 		$options = array(
+			'precheck' => $this->params['precheck'],
 			'type' => $this->type,
 			'callback' => &$this
 		);
@@ -415,6 +422,7 @@ Commands:
  *
  * @return void
  */
+ /*
 	public function help() {
 		$help = <<<TEXT
 The Migration database management for CakePHP
@@ -451,6 +459,7 @@ TEXT;
 		$this->out($help);
 		$this->_stop();
 	}
+*/
 
 /**
  * Shows a list of available migrations
