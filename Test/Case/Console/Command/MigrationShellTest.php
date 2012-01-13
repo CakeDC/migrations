@@ -1,4 +1,5 @@
 <?php
+App::uses('ShellDispatcher', 'Console');
 App::uses('MigrationShell', 'Migrations.Console/Command');
 
 /**
@@ -88,7 +89,7 @@ class MigrationShellTest extends CakeTestCase {
 		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
 		$this->Shell = $this->getMock(
 			'TestMigrationShell',
-			array('in', 'hr', 'createFile', 'error', 'err', '_stop', '_showInfo'),
+			array('in', 'hr', 'createFile', 'error', 'err', '_stop', '_showInfo', 'dispatchShell'),
 			array($out, $out, $in));
 
 		$this->Shell->Version = $this->getMock(
@@ -301,11 +302,11 @@ class MigrationShellTest extends CakeTestCase {
 	}
 
 /**
- * testRunWithFailures method
+ * testRunWithFailuresOnce method
  *
  * @return void
  **/
-	public function testRunWithFailures() {
+	public function testRunWithFailuresOnce() {
 		$this->Shell->expects($this->any())->method('_stop')->will($this->returnValue(false));
 
 		$mapping = array(1 => array(
@@ -318,18 +319,55 @@ class MigrationShellTest extends CakeTestCase {
 		$migration->info = $mapping[1];
 		$exception = new MigrationException($migration, 'Exception message');
 
-		$this->Shell->Version->expects($this->once())->method('getMapping')->will($this->returnValue($mapping));
-		$this->Shell->Version->expects($this->once())->method('getVersion')->will($this->returnValue(0));
-		$this->Shell->Version->expects($this->once())->method('run')->will($this->throwException($exception));
+		$this->Shell->Version->expects($this->any())->method('getMapping')->will($this->returnValue($mapping));
+		$this->Shell->Version->expects($this->any())->method('getVersion')->will($this->returnValue(0));
+		$this->Shell->Version->expects($this->at(2))->method('run')->will($this->throwException($exception));
+		$this->Shell->expects($this->at(1))->method('in')->will($this->returnValue('y'));
 		$this->Shell->args = array('up');
-		$this->assertFalse($this->Shell->run());
+		$this->assertTrue($this->Shell->run());
 
 		$result = $this->Shell->output;
 		$pattern = <<<TEXT
 /Running migrations:
 An error occurred when processing the migration:
   Migration: 001_schema_dump
-  Error: Exception message/
+  Error: Exception message
+All migrations have completed./
+TEXT;
+		$this->assertPattern(str_replace("\r\n", "\n", $pattern), str_replace("\r\n", "\n", $result));
+	}
+	
+/**
+ * testRunWithFailuresNotOnce method
+ *
+ * @return void
+ **/
+	public function testRunWithFailuresNotOnce() {
+		$this->Shell->expects($this->any())->method('_stop')->will($this->returnValue(false));
+	
+		$mapping = array(
+			1 => array(
+				'version' => 1, 'name' => '001_schema_dump',
+				'class' => 'M4af9d151e1484b74ad9d007058157726',
+				'type' => $this->Shell->type, 'migrated' => null
+			),
+		);
+	
+		$migration = new CakeMigration();
+		$migration->info = $mapping[1];
+		$exception = new MigrationException($migration, 'Exception message');
+	
+		$this->Shell->Version->expects($this->any())->method('getMapping')->will($this->returnValue($mapping));
+		$this->Shell->Version->expects($this->any())->method('getVersion')->will($this->returnValue(0));
+		$this->Shell->Version->expects($this->at(2))->method('run')->will($this->throwException($exception));
+		$this->Shell->Version->expects($this->at(3))->method('run')->will($this->returnValue(true));
+		$this->Shell->expects($this->at(1))->method('in')->will($this->returnValue('y'));
+		$this->Shell->args = array('all');
+		$this->assertTrue($this->Shell->run());
+		$result = $this->Shell->output;
+		$pattern = <<<TEXT
+/Running migrations:
+All migrations have completed./
 TEXT;
 		$this->assertPattern(str_replace("\r\n", "\n", $pattern), str_replace("\r\n", "\n", $result));
 	}
@@ -756,6 +794,8 @@ TEXT;
 		$this->Shell->expects($this->at(0))->method('in')->will($this->returnValue('y'));
 		$this->Shell->expects($this->at(2))->method('in')->will($this->returnValue('n'));
 		$this->Shell->expects($this->at(3))->method('in')->will($this->returnValue('002 drop slug field'));
+		$this->Shell->expects($this->at(4))->method('in')->will($this->returnValue('y'));
+		$this->Shell->expects($this->at(5))->method('dispatchShell')->with('schema generate --connection test --force');
 
 		$mapping = array(
 			1 => array('class' => 'M4af9d15154844819b7a0007058157726')

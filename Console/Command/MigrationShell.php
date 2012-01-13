@@ -210,9 +210,11 @@ Commands:
 			'type' => $this->type,
 			'callback' => &$this
 		);
+		$once = false; //In case of exception run shell again (all, reset, migration number)
 		if (isset($this->args[0]) && in_array($this->args[0], array('up', 'down'))) {
 			$options['direction'] = $this->args[0];
-
+			$once = true; //Run shell only once (in case of exception)
+			$direction = $options['direction'];
 			if ($options['direction'] == 'up') {
 				$latestVersion++;
 			}
@@ -223,8 +225,10 @@ Commands:
 		} else if (isset($this->args[0]) && $this->args[0] == 'all') {
 			end($mapping);
 			$options['version'] = key($mapping);
+			$direction = 'up';
 		} else if (isset($this->args[0]) && $this->args[0] == 'reset') {
 			$options['version'] = 0;
+			$direction = 'down';
 		} else {
 			if (isset($this->args[0]) && is_numeric($this->args[0])) {
 				$options['version'] = (int) $this->args[0];
@@ -251,6 +255,11 @@ Commands:
 						(isset($mapping[(int) $response]) || ((int) $response === 0 && $latestVersion > 0));
 					if ($valid) {
 						$options['version'] = (int) $response;
+						if ((int) $response <= $latestVersion) {
+							$direction = 'down';
+						} else {
+							$direction = 'up';
+						}
 						break;
 					} else {
 						$this->out(__d('Migrations', 'Not a valid migration version.'));
@@ -261,6 +270,7 @@ Commands:
 		}
 
 		$this->out(__d('Migrations', 'Running migrations:'));
+		
 		try {
 			$this->Version->run($options);
 		} catch (MigrationException $e) {
@@ -268,8 +278,19 @@ Commands:
 			$this->out('  ' . sprintf(__d('Migrations', 'Migration: %s'), $e->Migration->info['name']));
 			$this->out('  ' . sprintf(__d('Migrations', 'Error: %s'), $e->getMessage()));
 
-			$this->out('');
-			return false;
+			$this->hr();
+			
+			$response = $this->in(__d('Migrations', 'Do you want to mark the migration as successful?. [y]es or [a]bort.'), array('y', 'a'));
+				
+			if (strtolower($response) === 'y') {
+				$this->Version->setVersion($e->Migration->info['version'], $this->type, ($direction == 'up'));
+				if (!$once) {
+					return $this->run();
+				} 
+			} else if (strtolower($response) === 'a') {
+				return $this->_stop();
+			}
+			$this->hr();
 		}
 
 		$this->out(__d('Migrations', 'All migrations have completed.'));
@@ -363,6 +384,13 @@ Commands:
 
 		$this->out('');
 		$this->out(__d('Migrations', 'Done.'));
+
+		if ($fromSchema && isset($comparison)) {
+			$response = $this->in(__d('Migrations', 'Do you want update the schema.php file?'), array('y', 'n'), 'y');
+			if (strtolower($response) === 'y') {
+				$this->_updateSchema();
+			}
+		}
 	}
 
 /**
@@ -602,6 +630,22 @@ TEXT;
 			unset($read['tables']['schema_migrations']);
 		}
 		return $read;
+	}
+
+/**
+ * Update the schema, making a call to schema shell
+ *
+ * @return void
+ */
+	protected function _updateSchema() {
+		$command = 'schema generate --connection ' . $this->connection;
+		if (!empty($this->params['plugin'])) {
+			$command .= ' --plugin ' . $this->params['plugin'];
+		}
+		if ($this->params['force']) {
+			$command .= ' --force';
+		}
+		$this->dispatchShell($command);
 	}
 
 /**

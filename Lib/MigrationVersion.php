@@ -131,8 +131,8 @@ class MigrationVersion {
  * @param string $type Can be 'app' or a plugin name
  * @return mixed False in case of no file found or empty mapping, array with mapping
  */
-	public function getMapping($type) {
-		if (!empty($this->__mapping[$type])) {
+	public function getMapping($type, $cache = true) {
+		if ($cache && !empty($this->__mapping[$type])) {
 			return $this->__mapping[$type];
 		}
 		$mapping = $this->__loadFile('map', $type);
@@ -208,7 +208,7 @@ class MigrationVersion {
  */
 	public function run($options) {
 		$targetVersion = $latestVersion = $this->getVersion($options['type']);
-		$mapping = $this->getMapping($options['type']);
+		$mapping = $this->getMapping($options['type'], false);
 
 		// Check direction and targetVersion
 		if (isset($options['version'])) {
