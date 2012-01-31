@@ -1,6 +1,6 @@
 # Migrations Plugin for CakePHP #
 
-Version 1.2
+Version 2.1
 
 This migrations plugin enables developers to quickly and easily manage and migrate between database schema versions.
 
@@ -13,7 +13,7 @@ For detailed usage information, please see the [documentation online](http://cak
 ## Requirements ##
 
 * PHP version: PHP 5.2+
-* CakePHP version: 2.0
+* CakePHP version: 2.1
 
 ## Support ##
 

@@ -131,31 +131,31 @@ class CakeMigrationTest extends CakeTestCase {
 		));
 
 		$sources = $this->db->listSources();
-		$this->assertFalse(in_array($this->db->fullTableName('migration_user', false), $sources));
-		$this->assertFalse(in_array($this->db->fullTableName('migration_posts', false), $sources));
+		$this->assertFalse(in_array($this->db->fullTableName('migration_user', false, false), $sources));
+		$this->assertFalse(in_array($this->db->fullTableName('migration_posts', false, false), $sources));
 
 		$this->assertTrue($migration->run('up'));
 		$sources = $this->db->listSources();
-		$this->assertTrue(in_array($this->db->fullTableName('migration_users', false), $sources));
-		$this->assertTrue(in_array($this->db->fullTableName('migration_posts', false), $sources));
+		$this->assertTrue(in_array($this->db->fullTableName('migration_users', false, false), $sources));
+		$this->assertTrue(in_array($this->db->fullTableName('migration_posts', false, false), $sources));
 
 		try {
 			$migration->run('up');
 			$this->fail('No exception triggered');
 		} catch (MigrationException $e) {
-			$this->assertEqual('Table "' . $this->db->fullTableName('migration_posts', false) . '" already exists in database.', $e->getMessage());
+			$this->assertEqual('Table "' . $this->db->fullTableName('migration_posts', false, false) . '" already exists in database.', $e->getMessage());
 		}
 
 		$this->assertTrue($migration->run('down'));
 		$sources = $this->db->listSources();
-		$this->assertFalse(in_array($this->db->fullTableName('migration_users', false), $sources));
-		$this->assertFalse(in_array($this->db->fullTableName('migration_posts', false), $sources));
+		$this->assertFalse(in_array($this->db->fullTableName('migration_users', false, false), $sources));
+		$this->assertFalse(in_array($this->db->fullTableName('migration_posts', false, false), $sources));
 		if ($this->db->config['datasource'] != 'Database/Mysql') { // && $this->db->config['driver'] != 'mysqli') {
 			try {
 				$migration->run('down');
 				$this->fail('No exception triggered');
 			} catch (MigrationException $e) {
-				$this->assertEqual('Table "' . $this->db->fullTableName('migration_posts', false) . '" does not exists in database.', $e->getMessage());
+				$this->assertEqual('Table "' . $this->db->fullTableName('migration_posts', false, false) . '" does not exists in database.', $e->getMessage());
 			}
 		}
 	}
@@ -174,25 +174,25 @@ class CakeMigrationTest extends CakeTestCase {
 		));
 
 		$sources = $this->db->listSources();
-		$this->assertTrue(in_array($this->db->fullTableName('posts', false), $sources));
-		$this->assertFalse(in_array($this->db->fullTableName('renamed_posts', false), $sources));
+		$this->assertTrue(in_array($this->db->fullTableName('posts', false, false), $sources));
+		$this->assertFalse(in_array($this->db->fullTableName('renamed_posts', false, false), $sources));
 
 		$this->assertTrue($migration->run('up'));
 		$sources = $this->db->listSources();
-		$this->assertFalse(in_array($this->db->fullTableName('posts', false), $sources));
-		$this->assertTrue(in_array($this->db->fullTableName('renamed_posts', false), $sources));
+		$this->assertFalse(in_array($this->db->fullTableName('posts', false, false), $sources));
+		$this->assertTrue(in_array($this->db->fullTableName('renamed_posts', false, false), $sources));
 
 		try {
 			$migration->run('up');
 			$this->fail('No exception triggered');
 		} catch (MigrationException $e) {
-			$this->assertEqual('Table "' . $this->db->fullTableName('posts', false) . '" does not exists in database.', $e->getMessage());
+			$this->assertEqual('Table "' . $this->db->fullTableName('posts', false, false) . '" does not exists in database.', $e->getMessage());
 		}
 
 		$this->assertTrue($migration->run('down'));
 		$sources = $this->db->listSources();
-		$this->assertTrue(in_array($this->db->fullTableName('posts', false), $sources));
-		$this->assertFalse(in_array($this->db->fullTableName('renamed_posts', false), $sources));
+		$this->assertTrue(in_array($this->db->fullTableName('posts', false, false), $sources));
+		$this->assertFalse(in_array($this->db->fullTableName('renamed_posts', false, false), $sources));
 	}
 
 /**

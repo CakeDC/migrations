@@ -248,7 +248,7 @@ class MigrationVersion {
 			'ds' => $this->connection);
 
 		$db =& ConnectionManager::getDataSource($this->connection);
-		if (!in_array($db->fullTableName('schema_migrations', false), $db->listSources())) {
+		if (!in_array($db->fullTableName('schema_migrations', false, false), $db->listSources())) {
 			$map = $this->__loadFile('map', 'Migrations');
 
 			list($name, $class) = each($map[1]);
