@@ -535,10 +535,9 @@ TEXT;
 		}
 		require_once $file;
 
-		$name = Inflector::camelize($type) . 'Schema';
+		$name = Inflector::camelize(Inflector::slug($type)) . 'Schema';
 		if ($type == 'app' && !class_exists($name)) {
-			$this->params['app'] = str_replace('-', '', $this->params['app']);
-			$name = Inflector::camelize($this->params['app']) . 'Schema';
+			$name = Inflector::camelize(Inflector::slug($this->params['app'])) . 'Schema';
 		}
 
 		$plugin = ($type === 'app') ? null : $type;
@@ -753,4 +752,3 @@ TEXT;
 	}
 }
 ?>
-
