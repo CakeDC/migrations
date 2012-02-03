@@ -364,6 +364,7 @@ class MigrationShellTest extends CakeTestCase {
 		$Version->setReturnValue('getMapping', $mapping);
 		$Version->setReturnValue('getVersion', 0);
 		$this->Shell->args = array('up');
+        $this->Shell->setReturnValueAt(0, 'in', 'a');
 		$this->assertFalse($this->Shell->run());
 
 		$result = $this->Shell->output;
@@ -867,7 +868,7 @@ TEXT;
 		\),
 		'down' => array\(
 			'drop_table' => array\(
-				'articles'
+				'articles', 'binary_tests', 'datatypes'
 			\),
 		\),
 	\);$/
@@ -920,6 +921,20 @@ TEXT;
 		$this->Shell->Version->setVersion(1, 'migrations');
 	}
 
+
+/**
+ * testGetSchema method
+ *
+ * @return void
+ */
+    function testGetSchema() {
+        $this->MyShell =& new MockMigrationShell($this->Dispatcher);
+        $result = $this->MyShell->publicGetSchema();
+        $this->assertNotNull($result);
+        $this->assertTrue($result);
+    }
+
+
 /**
  * Strip all the content surrounding the $migration variable
  *
@@ -942,5 +957,12 @@ TEXT;
 		return implode("\n", $result);
 	}
 }
+
+class MockMigrationShell extends MigrationShell {
+    public function publicGetSchema($type = null) {
+        return $this->_getSchema($type);
+    }
+}
+
 ?>
 
