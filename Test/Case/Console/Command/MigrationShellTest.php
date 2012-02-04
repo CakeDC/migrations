@@ -160,10 +160,10 @@ class MigrationShellTest extends CakeTestCase {
 		$this->Shell->startup();
 		$this->assertEqual($this->Shell->connection, 'test');
 		$this->assertEqual($this->Shell->type, 'TestMigrationPlugin');
-
 		$this->Shell->params = array(
 			'connection' => 'default',
-			'plugin' => 'Migrations'
+			'plugin' => 'Migrations',
+			'auto-init' => false
 		);
 		$this->Shell->startup();
 		$this->assertEqual($this->Shell->connection, 'default');
@@ -870,27 +870,8 @@ TEXT;
 		$this->assertPattern(str_replace("\r\n", "\n", $pattern), str_replace("\r\n", "\n", $result));
 
 		$result = $this->__getMigrationVariable(TMP . 'tests' . DS . '001_schema_dump.php');
-		$pattern = <<<TEXT
-/^	public \\\$migration = array\(
-		'up' => array\(
-			'create_table' => array\(
-				'articles' => array\(/
-TEXT;
-		$this->assertPattern(str_replace("\r\n", "\n", $pattern), $result);
-
-		$pattern = <<<TEXT
-/				\),
-			\),
-		\),
-		'down' => array\(
-			'drop_table' => array\(
-				'articles'
-			\),
-		\),
-	\);$/
-TEXT;
-		$this->assertPattern(str_replace("\r\n", "\n", $pattern), $result);
-
+		$expected = file_get_contents(CakePlugin::path('Migrations') . '/Test/Fixture/test_migration.txt');
+		$this->assertEquals($expected, $result);
 		// Remove created files
 		$this->__unlink('001_schema_dump.php', 'map.php');
 	}

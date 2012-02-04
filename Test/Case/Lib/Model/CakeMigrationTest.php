@@ -145,19 +145,10 @@ class CakeMigrationTest extends CakeTestCase {
 		} catch (MigrationException $e) {
 			$this->assertEqual('Table "' . $this->db->fullTableName('migration_posts', false, false) . '" already exists in database.', $e->getMessage());
 		}
-
 		$this->assertTrue($migration->run('down'));
 		$sources = $this->db->listSources();
 		$this->assertFalse(in_array($this->db->fullTableName('migration_users', false, false), $sources));
 		$this->assertFalse(in_array($this->db->fullTableName('migration_posts', false, false), $sources));
-		if ($this->db->config['datasource'] != 'Database/Mysql') { // && $this->db->config['driver'] != 'mysqli') {
-			try {
-				$migration->run('down');
-				$this->fail('No exception triggered');
-			} catch (MigrationException $e) {
-				$this->assertEqual('Table "' . $this->db->fullTableName('migration_posts', false, false) . '" does not exists in database.', $e->getMessage());
-			}
-		}
 	}
 
 /**
