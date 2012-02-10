@@ -25,7 +25,9 @@ class MigrationVersionTest extends CakeTestCase {
  **/
 	public function setUp() {
 		$this->Version = new MigrationVersion(array(
-			'connection' => 'test'));
+			'connection' => 'test',
+			'autoinit' => false
+		));
 
 		App::build(array('plugins' => CakePlugin::path('Migrations') . 'Test' .  DS . 'test_app' . DS . 'Plugin' . DS));
 	}
@@ -70,7 +72,7 @@ class MigrationVersionTest extends CakeTestCase {
 			1 => array(
 				'version' => 1,
 				'name' => '001_schema_dump',
-				'class' => 'M4af6d40056b04408808500cb58157726',
+				'class' => 'SchemaDump',
 				'type' => 'test_migration_plugin',
 				'migrated' => null
 			)
@@ -82,40 +84,19 @@ class MigrationVersionTest extends CakeTestCase {
 			1 => array(
 				'version' => 1,
 				'name' => '001_init_migrations',
-				'class' => 'M4af6e0f0a1284147a0b100ca58157726',
+				'class' => 'InitMigrations',
 				'type' => 'migrations',
 				'migrated' => '2009-11-10 00:55:34'
 			),
 			2 => array(
 				'version' => 2,
 				'name' => '002_convert_version_to_class_names',
-				'class' => 'M4ec50d1f7a284842b1b770fdcbdd56cb',
+				'class' => 'ConvertVersionToClassNames',
 				'type' => 'migrations',
 				'migrated' => '2011-11-18 13:53:32'
 			)
 		);
 		$this->assertEqual($result, $expected);
-	}
-
-/**
- * testGetMapping method on a plugin having an empty map.php file, or not
- * having this file at all
- *
- * @return void
- */
-	public function testGetMappingEmptyMap() {
-		CakePlugin::load('TestMigrationPlugin2');
-		CakePlugin::load('TestMigrationPlugin3');
-
-		try {
-			$this->Version->getMapping('test_migration_plugin2');
-			$this->fail('No exception triggered');
-		} catch (MigrationVersionException $e) {
-			$this->assertEqual('File `map.php` not found in the TestMigrationPlugin2 Plugin.', $e->getMessage());
-		}
-
-		$result = $this->Version->getMapping('test_migration_plugin3');
-		$this->assertIdentical($result, false);
 	}
 
 /**

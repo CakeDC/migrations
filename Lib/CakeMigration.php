@@ -474,7 +474,6 @@ class MigrationException extends Exception {
 
 /**
  * Reference to the Migration being processed on time the error ocurred
-
  * @var CakeMigration
  */
 	public $Migration;

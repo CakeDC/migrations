@@ -299,17 +299,16 @@ class MigrationShell extends Shell {
 			}
 		}
 
-		$class = 'M' . str_replace('-', '', String::uuid());
 		$response = $this->in(__d('Migrations', 'Do you want to preview the file before generation?'), array('y', 'n'), 'y');
 		if (strtolower($response) === 'y') {
-			$this->out($this->_generateMigration('',$class,$migration));
+			$this->out($this->_generateMigration('', 'PreviewMigration', $migration));
 		}
 
 		while (true) {
 			$name = $this->in(__d('Migrations', 'Please enter the descriptive name of the migration to generate:'));
-			if (!preg_match('/^([A-Za-z0-9_]+|\s)+$/', $name)) {
+			if (!preg_match('/^([A-Za-z0-9_]+|\s)+$/', $name) || is_numeric($name[0])) {
 				$this->out('');
-				$this->err(__d('Migrations', 'Migration name (%s) is invalid. It must only contain alphanumeric characters.', $name));
+				$this->err(__d('Migrations', 'Migration name (%s) is invalid. It must only contain alphanumeric characters and start with a letter.', $name));
 			} else {
 				$name = str_replace(' ', '_', trim($name));
 				break;
@@ -317,25 +316,11 @@ class MigrationShell extends Shell {
 		}
 
 		$this->out(__d('Migrations', 'Generating Migration...'));
-		$this->_writeMigration($name, $class, $migration);
-
-		$version = 1;
-		$map = array();
-		if (file_exists($this->path . 'map.php')) {
-			include $this->path . 'map.php';
-			ksort($map);
-			end($map);
-
-			list($version) = each($map);
-			$version++;
-		}
-		$map[$version] = array($name => $class);
-
-		$this->out(__d('Migrations', 'Mapping Migrations...'));
-		$this->_writeMap($map);
+		$time = gmdate('U');
+		$this->_writeMigration($name, $time, $migration);
 
 		if ($fromSchema) {
-			$this->Version->setVersion($version, $this->type);
+			$this->Version->setVersion($time, $this->type);
 		}
 
 		$this->out('');
@@ -624,35 +609,14 @@ class MigrationShell extends Shell {
  * Write a migration with given name
  *
  * @param string $name Name of migration
- * @param string $class Class name of migration
+ * @param int the version number (timestamp)
  * @param array $migration Migration instructions array
  * @return boolean
  */
-	protected function _writeMigration($name, $class, $migration) {
+	protected function _writeMigration($name, $version, $migration) {
 		$content = '';
-		$content = $this->_generateMigration($name, $class, $migration);
-		$File = new File($this->path . $name . '.php', true);
-		return $File->write($content);
-	}
-
-/**
- * Generate and write the map file
- *
- * @param array $map List of migrations
- * @return boolean
- */
-	protected function _writeMap($map) {
-		$content = "<?php\n";
-		$content .= "\$map = array(\n";
-		foreach ($map as $version => $info) {
-			list($name, $class) = each($info);
-			$content .= "\t" . $version . " => array(\n";
-			$content .= "\t\t'" . $name . "' => '" . $class . "'),\n";
-		}
-		$content .= ");\n";
-		$content .= "?>";
-
-		$File = new File($this->path . 'map.php', true);
+		$content = $this->_generateMigration($name, Inflector::camelize($name), $migration);
+		$File = new File($this->path . $version . '_' . strtolower($name) . '.php', true);
 		return $File->write($content);
 	}
 

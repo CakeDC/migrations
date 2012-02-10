@@ -1,5 +1,5 @@
 <?php
-class M4af6e0f0a1284147a0b100ca58157726 extends CakeMigration {
+class InitMigrations extends CakeMigration {
 
 /**
  * Migration description
