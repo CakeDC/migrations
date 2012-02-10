@@ -78,10 +78,9 @@ class MigrationShell extends Shell {
 			$this->type = $this->params['plugin'];
 		}
 		$this->path = $this->_getPath() . 'Config' . DS . 'Migration' . DS;
-
 		$this->Version =& new MigrationVersion(array(
 			'connection' => $this->connection,
-			'autoinit' => $this->params['auto-init']
+			'autoinit' => !$this->params['no-auto-init']
 		));
 
 		$this->__messages = array(
@@ -118,11 +117,11 @@ class MigrationShell extends Shell {
 					'short' => 'c', 
 					'default' => 'default',
 					'help' => __('Set db config <config>. Uses \'default\' if none is specified.')))
-			->addOption('auto-init', array(
-					'short' => 'a',
+			->addOption('no-auto-init', array(
+					'short' => 'n',
 					'boolean' => true,
-					'default' => true,
-					'help' => __('Automatically creates migrations table and runs internal plugin migrations')))
+					'default' => false,
+					'help' => __('Disables automatic creation of migrations table and running any internal plugin migrations')))
 			->addSubcommand('status', array(
 				'help' => __('Displays a status of all plugin and app migrations.')))
 			->addSubcommand('all', array(
