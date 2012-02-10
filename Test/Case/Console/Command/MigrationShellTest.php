@@ -66,7 +66,7 @@ class MigrationShellTest extends CakeTestCase {
  *
  * @var array
  */
-	public $fixtures = array('plugin.migrations.schema_migrations', 'core.article');
+	public $fixtures = array('plugin.migrations.schema_migrations', 'core.article', 'core.post', 'core.user');
 
 /**
  * setUp method
@@ -114,6 +114,9 @@ class MigrationShellTest extends CakeTestCase {
 		App::build(array('Plugin' => $this->plugins), true);
 		App::objects('plugins', null, false);
 		unset($this->Dispatcher, $this->Shell, $this->plugins);
+		foreach (glob(TMP . 'tests' . DS . '*.php') as $f) {
+			unlink($f);
+		}
 	}
 
 /**
@@ -147,15 +150,15 @@ class MigrationShellTest extends CakeTestCase {
  * @return void
  **/
 	public function testStartup() {
-		$this->assertEqual($this->Shell->connection, 'test');
+		$this->Shell->connection = 'default';
 		$this->assertEqual($this->Shell->type, 'TestMigrationPlugin');
 		$this->Shell->params = array(
-			'connection' => 'default',
+			'connection' => 'test',
 			'plugin' => 'Migrations',
-			'auto-init' => false
+			'no-auto-init' => false
 		);
 		$this->Shell->startup();
-		$this->assertEqual($this->Shell->connection, 'default');
+		$this->assertEqual($this->Shell->connection, 'test');
 		$this->assertEqual($this->Shell->type, 'Migrations');
 	}
 
