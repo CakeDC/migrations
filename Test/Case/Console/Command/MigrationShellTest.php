@@ -157,7 +157,6 @@ class MigrationShellTest extends CakeTestCase {
  * @return void
  **/
 	public function testStartup() {
-		$this->Shell->startup();
 		$this->assertEqual($this->Shell->connection, 'test');
 		$this->assertEqual($this->Shell->type, 'TestMigrationPlugin');
 		$this->Shell->params = array(

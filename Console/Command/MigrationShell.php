@@ -67,7 +67,6 @@ class MigrationShell extends Shell {
  * @return void
  */
 	public function startup() {
-		$this->_welcome();
 		$this->out(__d('Migrations', 'Cake Migration Shell'));
 		$this->hr();
 
@@ -81,7 +80,7 @@ class MigrationShell extends Shell {
 
 		$this->Version =& new MigrationVersion(array(
 			'connection' => $this->connection,
-			'autoinit' => !empty($this->params['auto-init'])
+			'autoinit' => $this->params['auto-init']
 		));
 
 		$this->__messages = array(
@@ -132,49 +131,7 @@ class MigrationShell extends Shell {
 			->addSubcommand('generate', array(
 				'help' => __('Generates a migration file.')))
 			->addSubcommand('add', array(
-				'help' => __('Generates a migration file.')))
-			// ->addSubcommand('help', array(
-				// 'help' => __('Run a migration to given direction or version.')))
-			// )->addArgument('name', array(
-				// 'help' => __('Name of the model to bake. Can use Plugin.name to bake plugin models.')
-			// )->addArgument('outdated', array(
-				// 'help' => __('')
-			;
-/*
-
-The Migration database management for CakePHP
----------------------------------------------------------------
-Usage: cake migration <command> <param1> <param2>...
----------------------------------------------------------------
-Params:
-	-connection <config>
-		Set db config <config>. Uses 'default' if none is specified.
-
-	-plugin
-		Plugin name to be used
-
-	-f
-		Force 'generate' to compare all tables.
-
-Commands:
-	migration help
-		Shows this help message.
-
-	migration run <up|down|all|reset|version>
-		Run a migration to given direction or version.
-		Provide a version number to get directly to the version.
-		You can also use all to apply all migrations or reset to unapply all.
-
-	migration <generate|add>
-		Generates a migration file.
-		To force generation of all tables when making a comparison/dump, use the -f param.
-
-	migration status <outdated>
-		Displays a status of all plugin and app migrations.
-
-
-*/		
-		
+				'help' => __('Generates a migration file.')));
 	}
 
 /**
@@ -442,48 +399,6 @@ Commands:
 				continue;
 			}
 		}
-	}
-
-/**
- * Displays help contents
- *
- * @return void
- */
-	public function help() {
-		$help = <<<TEXT
-The Migration database management for CakePHP
----------------------------------------------------------------
-Usage: cake migration <command> <param1> <param2>...
----------------------------------------------------------------
-Params:
-	-connection <config>
-		Set db config <config>. Uses 'default' if none is specified.
-
-	-plugin
-		Plugin name to be used
-
-	-f
-		Force 'generate' to compare all tables.
-
-Commands:
-	migration help
-		Shows this help message.
-
-	migration run <up|down|all|reset|version>
-		Run a migration to given direction or version.
-		Provide a version number to get directly to the version.
-		You can also use all to apply all migrations or reset to unapply all.
-
-	migration <generate|add>
-		Generates a migration file.
-		To force generation of all tables when making a comparison/dump, use the -f param.
-
-	migration status <outdated>
-		Displays a status of all plugin and app migrations.
-TEXT;
-
-		$this->out($help);
-		$this->_stop();
 	}
 
 /**

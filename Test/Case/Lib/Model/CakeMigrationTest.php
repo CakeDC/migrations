@@ -117,8 +117,6 @@ class CakeMigrationTest extends CakeTestCase {
 		)
 	);
 
-
-
 /**
  * testCreateTable method
  *
