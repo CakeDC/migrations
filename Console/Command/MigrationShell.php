@@ -162,71 +162,37 @@ class MigrationShell extends Shell {
 		}
 		$latestVersion = $this->Version->getVersion($this->type);
 
-		$options = array(
-			'type' => $this->type,
-			'callback' => &$this
-		);
 		$once = false; //In case of exception run shell again (all, reset, migration number)
 		if (isset($this->args[0]) && in_array($this->args[0], array('up', 'down'))) {
-			$options['direction'] = $this->args[0];
-			$once = true; //Run shell only once (in case of exception)
-			$direction = $options['direction'];
-			if ($options['direction'] == 'up') {
-				$latestVersion++;
-			}
-			if (!isset($mapping[$latestVersion])) {
-				$this->out(__d('Migrations', 'Not a valid migration version.'));
-				return $this->_stop();
-			}
+			$once = true;
+			$options = $this->_singleStepOptions($mapping, $latestVersion);
 		} else if (isset($this->args[0]) && $this->args[0] == 'all') {
 			end($mapping);
 			$options['version'] = key($mapping);
-			$direction = 'up';
+			$options['direction'] = 'up';
 		} else if (isset($this->args[0]) && $this->args[0] == 'reset') {
 			$options['version'] = 0;
-			$direction = 'down';
+			$options['direction'] = 'down';
 		} else {
-			if (isset($this->args[0]) && is_numeric($this->args[0])) {
-				$options['version'] = (int) $this->args[0];
-
-				$valid = isset($mapping[$options['version']]) || ($options['version'] === 0 && $latestVersion > 0);
-				if (!$valid) {
-					$this->out(__d('Migrations', 'Not a valid migration version.'));
-					return $this->_stop();
-				}
-			} else {
-				$this->_showInfo($mapping, $this->type);
-				$this->hr();
-
-				while (true) {
-					$response = $this->in(__d('Migrations', 'Please, choose what version you want to migrate to. [q]uit or [c]lean.'));
-					if (strtolower($response) === 'q') {
-						return $this->_stop();
-					} else if (strtolower($response) === 'c') {
-						$this->_clear();
-						continue;
-					}
-
-					$valid = is_numeric($response) &&
-						(isset($mapping[(int) $response]) || ((int) $response === 0 && $latestVersion > 0));
-					if ($valid) {
-						$options['version'] = (int) $response;
-						if ((int) $response <= $latestVersion) {
-							$direction = 'down';
-						} else {
-							$direction = 'up';
-						}
-						break;
-					} else {
-						$this->out(__d('Migrations', 'Not a valid migration version.'));
-					}
-				}
-				$this->hr();
-			}
+			$options = $this->_promptVersionOptions($mapping, $latestVersion);
 		}
 
 		$this->out(__d('Migrations', 'Running migrations:'));
-		
+		if ($options === false) {
+			return false;
+		}
+		$options += array(
+			'type' => $this->type,
+			'callback' => &$this
+		);
+		$this->_execute($options, $once);
+
+		$this->out(__d('Migrations', 'All migrations have completed.'));
+		$this->out('');
+		return true;
+	}
+
+	protected function _execute($options, $once) {
 		try {
 			$this->Version->run($options);
 		} catch (MigrationException $e) {
@@ -239,7 +205,7 @@ class MigrationShell extends Shell {
 			$response = $this->in(__d('Migrations', 'Do you want to mark the migration as successful?. [y]es or [a]bort.'), array('y', 'a'));
 				
 			if (strtolower($response) === 'y') {
-				$this->Version->setVersion($e->Migration->info['version'], $this->type, ($direction == 'up'));
+				$this->Version->setVersion($e->Migration->info['version'], $this->type, $options['direction'] === 'up');
 				if (!$once) {
 					return $this->run();
 				} 
@@ -248,13 +214,66 @@ class MigrationShell extends Shell {
 			}
 			$this->hr();
 		}
+	}
 
-		$this->out(__d('Migrations', 'All migrations have completed.'));
-		$this->out('');
-		return true;
+	protected function _singleStepOptions($mapping, $latestVersion) {
+		$versions = array_keys($mapping);
+		$flipped = array_flip($versions);
+		$versionNumber = isset($flipped[$latestVersion]) ? $flipped[$latestVersion] : -1;
+		$options['direction'] = $this->args[0];
+
+		if ($options['direction'] == 'up') {
+			$latestVersion = isset($versions[$versionNumber + 1]) ? $versions[$versionNumber + 1] : -1;
+		}
+		if (!isset($mapping[$latestVersion])) {
+			$this->out(__d('Migrations', 'Not a valid migration version.'));
+			return $this->_stop();
+		}
+		$options['version'] = $mapping[$latestVersion]['version'];
+		return $options;
 	}
 
 
+	protected function _promptVersionOptions($mapping, $latestVersion) {
+		if (isset($this->args[0]) && is_numeric($this->args[0])) {
+			$options['version'] = (int) $this->args[0];
+
+			$valid = isset($mapping[$options['version']]) || ($options['version'] === 0 && $latestVersion > 0);
+			if (!$valid) {
+				$this->out(__d('Migrations', 'Not a valid migration version.'));
+				return $this->_stop();
+			}
+		} else {
+			$this->_showInfo($mapping, $this->type);
+			$this->hr();
+
+			while (true) {
+				$response = $this->in(__d('Migrations', 'Please, choose what version you want to migrate to. [q]uit or [c]lean.'));
+				if (strtolower($response) === 'q') {
+					return $this->_stop();
+				} else if (strtolower($response) === 'c') {
+					$this->_clear();
+					continue;
+				}
+
+				$valid = is_numeric($response) && isset($mapping[(int) $response]);
+				if ($valid) {
+					$options['version'] = (int) $response;
+					$direction = 'up';
+					if (empty($mapping[(int) $response]['migrated'])) {
+						$direction = 'up';
+					} else if ((int) $response <= $latestVersion) {
+						$direction = 'down';
+					}
+					break;
+				} else {
+					$this->out(__d('Migrations', 'Not a valid migration version.'));
+				}
+			}
+			$this->hr();
+		}
+		return compact('direction') + $options;
+	}
 /**
  * Generate a new migration file
  *

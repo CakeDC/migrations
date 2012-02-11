@@ -206,19 +206,24 @@ class MigrationVersion {
 	public function run($options) {
 		$targetVersion = $latestVersion = $this->getVersion($options['type']);
 		$mapping = $this->getMapping($options['type'], false);
-
+		$direction = 'up';
+		if (!empty($options['direction'])) {
+			$direction = $options['direction'];
+		}
 		// Check direction and targetVersion
 		if (isset($options['version'])) {
 			$targetVersion = $options['version'];
-			$direction = ($targetVersion <= $latestVersion) ? 'down' : 'up';
-			if ($direction == 'down') {
-				$targetVersion++;
+			$direction = ($targetVersion < $latestVersion) ? 'down' : $direction;
+			if (isset($mapping[$targetVersion]) && empty($mapping[$targetVersion]['migrated'])) {
+				$direction = 'up';
 			}
-		} else if (!empty($options['direction'])) {
-			$direction = $options['direction'];
-			if ($direction == 'up') {
-				$targetVersion++;
-			}
+		}
+
+		if ($direction === 'up' && !isset($options['version'])) {
+			$keys = array_keys($mapping);
+			$flipped = array_flip($keys);
+			$next = $flipped[$targetVersion + 1];
+			$targetVersion = $keys[$next];
 		}
 
 		if ($direction == 'down') {

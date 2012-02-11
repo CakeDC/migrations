@@ -192,7 +192,8 @@ class MigrationShellTest extends CakeTestCase {
 		$this->Shell->Version->expects($this->at(2))->method('run')->with($this->equalTo(array(
 			'type' => 'TestMigrationPlugin',
 			'callback' => $this->Shell,
-			'direction' => 'up'
+			'direction' => 'up',
+			'version' => 1
 		)));
 		$this->Shell->args = array('up');
 		$this->assertTrue($this->Shell->run());
@@ -212,7 +213,8 @@ class MigrationShellTest extends CakeTestCase {
 		$this->Shell->Version->expects($this->at(2))->method('run')->with($this->equalTo(array(
 			'type' => 'TestMigrationPlugin',
 			'callback' => $this->Shell,
-			'direction' => 'down'
+			'direction' => 'down',
+			'version' => 1
 		)));
 		$this->Shell->args = array('down');
 		$this->assertTrue($this->Shell->run());
@@ -222,7 +224,8 @@ class MigrationShellTest extends CakeTestCase {
 		$this->Shell->Version->expects($this->at(2))->method('run')->with($this->equalTo(array(
 			'type' => 'TestMigrationPlugin',
 			'callback' => $this->Shell,
-			'version' => 10
+			'version' => 10,
+			'direction' => 'up'
 		)));
 		$this->Shell->args = array('all');
 		$this->assertTrue($this->Shell->run());
@@ -232,7 +235,8 @@ class MigrationShellTest extends CakeTestCase {
 		$this->Shell->Version->expects($this->at(2))->method('run')->with($this->equalTo(array(
 			'type' => 'TestMigrationPlugin',
 			'callback' => $this->Shell,
-			'version' => 0
+			'version' => 0,
+			'direction' => 'down'
 		)));
 		$this->Shell->args = array('reset');
 		$this->assertTrue($this->Shell->run());
@@ -242,22 +246,12 @@ class MigrationShellTest extends CakeTestCase {
 		$this->Shell->Version->expects($this->at(2))->method('run')->with($this->equalTo(array(
 			'type' => 'TestMigrationPlugin',
 			'callback' => $this->Shell,
-			'version' => 1
+			'version' => 1,
+			'direction' => 'up'
 		)));
 		$this->Shell->expects($this->at(2))->method('in')->will($this->returnValue(0));
 		$this->Shell->expects($this->at(4))->method('in')->will($this->returnValue(11));
 		$this->Shell->expects($this->at(6))->method('in')->will($this->returnValue(1));
-		$this->Shell->args = array();
-		$this->assertTrue($this->Shell->run());
-
-		// cake migration run - answers 0
-		$this->Shell->Version->expects($this->at(1))->method('getVersion')->will($this->returnValue(1));
-		$this->Shell->Version->expects($this->at(2))->method('run')->with($this->equalTo(array(
-			'type' => 'TestMigrationPlugin',
-			'callback' => $this->Shell,
-			'version' => 0
-		)));
-		$this->Shell->expects($this->at(2))->method('in')->will($this->returnValue(0));
 		$this->Shell->args = array();
 		$this->assertTrue($this->Shell->run());
 
@@ -266,23 +260,19 @@ class MigrationShellTest extends CakeTestCase {
 		$this->Shell->Version->expects($this->at(2))->method('run')->with($this->equalTo(array(
 			'type' => 'TestMigrationPlugin',
 			'callback' => $this->Shell,
-			'version' => 10
+			'version' => 10,
+			'direction' => 'up'
 		)));
 		$this->Shell->expects($this->at(2))->method('in')->will($this->returnValue(10));
 		$this->Shell->args = array();
 		$this->assertTrue($this->Shell->run());
-
-		// cake migration run 0 - on version 0 == stop
-		$this->Shell->Version->expects($this->at(1))->method('getVersion')->will($this->returnValue(0));
-		$this->Shell->args = array('0');
-		$this->assertFalse($this->Shell->run());
 
 		// cake migration run 1
 		$this->Shell->Version->expects($this->at(1))->method('getVersion')->will($this->returnValue(0));
 		$this->Shell->Version->expects($this->at(2))->method('run')->with($this->equalTo(array(
 			'type' => 'TestMigrationPlugin',
 			'callback' => $this->Shell,
-			'version' => 1
+			'version' => 1,
 		)));
 		$this->Shell->args = array('1');
 		$this->assertTrue($this->Shell->run());
