@@ -19,7 +19,7 @@ App::import('Lib', 'Migrations.MigrationVersion');
  *
  * @@@
  * public $components = array('DebugKit.Toolbar' => array(
- *    'panels' => array('migrations')
+ *    'panels' => array('Migrations.migrations')
  * ));
  * @@@
  *
