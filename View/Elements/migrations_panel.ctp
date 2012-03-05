@@ -10,7 +10,7 @@
  */
 
 ?>
-<h2><?php __d('migrations', 'Migration Status') ?></h2>
+<h2><?php echo __d('migrations', 'Migration Status') ?></h2>
 <div class="code-table">
 
 	<a id="hide-migrations" href="#migrations">Toggle Applied migrations</a>
