@@ -11,7 +11,7 @@ As an application is developed, changes to the database may be required, and man
 
 ## Usage ##
 
-- Unzip or clone this plugin into your app/Plugin/Migration folder or the shared plugins folder for your CakePHP installation.
+- Unzip or clone this plugin into your app/Plugin/Migrations folder or the shared plugins folder for your CakePHP installation.
 - Add the plugin to your app/Config/bootstrap.php using `CakePlugin::load('Migrations')`
 - Run `Console/cake Migrations.migration` to initialized the `schema_migrations` table
 
