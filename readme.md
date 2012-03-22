@@ -26,7 +26,6 @@ If you want import all tables regardless if it has a model or not you can use -f
 
 	cake Migrations.migration generate -f 
 
-
 ### Running migrations ###
 
 After generating or being supplied a set of migrations, you can process them to change the state of your database.
@@ -55,6 +54,12 @@ To get all pending changes into your database run:
 #### Running migrations for plugins ###
 
 	cake migration all --plugin Users
+
+### Migration shell return codes
+
+0 = Success
+1 = No migrations available
+2 = Not a valid migration version
 
 ###  Auto migration files ### 
 

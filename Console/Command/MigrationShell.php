@@ -158,7 +158,7 @@ class MigrationShell extends Shell {
 
 		if ($mapping === false) {
 			$this->out(__d('Migrations', 'No migrations available.'));
-			return $this->_stop();
+			return $this->_stop(1);
 		}
 		$latestVersion = $this->Version->getVersion($this->type);
 
@@ -227,7 +227,7 @@ class MigrationShell extends Shell {
 		}
 		if (!isset($mapping[$latestVersion])) {
 			$this->out(__d('Migrations', 'Not a valid migration version.'));
-			return $this->_stop();
+			return $this->_stop(2);
 		}
 		$options['version'] = $mapping[$latestVersion]['version'];
 		return $options;
