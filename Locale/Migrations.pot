@@ -1,0 +1,240 @@
+# LANGUAGE translation of CakePHP Application
+# Copyright YEAR NAME <EMAIL@ADDRESS>
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"POT-Creation-Date: 2012-03-25 18:01+0100\n"
+"PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
+"Last-Translator: NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+#: Config/Migration/002_convert_version_to_class_names.php:60
+msgid "Sorry, I can't downgrade. Why would you want that anyways?"
+msgstr ""
+
+#: Console/Command/MigrationShell.php:71
+msgid "Cake Migration Shell"
+msgstr ""
+
+#: Console/Command/MigrationShell.php:87
+msgid "Creating table :table."
+msgstr ""
+
+#: Console/Command/MigrationShell.php:88
+msgid "Dropping table :table."
+msgstr ""
+
+#: Console/Command/MigrationShell.php:89
+msgid "Renaming table :old_name to :new_name."
+msgstr ""
+
+#: Console/Command/MigrationShell.php:90
+msgid "Adding field :field to :table."
+msgstr ""
+
+#: Console/Command/MigrationShell.php:91
+msgid "Dropping field :field from :table."
+msgstr ""
+
+#: Console/Command/MigrationShell.php:92
+msgid "Changing field :field from :table."
+msgstr ""
+
+#: Console/Command/MigrationShell.php:93
+msgid "Renaming field :old_name to :new_name on :table."
+msgstr ""
+
+#: Console/Command/MigrationShell.php:94
+msgid "Adding index :index to :table."
+msgstr ""
+
+#: Console/Command/MigrationShell.php:95
+msgid "Dropping index :index from :table."
+msgstr ""
+
+#: Console/Command/MigrationShell.php:111
+msgid "Plugin name to be used"
+msgstr ""
+
+#: Console/Command/MigrationShell.php:115
+msgid "Force 'generate' to compare all tables."
+msgstr ""
+
+#: Console/Command/MigrationShell.php:119
+msgid "Set db config <config>. Uses 'default' if none is specified."
+msgstr ""
+
+#: Console/Command/MigrationShell.php:124
+msgid "Disables automatic creation of migrations table and running any internal plugin migrations"
+msgstr ""
+
+#: Console/Command/MigrationShell.php:126
+msgid "Displays a status of all plugin and app migrations."
+msgstr ""
+
+#: Console/Command/MigrationShell.php:128
+msgid "Bake a complete MVC. optional <name> of a Model"
+msgstr ""
+
+#: Console/Command/MigrationShell.php:130
+msgid "Run a migration to given direction or version."
+msgstr ""
+
+#: Console/Command/MigrationShell.php:132;134
+msgid "Generates a migration file."
+msgstr ""
+
+#: Console/Command/MigrationShell.php:160
+msgid "No migrations available."
+msgstr ""
+
+#: Console/Command/MigrationShell.php:180
+msgid "Running migrations:"
+msgstr ""
+
+#: Console/Command/MigrationShell.php:190
+msgid "All migrations have completed."
+msgstr ""
+
+#: Console/Command/MigrationShell.php:199
+msgid "An error occurred when processing the migration:"
+msgstr ""
+
+#: Console/Command/MigrationShell.php:200
+msgid "Migration: %s"
+msgstr ""
+
+#: Console/Command/MigrationShell.php:201
+msgid "Error: %s"
+msgstr ""
+
+#: Console/Command/MigrationShell.php:205
+msgid "Do you want to mark the migration as successful?. [y]es or [a]bort."
+msgstr ""
+
+#: Console/Command/MigrationShell.php:229;243;270
+msgid "Not a valid migration version."
+msgstr ""
+
+#: Console/Command/MigrationShell.php:251
+msgid "Please, choose what version you want to migrate to. [q]uit or [c]lean."
+msgstr ""
+
+#: Console/Command/MigrationShell.php:289
+msgid "Do you want compare the schema.php file to the database?"
+msgstr ""
+
+#: Console/Command/MigrationShell.php:292
+msgid "Comparing schema.php to the database..."
+msgstr ""
+
+#: Console/Command/MigrationShell.php:304
+msgid "Do you want generate a dump from current database?"
+msgstr ""
+
+#: Console/Command/MigrationShell.php:307
+msgid "Generating dump from current database..."
+msgstr ""
+
+#: Console/Command/MigrationShell.php:321
+msgid "Do you want to preview the file before generation?"
+msgstr ""
+
+#: Console/Command/MigrationShell.php:327
+msgid "Please enter the descriptive name of the migration to generate:"
+msgstr ""
+
+#: Console/Command/MigrationShell.php:330
+msgid "Migration name (%s) is invalid. It must only contain alphanumeric characters and start with a letter."
+msgstr ""
+
+#: Console/Command/MigrationShell.php:337
+msgid "Generating Migration..."
+msgstr ""
+
+#: Console/Command/MigrationShell.php:346
+msgid "Done."
+msgstr ""
+
+#: Console/Command/MigrationShell.php:349
+msgid "Do you want update the schema.php file?"
+msgstr ""
+
+#: Console/Command/MigrationShell.php:391
+msgid "Current version:"
+msgstr ""
+
+#: Console/Command/MigrationShell.php:396
+msgid "None applied."
+msgstr ""
+
+#: Console/Command/MigrationShell.php:399
+msgid "Latest version:"
+msgstr ""
+
+#: Console/Command/MigrationShell.php:423
+msgid "Current migration version:"
+msgstr ""
+
+#: Console/Command/MigrationShell.php:428
+msgid "Available migrations:"
+msgstr ""
+
+#: Console/Command/MigrationShell.php:434
+msgid "applied"
+msgstr ""
+
+#: Console/Command/MigrationShell.php:436
+msgid "not applied"
+msgstr ""
+
+#: Lib/CakeMigration.php:160
+msgid "Migration direction (%s) is not one of valid directions."
+msgstr ""
+
+#: Lib/CakeMigration.php:219
+msgid "Migration action type (%s) is not one of valid actions type."
+msgstr ""
+
+#: Lib/CakeMigration.php:238;293
+msgid "Table \"%s\" already exists in database."
+msgstr ""
+
+#: Lib/CakeMigration.php:245;270;300;375;391
+msgid "SQL Error: %s"
+msgstr ""
+
+#: Lib/CakeMigration.php:263;289
+msgid "Table \"%s\" does not exists in database."
+msgstr ""
+
+#: Lib/CakeMigration.php:331
+msgid "Field \"%s\" does not exists in \"%s\"."
+msgstr ""
+
+#: Lib/CakeMigration.php:339
+msgid "Field \"%s\" already exists in \"%s\"."
+msgstr ""
+
+#: Lib/CakeMigration.php:425
+msgid "Interrupted when running \"%s\" callback."
+msgstr ""
+
+#: Lib/MigrationVersion.php:184
+msgid "Class `%1$s` not found on file `%2$s` for %3$s."
+msgstr ""
+
+#: Lib/MigrationVersion.php:293
+msgid "File `%1$s` not found in the %2$s."
+msgstr ""
+
+#: View/Elements/migrations_panel.ctp:13
+msgid "Migration Status"
+msgstr ""
+

@@ -108,30 +108,30 @@ class MigrationShell extends Shell {
 			'')
 			->addOption('plugin', array(
 					'short' => 'p', 
-					'help' => __('Plugin name to be used')))
+					'help' => __d('Migrations', 'Plugin name to be used')))
 			->addOption('force', array(
 					'short' => 'f',
 					'boolean' => true,
-					'help' => __('Force \'generate\' to compare all tables.')))
+					'help' => __d('Migrations', 'Force \'generate\' to compare all tables.')))
 			->addOption('connection', array(
 					'short' => 'c', 
 					'default' => 'default',
-					'help' => __('Set db config <config>. Uses \'default\' if none is specified.')))
+					'help' => __d('Migrations', 'Set db config <config>. Uses \'default\' if none is specified.')))
 			->addOption('no-auto-init', array(
 					'short' => 'n',
 					'boolean' => true,
 					'default' => false,
-					'help' => __('Disables automatic creation of migrations table and running any internal plugin migrations')))
+					'help' => __d('Migrations', 'Disables automatic creation of migrations table and running any internal plugin migrations')))
 			->addSubcommand('status', array(
-				'help' => __('Displays a status of all plugin and app migrations.')))
+				'help' => __d('Migrations', 'Displays a status of all plugin and app migrations.')))
 			->addSubcommand('all', array(
-				'help' => __('Bake a complete MVC. optional <name> of a Model')))
+				'help' => __d('Migrations', 'Bake a complete MVC. optional <name> of a Model')))
 			->addSubcommand('run', array(
-				'help' => __('Run a migration to given direction or version.')))
+				'help' => __d('Migrations', 'Run a migration to given direction or version.')))
 			->addSubcommand('generate', array(
-				'help' => __('Generates a migration file.')))
+				'help' => __d('Migrations', 'Generates a migration file.')))
 			->addSubcommand('add', array(
-				'help' => __('Generates a migration file.')));
+				'help' => __d('Migrations', 'Generates a migration file.')));
 	}
 
 /**
