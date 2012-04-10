@@ -59,11 +59,10 @@ class MigrationVersion {
 			$this->connection = $options['connection'];
 		}
 
-		$options = array(
+		$this->Version = ClassRegistry::init(array(
 			'class' => 'Migrations.SchemaMigration',
 			'ds' => $this->connection
-		);
-		$this->Version = ClassRegistry::init($options);
+		));
 		$this->Version->setDataSource($this->connection);
 		if (!isset($options['autoinit']) || $options['autoinit'] !== false) {
 			$this->__initMigrations();
