@@ -72,8 +72,8 @@ class MigrationVersionTest extends CakeTestCase {
 			1 => array(
 				'version' => 1,
 				'name' => '001_schema_dump',
-				'class' => 'SchemaDump',
-				'type' => 'test_migration_plugin',
+				'class' => 'M4af6d40056b04408808500cb58157726',
+				'type' => 'TestMigrationPlugin',
 				'migrated' => null
 			)
 		);
@@ -85,14 +85,14 @@ class MigrationVersionTest extends CakeTestCase {
 				'version' => 1,
 				'name' => '001_init_migrations',
 				'class' => 'InitMigrations',
-				'type' => 'migrations',
+				'type' => 'Migrations',
 				'migrated' => '2009-11-10 00:55:34'
 			),
 			2 => array(
 				'version' => 2,
 				'name' => '002_convert_version_to_class_names',
 				'class' => 'ConvertVersionToClassNames',
-				'type' => 'migrations',
+				'type' => 'Migrations',
 				'migrated' => '2011-11-18 13:53:32'
 			)
 		);

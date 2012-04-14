@@ -96,7 +96,11 @@ class MigrationVersion {
  * @return boolean
  */
 	public function setVersion($version, $type, $migrated = true) {
+		if ($type !== 'app') {
+			$type = Inflector::camelize($type);
+		}
 		$mapping = $this->getMapping($type);
+
 		// For BC, 002 was not applied yet.
 		$bc = ($this->Version->schema('class') === null);
 		$field = $bc ? 'version' : 'class';
@@ -182,7 +186,7 @@ class MigrationVersion {
 			} else {
 				if (isset($migrated[$class])) {
 					$mapping[$version]['migrated'] = $migrated[$class];
-				} elseif (isset($bcMapping[$class])) {
+				} elseif (isset($bcMapping[$class]) && !empty($migrated[$bcMapping[$class]])) {
 					$mapping[$version]['migrated'] = $migrated[$bcMapping[$class]];
 				}
 			}
