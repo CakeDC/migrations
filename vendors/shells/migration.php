@@ -489,7 +489,12 @@ TEXT;
 			$plugin = ($this->type === 'app') ? null : $this->type;
 			return new CakeSchema(array('connection' => $this->connection, 'plugin' => $plugin));
 		}
-		$file = $this->__getPath($type) . 'config' . DS . 'schema' . DS . 'schema.php';
+		$configs = $this->__getPath($type) .'config'. DS;
+		if (is_dir($configs .'schema')) {
+			$file = $configs .'schema'. DS .'schema.php';
+		} else {
+			$file = $configs .'sql'. DS .'schema.php';
+		}
 		if (!file_exists($file)) {
 			return false;
 		}
@@ -498,6 +503,9 @@ TEXT;
 		$name = Inflector::camelize(Inflector::slug($type)) . 'Schema';
 		if ($type == 'app' && !class_exists($name)) {
 			$name = Inflector::camelize(Inflector::slug($this->params['app'])) . 'Schema';
+		}
+		if (!class_exists($name)) {
+			$name = 'Schema';
 		}
 
 		$plugin = ($type === 'app') ? null : $type;
