@@ -19,7 +19,7 @@ class ConvertVersionToClassNames extends CakeMigration {
 		'up' => array(
 			'alter_field' => array(
 				'schema_migrations' => array(
-					'version' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 33, 'name' => 'class')
+					'version' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 330, 'name' => 'class')
 				)
 			)
 		),
