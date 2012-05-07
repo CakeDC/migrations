@@ -20,7 +20,7 @@ class InitMigrations extends CakeMigration {
 			'create_table' => array(
 				'schema_migrations' => array(
 					'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
-					'class' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 33),
+					'class' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 330),
 					'type' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 50),
 					'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 					'indexes' => array(
