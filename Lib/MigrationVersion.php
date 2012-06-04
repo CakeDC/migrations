@@ -184,6 +184,11 @@ class MigrationVersion {
 					$mapping[$version]['migrated'] = $migrated[$version];
 				}
 			} else {
+				// the class in schema_migrations is set to VARCHAR 33, so we need to substr
+				// in order to retrieve the proper class value from database
+				// regardless the actual classname
+				$class = substr($class, 0, 33);
+				
 				if (isset($migrated[$class])) {
 					$mapping[$version]['migrated'] = $migrated[$class];
 				} elseif (isset($bcMapping[$class]) && !empty($migrated[$bcMapping[$class]])) {
