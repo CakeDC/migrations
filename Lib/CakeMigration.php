@@ -350,7 +350,7 @@ class CakeMigration extends Object {
 						break;
 					case 'change':
 						$def = array_merge($tableFields[$field], $col);
-						if (!empty($def['length']) && !empty($col['type']) && substr($col['type'], 0, 4) == 'date') {
+						if (!empty($def['length']) && !empty($col['type']) && (substr($col['type'], 0, 4) == 'date' || substr($col['type'], 0, 4) == 'time')) {
 							$def['length'] = null;
 						}
 						$sql = $this->db->alterSchema(array(
