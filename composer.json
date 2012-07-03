@@ -1,0 +1,17 @@
+{
+    "name": "cakedc/migrations",
+    "type": "cakephp-plugin",
+    "description": "Migrations Plugin for CakePHP",
+    "keywords": ["cakephp","migrations"],
+    "homepage": "http://cakedc.com",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Cake Development Corporation",
+            "homepage": "http://cakedc.com"
+        }
+    ],
+    "require": {
+        "composer/installers": "*"
+    }
+}
