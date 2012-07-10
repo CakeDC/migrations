@@ -57,7 +57,7 @@ class ConvertVersionToClassNames extends CakeMigration {
  */
 	public function before($direction) {
 		if ($direction == 'down') {
-			throw new InternalErrorException(__d('migrations', 'Sorry, I can\'t downgrade. Why would you want that anyways?'));
+			throw new InternalErrorException(__d('Migrations', 'Sorry, I can\'t downgrade. Why would you want that anyways?'));
 		}
 
 		$this->records = $this->Version->Version->find('all');

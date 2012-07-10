@@ -157,7 +157,7 @@ class CakeMigration extends Object {
 	public function run($direction) {
 		if (!in_array($direction, array('up', 'down'))) {
 			throw new MigrationException($this, sprintf(
-				__d('migrations', 'Migration direction (%s) is not one of valid directions.'), $direction
+				__d('Migrations', 'Migration direction (%s) is not one of valid directions.'), $direction
 			), E_USER_NOTICE);
 		}
 		$this->direction = $direction;
@@ -216,7 +216,7 @@ class CakeMigration extends Object {
 					break;
 				default:
 					throw new MigrationException($this, sprintf(
-						__d('migrations', 'Migration action type (%s) is not one of valid actions type.'), $type
+						__d('Migrations', 'Migration action type (%s) is not one of valid actions type.'), $type
 					), E_USER_NOTICE);
 			}
 
@@ -235,14 +235,14 @@ class CakeMigration extends Object {
 		foreach ($tables as $table => $fields) {
 			if (in_array($this->db->fullTableName($table, false, false), $this->db->listSources())) {
 				throw new MigrationException($this,
-					__d('migrations', 'Table "%s" already exists in database.', $this->db->fullTableName($table, false, false))
+					__d('Migrations', 'Table "%s" already exists in database.', $this->db->fullTableName($table, false, false))
 				);
 			}
 			$this->Schema->tables = array($table => $fields);
 
 			$this->_invokeCallbacks('beforeAction', 'create_table', array('table' => $table));
 			if (@$this->db->execute($this->db->createSchema($this->Schema)) === false) {
-				throw new MigrationException($this, __d('migrations', 'SQL Error: %s', $this->db->error));
+				throw new MigrationException($this, __d('Migrations', 'SQL Error: %s', $this->db->error));
 			}
 			$this->_invokeCallbacks('afterAction', 'create_table', array('table' => $table));
 		}
@@ -260,14 +260,14 @@ class CakeMigration extends Object {
 		foreach ($tables as $table) {
 			if (!in_array($this->db->fullTableName($table, false, false), $this->db->listSources())) {
 				throw new MigrationException($this,
-					__d('migrations', 'Table "%s" does not exists in database.', $this->db->fullTableName($table, false, false))
+					__d('Migrations', 'Table "%s" does not exists in database.', $this->db->fullTableName($table, false, false))
 				);
 			}
 			$this->Schema->tables = array($table => array());
 
 			$this->_invokeCallbacks('beforeAction', 'drop_table', array('table' => $table));
 			if (@$this->db->execute($this->db->dropSchema($this->Schema)) === false) {
-				throw new MigrationException($this, sprintf(__d('migrations', 'SQL Error: %s'), $this->db->error));
+				throw new MigrationException($this, sprintf(__d('Migrations', 'SQL Error: %s'), $this->db->error));
 			}
 			$this->_invokeCallbacks('afterAction', 'drop_table', array('table' => $table));
 		}
@@ -286,18 +286,18 @@ class CakeMigration extends Object {
 			$sources = $this->db->listSources();
 			if (!in_array($this->db->fullTableName($oldName, false, false), $sources)) {
 				throw new MigrationException($this,
-					__d('migrations', 'Table "%s" does not exists in database.', $this->db->fullTableName($oldName, false, false))
+					__d('Migrations', 'Table "%s" does not exists in database.', $this->db->fullTableName($oldName, false, false))
 				);
 			} else if (in_array($this->db->fullTableName($newName, false), $sources)) {
 				throw new MigrationException($this,
-					__d('migrations', 'Table "%s" already exists in database.', $this->db->fullTableName($newName, false, false))
+					__d('Migrations', 'Table "%s" already exists in database.', $this->db->fullTableName($newName, false, false))
 				);
 			}
 			$sql = 'RENAME TABLE ' . $this->db->fullTableName($oldName) . ' TO ' . $this->db->fullTableName($newName) . ';';
 
 			$this->_invokeCallbacks('beforeAction', 'rename_table', array('old_name' => $oldName, 'new_name' => $newName));
 			if (@$this->db->execute($sql) === false) {
-				throw new MigrationException($this, __d('migrations', 'SQL Error: %s', $this->db->error));
+				throw new MigrationException($this, __d('Migrations', 'SQL Error: %s', $this->db->error));
 			}
 			$this->_invokeCallbacks('afterAction', 'rename_table', array('old_name' => $oldName, 'new_name' => $newName));
 		}
@@ -328,7 +328,7 @@ class CakeMigration extends Object {
 				}
 				if ($type !== 'add' && !isset($tableFields[$field])) {
 					throw new MigrationException($this, sprintf(
-						__d('migrations', 'Field "%s" does not exists in "%s".'), $field, $table
+						__d('Migrations', 'Field "%s" does not exists in "%s".'), $field, $table
 					));
 				}
 
@@ -336,7 +336,7 @@ class CakeMigration extends Object {
 					case 'add':
 						if (isset($tableFields[$field])) {
 							throw new MigrationException($this, sprintf(
-								__d('migrations', 'Field "%s" already exists in "%s".'), $field, $table
+								__d('Migrations', 'Field "%s" already exists in "%s".'), $field, $table
 							));
 						}
 						$sql = $this->db->alterSchema(array(
@@ -372,7 +372,7 @@ class CakeMigration extends Object {
 
 				$this->_invokeCallbacks('beforeAction', $type . '_field', $data);
 				if (@$this->db->execute($sql) === false) {
-					throw new MigrationException($this, sprintf(__d('migrations', 'SQL Error: %s'), $this->db->error));
+					throw new MigrationException($this, sprintf(__d('Migrations', 'SQL Error: %s'), $this->db->error));
 				}
 				$this->_invokeCallbacks('afterAction', $type . '_field', $data);
 			}
@@ -388,7 +388,7 @@ class CakeMigration extends Object {
 
 				$this->_invokeCallbacks('beforeAction', $type . '_index', array('table' => $table, 'index' => $key));
 				if (@$this->db->execute($sql) === false) {
-					throw new MigrationException($this, sprintf(__d('migrations', 'SQL Error: %s'), $this->db->error));
+					throw new MigrationException($this, sprintf(__d('Migrations', 'SQL Error: %s'), $this->db->error));
 				}
 				$this->_invokeCallbacks('afterAction', $type . '_index', array('table' => $table, 'index' => $key));
 			}
@@ -422,7 +422,7 @@ class CakeMigration extends Object {
 			}
 
 			throw new MigrationException($this, sprintf(
-				__d('migrations', 'Interrupted when running "%s" callback.'), $callback
+				__d('Migrations', 'Interrupted when running "%s" callback.'), $callback
 			), E_USER_NOTICE);
 		}
 	}
