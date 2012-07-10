@@ -11,9 +11,9 @@ As an application is developed, changes to the database may be required, and man
 
 ## Usage ##
 
-- Unzip or clone this plugin into your app/Plugin/Migration folder or the shared plugins folder for your CakePHP installation.
+- Unzip or clone this plugin into your app/Plugin/Migrations folder or the shared plugins folder for your CakePHP installation.
 - Add the plugin to your app/Config/bootstrap.php using `CakePlugin::load('Migrations')`
-- Run `Console/cake Migrations.migration` to initialized the `schema_migrations` table
+- Run `Console/cake Migrations.migration -p Migrations` to initialized the `schema_migrations` table
 
 ### Generating your first migration ###
 
@@ -25,7 +25,6 @@ Answer the questions asked, and it will generate a new file containing a databas
 If you want import all tables regardless if it has a model or not you can use -f (force) parameter while running the command:
 
 	cake Migrations.migration generate -f 
-
 
 ### Running migrations ###
 
@@ -55,6 +54,12 @@ To get all pending changes into your database run:
 #### Running migrations for plugins ###
 
 	cake migration all --plugin Users
+
+### Migration shell return codes
+
+0 = Success
+1 = No migrations available
+2 = Not a valid migration version
 
 ###  Auto migration files ### 
 

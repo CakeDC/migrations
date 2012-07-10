@@ -104,17 +104,17 @@ class MigrationShell extends Shell {
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
 		return $parser->description(
-			'The Migration shell.' . 
+			'The Migration shell.' .
 			'')
 			->addOption('plugin', array(
-					'short' => 'p', 
+					'short' => 'p',
 					'help' => __('Plugin name to be used')))
 			->addOption('force', array(
 					'short' => 'f',
 					'boolean' => true,
 					'help' => __('Force \'generate\' to compare all tables.')))
 			->addOption('connection', array(
-					'short' => 'c', 
+					'short' => 'c',
 					'default' => 'default',
 					'help' => __('Set db config <config>. Uses \'default\' if none is specified.')))
 			->addOption('no-auto-init', array(
@@ -140,7 +140,7 @@ class MigrationShell extends Shell {
  * @return void
  */
 	public function main() {
-		$this->run();
+		$this->out($this->getOptionParser()->help());
 	}
 
 /**
@@ -158,7 +158,7 @@ class MigrationShell extends Shell {
 
 		if ($mapping === false) {
 			$this->out(__d('Migrations', 'No migrations available.'));
-			return $this->_stop();
+			return $this->_stop(1);
 		}
 		$latestVersion = $this->Version->getVersion($this->type);
 
@@ -201,14 +201,14 @@ class MigrationShell extends Shell {
 			$this->out('  ' . sprintf(__d('Migrations', 'Error: %s'), $e->getMessage()));
 
 			$this->hr();
-			
+
 			$response = $this->in(__d('Migrations', 'Do you want to mark the migration as successful?. [y]es or [a]bort.'), array('y', 'a'));
-				
+
 			if (strtolower($response) === 'y') {
 				$this->Version->setVersion($e->Migration->info['version'], $this->type, $options['direction'] === 'up');
 				if (!$once) {
 					return $this->run();
-				} 
+				}
 			} else if (strtolower($response) === 'a') {
 				return $this->_stop();
 			}
@@ -227,7 +227,7 @@ class MigrationShell extends Shell {
 		}
 		if (!isset($mapping[$latestVersion])) {
 			$this->out(__d('Migrations', 'Not a valid migration version.'));
-			return $this->_stop();
+			return $this->_stop(2);
 		}
 		$options['version'] = $mapping[$latestVersion]['version'];
 		return $options;
@@ -297,7 +297,7 @@ class MigrationShell extends Shell {
 				$newSchema = $this->_readSchema();
 				$comparison = $this->Schema->compare($oldSchema, $newSchema);
 				$migration = $this->_fromComparison($migration, $comparison, $oldSchema->tables, $newSchema['tables']);
-				
+
 				$fromSchema = true;
 			}
 		} else {
@@ -328,6 +328,9 @@ class MigrationShell extends Shell {
 			if (!preg_match('/^([A-Za-z0-9_]+|\s)+$/', $name) || is_numeric($name[0])) {
 				$this->out('');
 				$this->err(__d('Migrations', 'Migration name (%s) is invalid. It must only contain alphanumeric characters and start with a letter.', $name));
+			} elseif (strlen($name) > 255) {
+				$this->out('');
+				$this->err(__d('Migrations', 'Migration name (%s) is invalid. It cannot be longer than 255 characters.', $name));
 			} else {
 				$name = str_replace(' ', '_', trim($name));
 				break;
@@ -380,6 +383,7 @@ class MigrationShell extends Shell {
 				if ($mapping === false) {
 					continue;
 				}
+
 				$version = $this->Version->getVersion($type);
 				$latest = end($mapping);
 				if ($outdated && $latest['version'] == $version) {
@@ -652,7 +656,7 @@ class MigrationShell extends Shell {
 				if (is_array($value)) {
 					$_values[] = "'" . $key . "' => array('" . implode("', '",  $value) . "')";
 				} else if (!is_numeric($key)) {
-					$value = var_export($value, true);					
+					$value = var_export($value, true);
 					$_values[] = "'" . $key . "' => " . $value;
 				}
 			}

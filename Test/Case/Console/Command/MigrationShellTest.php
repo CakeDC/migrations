@@ -723,10 +723,7 @@ TEXT;
 		$this->Shell->expects($this->at(4))->method('in')->will($this->returnValue('y'));
 		$this->Shell->expects($this->at(5))->method('dispatchShell')->with('schema generate --connection test --force');
 
-		$mapping = array(
-			gmdate('U') => array('class' => 'M4af9d15154844819b7a0007058157726')
-		);
-		$this->Shell->Version->expects($this->any())->method('getMapping')->will($this->returnValue($mapping));
+		$this->Shell->Version->expects($this->any())->method('getMapping')->will($this->returnCallback(array($this, 'returnMapping')));
 		
 		$this->assertEmpty(glob(TMP . 'tests' . DS . '*drop_slug_field.php'));
 		$this->Shell->params['force'] = true;
@@ -757,6 +754,12 @@ TEXT;
 		$this->assertPattern(str_replace("\r\n", "\n", $pattern), $result);
 	}
 
+	public function returnMapping() {
+		return array(
+			gmdate('U') => array('class' => 'M4af9d15154844819b7a0007058157726')
+		);
+	}
+
 /**
  * testGenerateDump method
  *
@@ -770,7 +773,7 @@ TEXT;
 		$mapping = array(
 			gmdate('U') => array('class' => 'M4af9d15154844819b7a0007058157726')
 		);
-		$this->Shell->Version->expects($this->any())->method('getMapping')->will($this->returnValue($mapping));
+		$this->Shell->Version->expects($this->any())->method('getMapping')->will($this->returnCallback(array($this, 'returnMapping')));
 		
 		$this->assertEmpty(glob(TMP . 'tests' . DS . '*schema_dump.php'));
 		$this->Shell->type = 'TestMigrationPlugin2';
@@ -783,6 +786,7 @@ TEXT;
 		foreach ($files as $f) {
 			unlink($f);
 		}
+
 		$expected = file_get_contents(CakePlugin::path('Migrations') . '/Test/Fixture/test_migration.txt');
 		$this->assertEquals($expected, $result);
 	}

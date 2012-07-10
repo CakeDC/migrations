@@ -163,7 +163,7 @@ class CakeMigration extends Object {
 		$this->direction = $direction;
 
 		$null = null;
-		$this->db =& ConnectionManager::getDataSource($this->connection);
+		$this->db = ConnectionManager::getDataSource($this->connection);
 		$this->db->cacheSources = false;
 		$this->db->begin($null);
 		$this->Schema = new CakeSchema(array('connection' => $this->connection));
@@ -350,7 +350,7 @@ class CakeMigration extends Object {
 						break;
 					case 'change':
 						$def = array_merge($tableFields[$field], $col);
-						if (!empty($def['length']) && !empty($col['type']) && substr($col['type'], 0, 4) == 'date') {
+						if (!empty($def['length']) && !empty($col['type']) && (substr($col['type'], 0, 4) == 'date' || substr($col['type'], 0, 4) == 'time')) {
 							$def['length'] = null;
 						}
 						$sql = $this->db->alterSchema(array(
