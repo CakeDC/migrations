@@ -18,7 +18,6 @@ App::uses('Shell', 'Console');
 App::uses('CakeSchema', 'Model');
 App::uses('MigrationVersion', 'Migrations.Lib');
 App::uses('String', 'Utility');
-
 /**
  * Migration shell.
  *
