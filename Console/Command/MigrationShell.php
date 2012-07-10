@@ -140,7 +140,7 @@ class MigrationShell extends Shell {
  * @return void
  */
 	public function main() {
-		$this->run();
+		$this->out($this->getOptionParser()->help());
 	}
 
 /**
