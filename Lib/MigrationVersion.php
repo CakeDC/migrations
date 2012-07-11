@@ -63,6 +63,7 @@ class MigrationVersion {
 			'class' => 'Migrations.SchemaMigration',
 			'ds' => $this->connection
 		));
+		$this->Version->setDataSource($this->connection);
 		if (!isset($options['autoinit']) || $options['autoinit'] !== false) {
 			$this->__initMigrations();
 		}
@@ -76,11 +77,13 @@ class MigrationVersion {
  */
 	public function getVersion($type) {
 		$mapping = $this->getMapping($type);
-		krsort($mapping);
+		if($mapping !== false) {
+			krsort($mapping);
 
-		foreach ($mapping as $version => $info) {
-			if ($info['migrated'] !== null) {
-				return $version;
+			foreach ($mapping as $version => $info) {
+				if ($info['migrated'] !== null) {
+					return $version;
+				}
 			}
 		}
 		return 0;
