@@ -257,11 +257,19 @@ class CakeMigrationTest extends CakeTestCase {
 			)
 		));
 
-		$fields = $this->db->describe($model);
+		$fields = $this->db->describe($model); 
 		$this->assertFalse(isset($fields['views']));
 
 		$this->assertTrue($migration->run('up'));
 		$fields = $this->db->describe($model);
+		$indexes = $this->db->index($model);
+		$this->assertTrue(!empty($indexes));
+		$uniqueAuthorTitle = array('column' => array(0 => 'author_id', 1 => 'title'), 'unique' =>  1);
+		$viewCount = array('column' => 'views', 'unique' => 0);
+		$this->assertTrue(isset($indexes['UNIQUE_AUTHOR_TITLE']));
+		$this->assertTrue(isset($indexes['VIEW_COUNT']));
+		$this->assertIdentical($indexes['UNIQUE_AUTHOR_TITLE'], $uniqueAuthorTitle);
+		$this->assertIdentical($indexes['VIEW_COUNT'], $viewCount);
 		$this->assertTrue(isset($fields['views']));
 		$this->assertEqual($fields['views']['key'], 'index');
 
@@ -274,6 +282,9 @@ class CakeMigrationTest extends CakeTestCase {
 
 		$this->assertTrue($migration->run('down'));
 		$fields = $this->db->describe($model);
+		$indexes = $this->db->index($model);
+		$this->assertFalse(isset($indexes['UNIQUE_AUTHOR_TITLE']));
+		$this->assertFalse(isset($indexes['VIEW_COUNT']));
 		$this->assertFalse(isset($fields['views']));
 
 		try {
@@ -282,6 +293,7 @@ class CakeMigrationTest extends CakeTestCase {
 		} catch (MigrationException $e) {
 			//$this->pass('Exception caught');
 		}
+
 	}
 
 /**
