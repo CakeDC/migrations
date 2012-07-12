@@ -286,14 +286,6 @@ class CakeMigrationTest extends CakeTestCase {
 		$this->assertFalse(isset($indexes['UNIQUE_AUTHOR_TITLE']));
 		$this->assertFalse(isset($indexes['VIEW_COUNT']));
 		$this->assertFalse(isset($fields['views']));
-
-		try {
-			$migration->run('down');
-			$this->fail('No exception triggered');
-		} catch (MigrationException $e) {
-			//$this->pass('Exception caught');
-		}
-
 	}
 
 /**
@@ -491,8 +483,8 @@ class CakeMigrationTest extends CakeTestCase {
 		$expected = array(
 			array('type' => 'create_table', 'data' => array('table' => 'migration_posts')),
 			array('type' => 'add_field', 'data' => array('table' => 'users', 'field' => 'email')),
-			array('type' => 'add_index', 'data' => array('table' => 'users', 'index' => 'UNIQUE_USER'))
-		);
+			array('type' => 'add_index', 'data' => array('table' => 'users', 'index' => 'UNIQUE_USER')));
+
 		$this->assertEqual($result['afterMigration'], 'up');
 		$this->assertEqual($result['beforeMigration'], 'up');
 		$this->assertEqual($result['afterAction'], $expected);
@@ -504,9 +496,9 @@ class CakeMigrationTest extends CakeTestCase {
 		$result = $callback->calls['down'];
 		$expected = array(
 			array('type' => 'drop_table', 'data' => array('table' => 'migration_posts')),
-			array('type' => 'drop_field', 'data' => array('table' => 'users', 'field' => 'email')),
-			array('type' => 'drop_index', 'data' => array('table' => 'users', 'index' => 'UNIQUE_USER'))
-		);
+			array('type' => 'drop_index', 'data' => array('table' => 'users', 'index' => 'UNIQUE_USER')),
+			array('type' => 'drop_field', 'data' => array('table' => 'users', 'field' => 'email')));
+
 		$this->assertEqual($result['afterMigration'], 'down');
 		$this->assertEqual($result['beforeMigration'], 'down');
 		$this->assertEqual($result['afterAction'], $expected);
