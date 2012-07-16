@@ -289,6 +289,66 @@ class CakeMigrationTest extends CakeTestCase {
 	}
 
 /**
+* Test alter index (changing column of an index). Issue #26
+* @return void
+*/
+	public function testAlterIndex(){
+		$this->loadFixtures('Post');
+		$model = new Model(array('table' => 'posts', 'ds' => 'test'));
+		$fields = $this->db->describe($model);
+		$indexes = $this->db->index($model);
+		$indexesBeforeMigration = count($indexes);
+		$this->assertTrue(!empty($indexes) && is_array($indexes));
+		$this->assertEqual($indexes['PRIMARY']['column'], 'id');
+		$this->assertFalse(array_key_exists('key', $fields['published']));
+		$migration = new TestCakeMigration(array(
+			'up' => array(
+				'drop_field' => array(
+					'posts' => array('title')
+				),
+				'create_field' => array(
+					'posts' => array(
+						'title' => array('type' => 'string', 'null' => false, 'length' => 255),
+						'indexes' => array('NEW_INDEX' => array('column' => 'title', 'unique' => false))
+					)
+				)
+			),
+			'down' => array(
+				'drop_field' => array(
+					'posts' => array('published', 'title', 'indexes' => array('NEW_INDEX'))
+				),
+				'create_field' => array(
+					'posts' => array(
+						'title' => array('type' => 'string', 'null' => false, 'length' => 255),
+						'published' => array('type' => 'string', 'null' => true, 'length' => 1),
+						'indexes' => array('NEW_INDEX' => array('column' => 'published', 'unique' => false))
+					)
+				)
+			)
+			
+			)
+		);
+		
+		$this->assertTrue($migration->run('up'));
+		$indexes = $this->db->index($model);
+		$indexesAfterMigrationUp = count($indexes);
+		$this->assertEqual($indexesBeforeMigration, $indexesAfterMigrationUp - 1);
+		$this->assertArrayHasKey('NEW_INDEX', $indexes);
+		$this->assertEqual($indexes['NEW_INDEX']['column'], 'title');
+		$this->assertEqual($indexes['NEW_INDEX']['unique'], 0);
+		
+		$this->assertTrue($migration->run('down'));
+		$fields = $this->db->describe($model);
+		$indexes = $this->db->index($model);
+		$indexesAfterMigrationDown = count($indexes);
+		$this->assertEqual($indexesAfterMigrationUp, $indexesAfterMigrationDown);
+		$this->assertTrue(array_key_exists('key', $fields['published']));
+		$this->assertEqual($fields['published']['type'], 'string');
+		$this->assertEqual($fields['published']['null'], true);
+		$this->assertEqual($fields['published']['length'], 1);
+	}
+
+/**
  * testAlterField method
  *
  * @return void
