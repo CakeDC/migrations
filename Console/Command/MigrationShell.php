@@ -78,7 +78,7 @@ class MigrationShell extends Shell {
 			$this->type = $this->params['plugin'];
 		}
 		$this->path = $this->_getPath() . 'Config' . DS . 'Migration' . DS;
-		$this->Version =& new MigrationVersion(array(
+		$this->Version = new MigrationVersion(array(
 			'connection' => $this->connection,
 			'autoinit' => !$this->params['no-auto-init']
 		));
