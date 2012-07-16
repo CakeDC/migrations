@@ -63,6 +63,7 @@ class MigrationVersion {
 			'class' => 'Migrations.SchemaMigration',
 			'ds' => $this->connection
 		));
+		$this->Version->setDataSource($this->connection);
 		if (!isset($options['autoinit']) || $options['autoinit'] !== false) {
 			$this->__initMigrations();
 		}
@@ -76,11 +77,13 @@ class MigrationVersion {
  */
 	public function getVersion($type) {
 		$mapping = $this->getMapping($type);
-		krsort($mapping);
+		if($mapping !== false) {
+			krsort($mapping);
 
-		foreach ($mapping as $version => $info) {
-			if ($info['migrated'] !== null) {
-				return $version;
+			foreach ($mapping as $version => $info) {
+				if ($info['migrated'] !== null) {
+					return $version;
+				}
 			}
 		}
 		return 0;
@@ -208,7 +211,7 @@ class MigrationVersion {
 	public function getMigration($name, $class, $type, $options = array()) {
 		if (!class_exists($class) && (!$this->__loadFile($name, $type) || !class_exists($class))) {
 			throw new MigrationVersionException(sprintf(
-				__d('Migrations', 'Class `%1$s` not found on file `%2$s` for %3$s.'),
+				__d('migrations', 'Class `%1$s` not found on file `%2$s` for %3$s.'),
 				$class, $name . '.php', (($type == 'app') ? 'Application' : Inflector::camelize($type) . ' Plugin')
 			));
 		}
@@ -317,7 +320,7 @@ class MigrationVersion {
 
 		if (!file_exists($path . $name . '.php')) {
 			throw new MigrationVersionException(sprintf(
-				__d('Migrations', 'File `%1$s` not found in the %2$s.'),
+				__d('migrations', 'File `%1$s` not found in the %2$s.'),
 				$name . '.php', (($type == 'app') ? 'Application' : Inflector::camelize($type) . ' Plugin')
 			));
 		}
