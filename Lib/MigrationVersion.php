@@ -76,11 +76,13 @@ class MigrationVersion {
  */
 	public function getVersion($type) {
 		$mapping = $this->getMapping($type);
-		krsort($mapping);
-
-		foreach ($mapping as $version => $info) {
-			if ($info['migrated'] !== null) {
-				return $version;
+		if ($mapping) {
+			krsort($mapping);
+	
+			foreach ($mapping as $version => $info) {
+				if ($info['migrated'] !== null) {
+					return $version;
+				}
 			}
 		}
 		return 0;
