@@ -101,6 +101,13 @@ class MigrationVersionTest extends CakeTestCase {
 				'class' => 'ConvertVersionToClassNames',
 				'type' => 'Migrations',
 				'migrated' => '2011-11-18 13:53:32'
+			),
+			3 => array(
+					'version' => 3,
+					'name' => '003_increase_class_name_length',
+					'class' => 'IncreaseClassNameLength',
+					'type' => 'Migrations',
+					'migrated' => null
 			)
 		);
 		$this->assertEqual($result, $expected);
