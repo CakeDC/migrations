@@ -259,19 +259,34 @@ class MigrationVersion {
 		if ($direction == 'down') {
 			krsort($mapping);
 		}
-
+		
 		foreach ($mapping as $version => $info) {
 			if (($direction == 'up' && $version > $targetVersion)
 				|| ($direction == 'down' && $version < $targetVersion)) {
 				break;
 			} else if (($direction == 'up' && $info['migrated'] === null)
 				|| ($direction == 'down' && $info['migrated'] !== null)) {
-
+				
+				unset($options['callback']);
 				$migration = $this->getMigration($info['name'], $info['class'], $info['type'], $options);
 				$migration->Version = $this;
 				$migration->info = $info;
-				$migration->run($direction);
-
+				try {
+					$result = $migration->run($direction, $options);
+				} catch (Exception $e){
+					if (!isset($options['reset'])) {
+						$this->resetMigration($options['type']);  
+						$this->setVersion($version, $info['type'], false);
+						$this->restoreMigration($latestVersion, $options['type']);
+						if ($latestVersion > 0) {
+							$errorMessage = __d('migrations', sprintf("There was an error during a migration. \n The error was: '%s' \n Migration will be reset to 0 and then moved up to version '%u' ", $e->getMessage(), $latestVersion));
+							return $errorMessage;	
+						} else{
+							throw $e;
+						}
+						
+					}	
+				}
 				$this->setVersion($version, $info['type'], ($direction == 'up'));
 			}
 		}
@@ -279,6 +294,23 @@ class MigrationVersion {
 		return true;
 	}
 
+	protected function resetMigration($type){
+		$options['type'] = $type;
+		$options['version'] = 0;
+		$options['reset'] = true;
+		$options['direction'] = 'down';
+		$this->run($options); 
+		return true;
+	}
+
+	protected function restoreMigration($toVersion, $type){
+		$options['type'] = $type;
+		$options['direction'] = 'up';
+		$options['version'] = $toVersion;
+		$this->run($options);
+	}
+
+	
 /**
  * Initialize the migrations schema and keep it up-to-date
  *

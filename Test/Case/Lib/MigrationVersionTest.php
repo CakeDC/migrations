@@ -52,7 +52,7 @@ class MigrationVersionTest extends CakeTestCase {
 		$db->cacheSources = false;
 		$Schema = new CakeSchema(array('connection' => 'test'));
 		$Schema->tables = array('schema_migrations' => array());
-
+		
 		$db->execute($db->dropSchema($Schema));
 		$this->assertFalse(in_array($db->fullTableName('schema_migrations', false, false), $db->listSources()));
 

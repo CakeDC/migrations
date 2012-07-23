@@ -154,7 +154,7 @@ class CakeMigration extends Object {
  * @param string $direction, up or down direction of migration process
  * @return boolean Status of the process
  */
-	public function run($direction) {
+	public function run($direction, $options = array()) {
 		if (!in_array($direction, array('up', 'down'))) {
 			throw new MigrationException($this, sprintf(
 				__d('migrations', 'Migration direction (%s) is not one of valid directions.'), $direction
@@ -170,10 +170,15 @@ class CakeMigration extends Object {
 
 		try {
 			$this->_invokeCallbacks('beforeMigration', $direction);
-			$this->_run();
+			$result = $this->_run($options); 
 			$this->_clearCache();
 			$this->_invokeCallbacks('afterMigration', $direction);
+
+			if(!$result){
+				return false;
+			}
 		} catch (Exception $e) {
+
 			$this->db->rollback($null);
 			throw $e;
 		}
@@ -181,12 +186,15 @@ class CakeMigration extends Object {
 		return $this->db->commit($null);
 	}
 
+
+
 /**
  * Run migration commands
  *
  * @return void
  */
-	protected function _run() {
+	protected function _run($options) {
+		$result = true;
 		//force the order of migration types
 		uksort($this->migration[$this->direction], array($this, 'migration_order'));
 		foreach ($this->migration[$this->direction] as $type => $info) {
@@ -221,9 +229,19 @@ class CakeMigration extends Object {
 						__d('migrations', 'Migration action type (%s) is not one of valid actions type.'), $type
 					), E_USER_NOTICE);
 			}
-
-			$this->{$methodName}($type, $info);
+			//debug($type);
+			try {
+				$result = $this->{$methodName}($type, $info, $options);
+			} catch (Exception $e){
+				throw new MigrationException($this, sprintf(
+						__d('migrations', 'Error found: %s'), $e->getMessage()
+					));
+			}
+			
+			
+			
 		}
+		return $result;
 	}
 
 /**
@@ -246,7 +264,7 @@ class CakeMigration extends Object {
  * @param array $tables List of tables to be created
  * @return boolean Return true in case of success, otherwise false
  */
-	protected function _createTable($type, $tables) {
+	protected function _createTable($type, $tables, $options) {
 		foreach ($tables as $table => $fields) {
 			if (in_array($this->db->fullTableName($table, false, false), $this->db->listSources())) {
 				throw new MigrationException($this,
@@ -271,9 +289,9 @@ class CakeMigration extends Object {
  * @param array $tables List of tables to be dropped
  * @return boolean Return true in case of success, otherwise false
  */
-	protected function _dropTable($type, $tables) {
+	protected function _dropTable($type, $tables, $options) {
 		foreach ($tables as $table) {
-			if (!in_array($this->db->fullTableName($table, false, false), $this->db->listSources())) {
+			if (!in_array($this->db->fullTableName($table, false, false), $this->db->listSources()) && !isset($options['reset'])) {
 				throw new MigrationException($this,
 					__d('migrations', 'Table "%s" does not exists in database.', $this->db->fullTableName($table, false, false))
 				);
@@ -296,9 +314,10 @@ class CakeMigration extends Object {
  * @param array $tables List of tables to be renamed
  * @return boolean Return true in case of success, otherwise false
  */
-	protected function _renameTable($type, $tables) {
+	protected function _renameTable($type, $tables, $options) {
 		foreach ($tables as $oldName => $newName) {
 			$sources = $this->db->listSources();
+			
 			if (!in_array($this->db->fullTableName($oldName, false, false), $sources)) {
 				throw new MigrationException($this,
 					__d('migrations', 'Table "%s" does not exists in database.', $this->db->fullTableName($oldName, false, false))
@@ -309,12 +328,12 @@ class CakeMigration extends Object {
 				);
 			}
 			$sql = 'RENAME TABLE ' . $this->db->fullTableName($oldName) . ' TO ' . $this->db->fullTableName($newName) . ';';
-
 			$this->_invokeCallbacks('beforeAction', 'rename_table', array('old_name' => $oldName, 'new_name' => $newName));
 			if (@$this->db->execute($sql) === false) {
 				throw new MigrationException($this, __d('migrations', 'SQL Error: %s', $this->db->error));
 			}
 			$this->_invokeCallbacks('afterAction', 'rename_table', array('old_name' => $oldName, 'new_name' => $newName));
+
 		}
 		return true;
 	}
@@ -327,6 +346,7 @@ class CakeMigration extends Object {
  * @return boolean Return true in case of success, otherwise false
  */
 	protected function _alterTable($type, $tables) {
+		debug($type);
 		foreach ($tables as $table => $fields) {
 			$indexes = array();
 			if (isset($fields['indexes'])) {
@@ -340,8 +360,21 @@ class CakeMigration extends Object {
 
 			foreach ($fields as $field => $col) {
 				$model = new Model(array('table' => $table, 'ds' => $this->connection));
-				$tableFields = $this->db->describe($model);
-
+				try {
+					$tableFields = $this->db->describe($model);
+				} catch (Exception $e) {
+					debug ($model);
+					throw new MigrationException($this, sprintf(
+						__d('migrations', 'Table "%s" does not exists.'), $table
+					));
+				}
+				
+				if(!$tableFields){
+					throw new MigrationException($this, sprintf(
+						__d('migrations', 'Table "%s" does not exists.'), $table
+					));
+				}
+				
 				if ($type === 'drop') {
 					$field = $col;
 				}
@@ -349,8 +382,7 @@ class CakeMigration extends Object {
 					throw new MigrationException($this, sprintf(
 						__d('migrations', 'Field "%s" does not exists in "%s".'), $field, $table
 					));
-				}
-
+				} 
 				switch ($type) {
 					case 'add':
 						if (isset($tableFields[$field])) {
@@ -375,11 +407,12 @@ class CakeMigration extends Object {
 						$sql = $this->db->alterSchema(array(
 							$table => array('change' => array($field => $def))
 						));
+
 						break;
 					case 'rename':
 						$sql = $this->db->alterSchema(array(
 							$table => array('change' => array($field => array_merge($tableFields[$field], array('name' => $col))))
-						));
+						)); 
 						break;
 				}
 

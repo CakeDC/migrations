@@ -172,6 +172,7 @@ class MigrationShell extends Shell {
 			$options['direction'] = 'up';
 		} else if (isset($this->args[0]) && $this->args[0] == 'reset') {
 			$options['version'] = 0;
+			$options['reset'] = true;
 			$options['direction'] = 'down';
 		} else {
 			$options = $this->_promptVersionOptions($mapping, $latestVersion);
@@ -185,7 +186,10 @@ class MigrationShell extends Shell {
 			'type' => $this->type,
 			'callback' => &$this
 		);
-		$this->_execute($options, $once);
+		$result = $this->_execute($options, $once);
+		if($result !== true){
+			$this->out(__d('migrations', $result));
+		} 
 
 		$this->out(__d('migrations', 'All migrations have completed.'));
 		$this->out('');
@@ -193,8 +197,10 @@ class MigrationShell extends Shell {
 	}
 
 	protected function _execute($options, $once) {
+		$result = true;
 		try {
-			$this->Version->run($options);
+			$result = $this->Version->run($options);
+			
 		} catch (MigrationException $e) {
 			$this->out(__d('migrations', 'An error occurred when processing the migration:'));
 			$this->out('  ' . sprintf(__d('migrations', 'Migration: %s'), $e->Migration->info['name']));
@@ -214,6 +220,7 @@ class MigrationShell extends Shell {
 			}
 			$this->hr();
 		}
+		return $result;
 	}
 
 	protected function _singleStepOptions($mapping, $latestVersion) {
