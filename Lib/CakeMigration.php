@@ -153,6 +153,11 @@ class CakeMigration extends Object {
 				$this->{$variable} = $options[$variable];
 			}
 		}
+
+        if (empty($options['precheck'])) {
+            $options['precheck'] = 'exception';
+        }
+
 		if (!empty($options['precheck'])) {
 			$klass = 'Precheck' . Inflector::camelize($options['precheck']);
 			App::uses($klass, 'Migrations.Lib');
@@ -372,8 +377,12 @@ class CakeMigration extends Object {
 						));
 						break;
 					case 'rename':
+                        $data = array();
+                        if (array_key_exists($field, $tableFields)) {
+                            $data = $tableFields[$field];
+                        }
 						$sql = $this->db->alterSchema(array(
-							$table => array('change' => array($field => array_merge($tableFields[$field], array('name' => $col))))
+							$table => array('change' => array($field => array_merge($data, array('name' => $col))))
 						));
 						break;
 				}

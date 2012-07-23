@@ -26,7 +26,7 @@ abstract class PrecheckBase {
 				return $this->checkDropTable($data['table']);
 				break;
 			case 'rename_table':
-				return $this->checkCreateTable($data['new_table']) && $this->checkDropTable($data['old_table']);
+				return $this->checkCreateTable($data['new_name']) && $this->checkDropTable($data['old_name']);
 				break;
 			case 'add_field':
 				return $this->checkAddField($data['table'], $data['field']);
@@ -35,11 +35,16 @@ abstract class PrecheckBase {
 				return $this->checkDropField($data['table'], $data['field']);
 				break;
 			case 'change_field':
-				return $this->checkAddField($data['table'], $data['field']);
+                return true;
+				//return $this->checkDropField($data['table'], $data['field']);
+                break;
+            case 'rename_field':
+                return true;
+                //return $this->checkAddField($data['table'], $data['new_name']) && $this->checkDropField($data['table'], $data['old_name']);
 				break;
-			case 'rename_field':
-				return $this->checkAddField($data['table'], $data['new_name']) && $this->checkDropField($data['table'], $data['old_name']);
-				break;
+            case 'add_index':
+            case 'drop_index':
+                 return true;
 			default:
 				throw new MigrationException($this->migration, sprintf(
 					__d('migrations', 'Migration action type (%s) is not one of valid actions type.'), $type
