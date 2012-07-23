@@ -14,8 +14,11 @@
  * @package   plugns.migrations
  * @license   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
 App::uses('CakeMigration', 'Migrations.Lib');
 App::uses('ConnectionManager', 'Model');
+App::uses('Inflector', 'Utility');
+App::uses('Folder', 'Utility');
 
 /**
  * Migration version management.
@@ -66,6 +69,11 @@ class MigrationVersion {
 			$this->precheck = $options['precheck'];
 		}
 
+		$this->Version = ClassRegistry::init(array(
+			'class' => 'Migrations.SchemaMigration',
+			'ds' => $this->connection
+		));
+		$this->Version->setDataSource($this->connection);
 		if (!isset($options['autoinit']) || $options['autoinit'] !== false) {
 			$this->__initMigrations();
 		}
@@ -79,11 +87,13 @@ class MigrationVersion {
  */
 	public function getVersion($type) {
 		$mapping = $this->getMapping($type);
-		krsort($mapping);
+		if($mapping !== false) {
+			krsort($mapping);
 
-		foreach ($mapping as $version => $info) {
-			if ($info['migrated'] !== null) {
-				return $version;
+			foreach ($mapping as $version => $info) {
+				if ($info['migrated'] !== null) {
+					return $version;
+				}
 			}
 		}
 		return 0;
@@ -99,6 +109,9 @@ class MigrationVersion {
  * @return boolean
  */
 	public function setVersion($version, $type, $migrated = true) {
+		if ($type !== 'app') {
+			$type = Inflector::camelize($type);
+		}
 		$mapping = $this->getMapping($type);
 
 		// For BC, 002 was not applied yet.
@@ -132,16 +145,25 @@ class MigrationVersion {
  * @return mixed False in case of no file found or empty mapping, array with mapping
  */
 	public function getMapping($type, $cache = true) {
+		if ($type !== 'app') {
+			$type = Inflector::camelize($type);
+		}
+
 		if ($cache && !empty($this->__mapping[$type])) {
 			return $this->__mapping[$type];
 		}
-		$mapping = $this->__loadFile('map', $type);
+		$mapping = $this->_enumerateMigrations($type);
 		if (empty($mapping)) {
 			return false;
 		}
 
 		$migrated = $this->Version->find('all', array(
-			'conditions' => array($this->Version->alias . '.type' => $type),
+			'conditions' => array(
+				'OR' => array(
+					array($this->Version->alias . '.type' => Inflector::underscore($type)),
+					array($this->Version->alias . '.type' => $type),
+				)
+			),
 			'recursive' => -1,
 		));
 
@@ -153,6 +175,14 @@ class MigrationVersion {
 			$migrated = Set::combine($migrated, '/' . $this->Version->alias . '/class', '/' . $this->Version->alias . '/created');
 		}
 
+		$bcMapping = array();
+		if ($type == 'Migrations') {
+			$bcMapping = array(
+				'InitMigrations' => 'M4af6e0f0a1284147a0b100ca58157726',
+				'ConvertVersionToClassNames' => 'M4ec50d1f7a284842b1b770fdcbdd56cb',
+			);
+		}
+
 		ksort($mapping);
 		foreach ($mapping as $version => $migration) {
 			list($name, $class) = each($migration);
@@ -161,10 +191,17 @@ class MigrationVersion {
 				'version' => $version, 'name' => $name, 'class' => $class,
 				'type' => $type, 'migrated' => null
 			);
-			if ($bc && isset($migrated[$version])) {
-				$mapping[$version]['migrated'] = $migrated[$version];
-			} else if (!$bc && isset($migrated[$class])) {
-				$mapping[$version]['migrated'] = $migrated[$class];
+
+			if ($bc) {
+				if (isset($migrated[$version])) {
+					$mapping[$version]['migrated'] = $migrated[$version];
+				}
+			} else {
+				if (isset($migrated[$class])) {
+					$mapping[$version]['migrated'] = $migrated[$class];
+				} elseif (isset($bcMapping[$class]) && !empty($migrated[$bcMapping[$class]])) {
+					$mapping[$version]['migrated'] = $migrated[$bcMapping[$class]];
+				}
 			}
 		}
 
@@ -184,7 +221,7 @@ class MigrationVersion {
 	public function getMigration($name, $class, $type, $options = array()) {
 		if (!class_exists($class) && (!$this->__loadFile($name, $type) || !class_exists($class))) {
 			throw new MigrationVersionException(sprintf(
-				__d('Migrations', 'Class `%1$s` not found on file `%2$s` for %3$s.'),
+				__d('migrations', 'Class `%1$s` not found on file `%2$s` for %3$s.'),
 				$class, $name . '.php', (($type == 'app') ? 'Application' : Inflector::camelize($type) . ' Plugin')
 			));
 		}
@@ -209,19 +246,24 @@ class MigrationVersion {
 	public function run($options) {
 		$targetVersion = $latestVersion = $this->getVersion($options['type']);
 		$mapping = $this->getMapping($options['type'], false);
-
+		$direction = 'up';
+		if (!empty($options['direction'])) {
+			$direction = $options['direction'];
+		}
 		// Check direction and targetVersion
 		if (isset($options['version'])) {
 			$targetVersion = $options['version'];
-			$direction = ($targetVersion <= $latestVersion) ? 'down' : 'up';
-			if ($direction == 'down') {
-				$targetVersion++;
+			$direction = ($targetVersion < $latestVersion) ? 'down' : $direction;
+			if (isset($mapping[$targetVersion]) && empty($mapping[$targetVersion]['migrated'])) {
+				$direction = 'up';
 			}
-		} else if (!empty($options['direction'])) {
-			$direction = $options['direction'];
-			if ($direction == 'up') {
-				$targetVersion++;
-			}
+		}
+
+		if ($direction === 'up' && !isset($options['version'])) {
+			$keys = array_keys($mapping);
+			$flipped = array_flip($keys);
+			$next = $flipped[$targetVersion + 1];
+			$targetVersion = $keys[$next];
 		}
 
 		if ($direction == 'down') {
@@ -253,22 +295,14 @@ class MigrationVersion {
  * @return void
  */
 	private function __initMigrations() {
-		$options = array(
-			'class' => 'Migrations.SchemaMigration',
-			'ds' => $this->connection);
-
-		$db =& ConnectionManager::getDataSource($this->connection);
-		if (!in_array($db->fullTableName('schema_migrations', false), $db->listSources())) {
-			$map = $this->__loadFile('map', 'Migrations');
+		$db = ConnectionManager::getDataSource($this->connection);
+		if (!in_array($db->fullTableName('schema_migrations', false, false), $db->listSources())) {
+			$map = $this->_enumerateMigrations('migrations');
 
 			list($name, $class) = each($map[1]);
 			$migration = $this->getMigration($name, $class, 'Migrations');
 			$migration->run('up');
-
-			$this->Version =& ClassRegistry::init($options);
 			$this->setVersion(1, 'Migrations');
-		} else {
-			$this->Version =& ClassRegistry::init($options);
 		}
 
 		$mapping = $this->getMapping('Migrations');
@@ -296,25 +330,88 @@ class MigrationVersion {
 
 		if (!file_exists($path . $name . '.php')) {
 			throw new MigrationVersionException(sprintf(
-				__d('Migrations', 'File `%1$s` not found in the %2$s.'),
+				__d('migrations', 'File `%1$s` not found in the %2$s.'),
 				$name . '.php', (($type == 'app') ? 'Application' : Inflector::camelize($type) . ' Plugin')
 			));
 		}
 
 		include $path . $name . '.php';
-
-		if ($name == 'map') {
-			if (isset($map) && is_array($map)) {
-				return $map;
-			}
-			throw new MigrationVersionException(sprintf(
-				__d('Migrations', '%2$s does not contain a proper map.php file.'),
-				(($type == 'app') ? 'Application' : Inflector::camelize($type) . ' Plugin')
-			));
-		}
-
 		return true;
 	}
+
+/**
+ * Returns a map of all available migrations for a type (app or plugin)
+ *
+ * @param string $type Can be 'app' or a plugin name
+ * @return array containing a list of migration versions ordered by filename
+ */
+	protected function _enumerateMigrations($type) {
+		$map = $this->_enumerateNewMigrations($type);
+		$oldMap = $this->_enumerateOldMigrations($type);
+		foreach ($oldMap as $k => $v) {
+			$map[$k] = $oldMap[$k];
+		}
+		return $map;
+	}
+
+/**
+ * Returns a map of all available migrations for a type (app or plugin) using inflection
+ *
+ * @param string $type Can be 'app' or a plugin name
+ * @return array containing a list of migration versions ordered by filename
+ */
+	protected function _enumerateNewMigrations($type) {
+		$mapping = array();
+		$path = APP . 'Config' . DS . 'Migration' . DS;
+		if ($type != 'app') {
+			$path = CakePlugin::path(Inflector::camelize($type)) . 'Config' . DS . 'Migration' . DS;
+		}
+		if (!file_exists($path)) {
+			return $mapping;
+		}
+		$folder = new Folder($path);
+		foreach ($folder->find('.*?\.php', true) as $file) {
+			$parts = explode('_', $file);
+			$version = array_shift($parts);
+			$className = implode('_', $parts);
+			if ($version > 0 && strlen($className) > 0) {
+				$mapping[(int)$version] = array(substr($file, 0, -4) => Inflector::camelize(substr($className, 0, -4)));
+			}
+		}
+		return $mapping;
+	}
+
+/**
+ * Returns a map of all available migrations for a type (app or plugin) using regular expressions
+ *
+ * @param string $type Can be 'app' or a plugin name
+ * @return array containing a list of migration versions ordered by filename
+ */
+	protected function _enumerateOldMigrations($type) {
+		$mapping = array();
+		$path = APP . 'Config' . DS . 'Migration' . DS;
+		if ($type != 'app') {
+			$path = CakePlugin::path(Inflector::camelize($type)) . 'Config' . DS . 'Migration' . DS;
+		}
+		if (!file_exists($path)) {
+			return $mapping;
+		}
+		$folder = new Folder($path);
+		foreach ($folder->find('.*?\.php', true) as $file) {
+			$parts = explode('_', $file);
+			$version = array_shift($parts);
+			$className = implode('_', $parts);
+			if ($version > 0 && strlen($className) > 0) {
+				$contents = file_get_contents($path . $file);
+				if (preg_match("/class\s([\w]+)\sextends/", $contents, $matches)) {
+					$mapping[(int)$version] = array(substr($file, 0, -4) => $matches[1]);
+				}
+			}
+		}
+		return $mapping;
+
+	}
+
 }
 
 /**
