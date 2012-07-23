@@ -72,7 +72,7 @@ class CakeMigration extends Object {
 /**
  * DataSource used
  *
- * @var DataSource
+ * @var DboSource
  */
 	public $db = null;
 
@@ -96,6 +96,13 @@ class CakeMigration extends Object {
  * @var object
  */
 	public $callback = null;
+
+/**
+ * Precheck object executed before db updated
+ *
+ * @var PrecheckBase
+ */
+	public $Precheck = null;
 
 /**
  * Before migration callback
@@ -137,6 +144,11 @@ class CakeMigration extends Object {
 			if (!empty($options[$variable])) {
 				$this->{$variable} = $options[$variable];
 			}
+		}
+		if (!empty($options['precheck'])) {
+			$klass = 'Precheck' . Inflector::camelize($options['precheck']);
+			App::uses($klass, 'Migrations.Lib');
+			$this->Precheck = new $klass();
 		}
 	}
 
@@ -225,21 +237,18 @@ class CakeMigration extends Object {
  */
 	protected function _createTable($type, $tables) {
 		foreach ($tables as $table => $fields) {
-			if (in_array($this->db->fullTableName($table, false), $this->db->listSources())) {
-				throw new MigrationException($this,
-					__d('migrations', 'Table "%s" already exists in database.', $this->db->fullTableName($table, false))
-				);
-			}
 			$this->Schema->tables = array($table => $fields);
 
 			$this->_invokeCallbacks('beforeAction', 'create_table', array('table' => $table));
-			if (@$this->db->execute($this->db->createSchema($this->Schema)) === false) {
-				throw new MigrationException($this, __d('migrations', 'SQL Error: %s', $this->db->error));
+			if ($this->_invokePrecheck('beforeAction', 'create_table', array('table' => $table))) {
+				if (@$this->db->execute($this->db->createSchema($this->Schema)) === false) {
+					throw new MigrationException($this, __d('migrations', 'SQL Error: %s', $this->db->error));
+				}
 			}
 			$this->_invokeCallbacks('afterAction', 'create_table', array('table' => $table));
 		}
 		return true;
-	}
+}
 
 /**
  * Drop Table method
@@ -250,18 +259,15 @@ class CakeMigration extends Object {
  */
 	protected function _dropTable($type, $tables) {
 		foreach ($tables as $table) {
-			if (!in_array($this->db->fullTableName($table, false), $this->db->listSources())) {
-				throw new MigrationException($this,
-					__d('migrations', 'Table "%s" does not exists in database.', $this->db->fullTableName($table, false))
-				);
-			}
 			$this->Schema->tables = array($table => array());
+			if ($this->_invokePrecheck('beforeAction', 'drop_table', array('table' => $table))) {
 
-			$this->_invokeCallbacks('beforeAction', 'drop_table', array('table' => $table));
-			if (@$this->db->execute($this->db->dropSchema($this->Schema)) === false) {
-				throw new MigrationException($this, sprintf(__d('migrations', 'SQL Error: %s'), $this->db->error));
+				$this->_invokeCallbacks('beforeAction', 'drop_table', array('table' => $table));
+				if (@$this->db->execute($this->db->dropSchema($this->Schema)) === false) {
+					throw new MigrationException($this, sprintf(__d('migrations', 'SQL Error: %s'), $this->db->error));
+				}
+				$this->_invokeCallbacks('afterAction', 'drop_table', array('table' => $table));
 			}
-			$this->_invokeCallbacks('afterAction', 'drop_table', array('table' => $table));
 		}
 		return true;
 	}
@@ -275,23 +281,17 @@ class CakeMigration extends Object {
  */
 	protected function _renameTable($type, $tables) {
 		foreach ($tables as $oldName => $newName) {
-			$sources = $this->db->listSources();
-			if (!in_array($this->db->fullTableName($oldName, false), $sources)) {
-				throw new MigrationException($this,
-					__d('migrations', 'Table "%s" does not exists in database.', $this->db->fullTableName($oldName, false))
-				);
-			} else if (in_array($this->db->fullTableName($newName, false), $sources)) {
-				throw new MigrationException($this,
-					__d('migrations', 'Table "%s" already exists in database.', $this->db->fullTableName($newName, false))
-				);
-			}
-			$sql = 'RENAME TABLE ' . $this->db->fullTableName($oldName) . ' TO ' . $this->db->fullTableName($newName) . ';';
+			if ($this->_invokePrecheck('beforeAction', 'rename_table', array('old_name' => $oldName, 'new_name' => $newName))) {
+			
+				$sql = 'RENAME TABLE ' . $this->db->fullTableName($oldName) . ' TO ' . $this->db->fullTableName($newName) . ';';
 
-			$this->_invokeCallbacks('beforeAction', 'rename_table', array('old_name' => $oldName, 'new_name' => $newName));
-			if (@$this->db->execute($sql) === false) {
-				throw new MigrationException($this, __d('migrations', 'SQL Error: %s', $this->db->error));
+				$this->_invokeCallbacks('beforeAction', 'rename_table', array('old_name' => $oldName, 'new_name' => $newName));
+			
+				if (@$this->db->execute($sql) === false) {
+					throw new MigrationException($this, __d('migrations', 'SQL Error: %s', $this->db->error));
+				}
+				$this->_invokeCallbacks('afterAction', 'rename_table', array('old_name' => $oldName, 'new_name' => $newName));
 			}
-			$this->_invokeCallbacks('afterAction', 'rename_table', array('old_name' => $oldName, 'new_name' => $newName));
 		}
 		return true;
 	}
@@ -318,19 +318,14 @@ class CakeMigration extends Object {
 				if ($type === 'drop') {
 					$field = $col;
 				}
-				if ($type !== 'add' && !isset($tableFields[$field])) {
-					throw new MigrationException($this, sprintf(
-						__d('migrations', 'Field "%s" does not exists in "%s".'), $field, $table
-					));
-				}
+				// if ($type !== 'add' && !isset($tableFields[$field])) {
+					// throw new MigrationException($this, sprintf(
+						// __d('migrations', 'Field "%s" does not exists in "%s".'), $field, $table
+					// ));
+				// }
 
 				switch ($type) {
 					case 'add':
-						if (isset($tableFields[$field])) {
-							throw new MigrationException($this, sprintf(
-								__d('migrations', 'Field "%s" already exists in "%s".'), $field, $table
-							));
-						}
 						$sql = $this->db->alterSchema(array(
 							$table => array('add' => array($field => $col))
 						));
@@ -362,9 +357,11 @@ class CakeMigration extends Object {
 					$data = array('table' => $table, 'field' => $field);
 				}
 
-				$this->_invokeCallbacks('beforeAction', $type . '_field', $data);
-				if (@$this->db->execute($sql) === false) {
-					throw new MigrationException($this, sprintf(__d('migrations', 'SQL Error: %s'), $this->db->error));
+				if ($this->_invokePrecheck('beforeAction', $type . '_field', $data)) {
+					$this->_invokeCallbacks('beforeAction', $type . '_field', $data);
+					if (@$this->db->execute($sql) === false) {
+						throw new MigrationException($this, sprintf(__d('migrations', 'SQL Error: %s'), $this->db->error));
+					}
 				}
 				$this->_invokeCallbacks('afterAction', $type . '_field', $data);
 			}
@@ -379,8 +376,10 @@ class CakeMigration extends Object {
 				));
 
 				$this->_invokeCallbacks('beforeAction', $type . '_index', array('table' => $table, 'index' => $key));
-				if (@$this->db->execute($sql) === false) {
-					throw new MigrationException($this, sprintf(__d('migrations', 'SQL Error: %s'), $this->db->error));
+				if ($this->_invokePrecheck('beforeAction', $type . '_index', array('table' => $table, 'index' => $key))) {
+					if (@$this->db->execute($sql) === false) {
+						throw new MigrationException($this, sprintf(__d('migrations', 'SQL Error: %s'), $this->db->error));
+					}
 				}
 				$this->_invokeCallbacks('afterAction', $type . '_index', array('table' => $table, 'index' => $key));
 			}
@@ -410,13 +409,31 @@ class CakeMigration extends Object {
 		if ($callback == 'beforeMigration' || $callback == 'afterMigration') {
 			$callback = str_replace('Migration', '', $callback);
 			if ($this->{$callback}($type)) {
-				return true;
+				return;
 			}
 
 			throw new MigrationException($this, sprintf(
 				__d('migrations', 'Interrupted when running "%s" callback.'), $callback
 			), E_USER_NOTICE);
 		}
+	}
+	
+/**
+ * This method will invoke the before/afterAction callbacks, it is good when
+ * you need track every action.
+ *
+ * @param string $precheck Callback name, beforeMigration, beforeAction
+ * 		or afterMigration.
+ * @param string $type Type of action. i.e: create_table, drop_table, etc.
+ * 		Or also can be the direction, for before and after Migration callbacks
+ * @param array $data Data to send to the callback
+ * @return void
+ */
+	protected function _invokePrecheck($callback, $type, $data = array()) {
+		if ($callback == 'beforeAction') {
+			return $this->Precheck->{$callback}($this, $type, $data);
+		}
+		return false;
 	}
 
 /**
@@ -449,6 +466,7 @@ class CakeMigration extends Object {
  *
  * @param string $name Model name to be initialized
  * @param string $table Table name to be initialized
+ * @param array $options
  * @return Model
  */
 	public function generateModel($name, $table = null, $options = array()) {
@@ -485,9 +503,9 @@ class MigrationException extends Exception {
  * @param CakeMigration $Migration Reference to the Migration
  * @param string $message Message explaining the error
  * @param int $code Error code
- * @return void
+ * @return \MigrationException
  */
-	public function __construct(&$Migration, $message = '', $code = 0) {
+	public function __construct($Migration, $message = '', $code = 0) {
 		parent::__construct($message, $code);
 		$this->Migration = $Migration;
 	}
