@@ -5,7 +5,7 @@ abstract class PrecheckBase {
 	public function tableExists($table) {
 		$this->migration->db->cacheSources = false;
 		$tables = $this->migration->db->listSources();
-		return in_array($this->migration->db->fullTableName($table, false), $tables);
+		return in_array($this->migration->db->fullTableName($table, false, false), $tables);
 	}
 
 	public function fieldExists($table, $field) {

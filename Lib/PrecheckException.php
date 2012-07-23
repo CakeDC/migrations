@@ -6,7 +6,7 @@ class PrecheckException extends PrecheckBase {
 	public function checkDropTable($table) {
 		if (!$this->tableExists($table)) {
 			throw new MigrationException($this->migration,
-				__d('migrations', 'Table "%s" does not exists in database.', $this->migration->db->fullTableName($table, false))
+				__d('migrations', 'Table "%s" does not exists in database.', $this->migration->db->fullTableName($table, false, false))
 			);
 		}		
 		return true;
@@ -15,7 +15,7 @@ class PrecheckException extends PrecheckBase {
 	public function checkCreateTable($table) {
 		if ($this->tableExists($table)) {
 			throw new MigrationException($this->migration,
-				__d('migrations', 'Table "%s" already exists in database.', $this->migration->db->fullTableName($table, false))
+				__d('migrations', 'Table "%s" already exists in database.', $this->migration->db->fullTableName($table, false, false))
 			);
 		}		
 		return true;

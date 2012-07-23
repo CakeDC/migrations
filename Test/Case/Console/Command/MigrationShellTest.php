@@ -51,16 +51,6 @@ class TestMigrationShell extends MigrationShell {
 	function writeMigration($name, $class, $migration) {
 		return $this->_writeMigration($name, $class, $migration);
 	}
-
-/**
- * writeMap method
- *
- * @param $map
- * @return void
- */
-	function writeMap($map) {
-		return $this->_writeMap($map);
-	}
 }
 
 /**
@@ -76,7 +66,7 @@ class MigrationShellTest extends CakeTestCase {
  *
  * @var array
  */
-	public $fixtures = array('plugin.migrations.schema_migrations', 'core.article');
+	public $fixtures = array('plugin.migrations.schema_migrations', 'core.article', 'core.post', 'core.user');
 
 /**
  * setUp method
@@ -124,6 +114,9 @@ class MigrationShellTest extends CakeTestCase {
 		App::build(array('Plugin' => $this->plugins), true);
 		App::objects('plugins', null, false);
 		unset($this->Dispatcher, $this->Shell, $this->plugins);
+		foreach (glob(TMP . 'tests' . DS . '*.php') as $f) {
+			unlink($f);
+		}
 	}
 
 /**
@@ -157,16 +150,15 @@ class MigrationShellTest extends CakeTestCase {
  * @return void
  **/
 	public function testStartup() {
-		$this->Shell->startup();
-		$this->assertEqual($this->Shell->connection, 'test');
+		$this->Shell->connection = 'default';
 		$this->assertEqual($this->Shell->type, 'TestMigrationPlugin');
-
 		$this->Shell->params = array(
-			'connection' => 'default',
-			'plugin' => 'Migrations'
+			'connection' => 'test',
+			'plugin' => 'Migrations',
+			'no-auto-init' => false
 		);
 		$this->Shell->startup();
-		$this->assertEqual($this->Shell->connection, 'default');
+		$this->assertEqual($this->Shell->connection, 'test');
 		$this->assertEqual($this->Shell->type, 'Migrations');
 	}
 
@@ -200,7 +192,8 @@ class MigrationShellTest extends CakeTestCase {
 		$this->Shell->Version->expects($this->at(2))->method('run')->with($this->equalTo(array(
 			'type' => 'TestMigrationPlugin',
 			'callback' => $this->Shell,
-			'direction' => 'up'
+			'direction' => 'up',
+			'version' => 1
 		)));
 		$this->Shell->args = array('up');
 		$this->assertTrue($this->Shell->run());
@@ -220,7 +213,8 @@ class MigrationShellTest extends CakeTestCase {
 		$this->Shell->Version->expects($this->at(2))->method('run')->with($this->equalTo(array(
 			'type' => 'TestMigrationPlugin',
 			'callback' => $this->Shell,
-			'direction' => 'down'
+			'direction' => 'down',
+			'version' => 1
 		)));
 		$this->Shell->args = array('down');
 		$this->assertTrue($this->Shell->run());
@@ -230,7 +224,8 @@ class MigrationShellTest extends CakeTestCase {
 		$this->Shell->Version->expects($this->at(2))->method('run')->with($this->equalTo(array(
 			'type' => 'TestMigrationPlugin',
 			'callback' => $this->Shell,
-			'version' => 10
+			'version' => 10,
+			'direction' => 'up'
 		)));
 		$this->Shell->args = array('all');
 		$this->assertTrue($this->Shell->run());
@@ -240,7 +235,8 @@ class MigrationShellTest extends CakeTestCase {
 		$this->Shell->Version->expects($this->at(2))->method('run')->with($this->equalTo(array(
 			'type' => 'TestMigrationPlugin',
 			'callback' => $this->Shell,
-			'version' => 0
+			'version' => 0,
+			'direction' => 'down'
 		)));
 		$this->Shell->args = array('reset');
 		$this->assertTrue($this->Shell->run());
@@ -250,22 +246,12 @@ class MigrationShellTest extends CakeTestCase {
 		$this->Shell->Version->expects($this->at(2))->method('run')->with($this->equalTo(array(
 			'type' => 'TestMigrationPlugin',
 			'callback' => $this->Shell,
-			'version' => 1
+			'version' => 1,
+			'direction' => 'up'
 		)));
 		$this->Shell->expects($this->at(2))->method('in')->will($this->returnValue(0));
 		$this->Shell->expects($this->at(4))->method('in')->will($this->returnValue(11));
 		$this->Shell->expects($this->at(6))->method('in')->will($this->returnValue(1));
-		$this->Shell->args = array();
-		$this->assertTrue($this->Shell->run());
-
-		// cake migration run - answers 0
-		$this->Shell->Version->expects($this->at(1))->method('getVersion')->will($this->returnValue(1));
-		$this->Shell->Version->expects($this->at(2))->method('run')->with($this->equalTo(array(
-			'type' => 'TestMigrationPlugin',
-			'callback' => $this->Shell,
-			'version' => 0
-		)));
-		$this->Shell->expects($this->at(2))->method('in')->will($this->returnValue(0));
 		$this->Shell->args = array();
 		$this->assertTrue($this->Shell->run());
 
@@ -274,23 +260,19 @@ class MigrationShellTest extends CakeTestCase {
 		$this->Shell->Version->expects($this->at(2))->method('run')->with($this->equalTo(array(
 			'type' => 'TestMigrationPlugin',
 			'callback' => $this->Shell,
-			'version' => 10
+			'version' => 10,
+			'direction' => 'up'
 		)));
 		$this->Shell->expects($this->at(2))->method('in')->will($this->returnValue(10));
 		$this->Shell->args = array();
 		$this->assertTrue($this->Shell->run());
-
-		// cake migration run 0 - on version 0 == stop
-		$this->Shell->Version->expects($this->at(1))->method('getVersion')->will($this->returnValue(0));
-		$this->Shell->args = array('0');
-		$this->assertFalse($this->Shell->run());
 
 		// cake migration run 1
 		$this->Shell->Version->expects($this->at(1))->method('getVersion')->will($this->returnValue(0));
 		$this->Shell->Version->expects($this->at(2))->method('run')->with($this->equalTo(array(
 			'type' => 'TestMigrationPlugin',
 			'callback' => $this->Shell,
-			'version' => 1
+			'version' => 1,
 		)));
 		$this->Shell->args = array('1');
 		$this->assertTrue($this->Shell->run());
@@ -624,7 +606,7 @@ TEXT;
  **/
 	public function testWriteMigration() {
 		// Remove if exists
-		$this->__unlink('migration_test_file.php');
+		$this->__unlink('12345_migration_test_file.php');
 
 		$users = $this->tables['users'];
 		$users['indexes'] = array('UNIQUE_USER' => array('column' => 'user', 'unique' => true));
@@ -646,11 +628,11 @@ TEXT;
 				)
 			)
 		);
-		$this->assertFalse(file_exists(TMP . 'tests' . DS . 'migration_test_file.php'));
-		$this->assertTrue($this->Shell->writeMigration('migration_test_file', 'M' . str_replace('-', '', String::uuid()), $migration));
-		$this->assertTrue(file_exists(TMP . 'tests' . DS . 'migration_test_file.php'));
+		$this->assertFalse(file_exists(TMP . 'tests' . DS . '12345_migration_test_file.php'));
+		$this->assertTrue($this->Shell->writeMigration('migration_test_file', 12345, $migration));
+		$this->assertTrue(file_exists(TMP . 'tests' . DS . '12345_migration_test_file.php'));
 
-		$result = $this->__getMigrationVariable(TMP . 'tests' . DS . 'migration_test_file.php');
+		$result = $this->__getMigrationVariable(TMP . 'tests' . DS . '12345_migration_test_file.php');
 		$expected = <<<TEXT
 	public \$migration = array(
 		'up' => array(
@@ -686,43 +668,9 @@ TEXT;
 	);
 TEXT;
 		$this->assertEqual($result, str_replace("\r\n", "\n", $expected));
-		$this->__unlink('migration_test_file.php');
+		$this->__unlink('12345_migration_test_file.php');
 	}
 
-/**
- * testWriteMap method
- *
- * @return void
- **/
-	public function testWriteMap() {
-		// Remove if exists
-		$this->__unlink('map.php');
-
-		$map = array(
-			1 => array('001_schema_dump' => 'M4af9d151e1484b74ad9d007058157726'),
-			2 => array('002_create_some_sample_data' => 'M4af9d15154844819b7a0007058157726'),
-			3 => array('003_add_xyz_support' => 'M4af9d151bf8c4ce5a25e007058157726')
-		);
-		$this->assertFalse(file_exists(TMP . 'tests' . DS . 'map.php'));
-		$this->assertTrue($this->Shell->writeMap($map));
-		$this->assertTrue(file_exists(TMP . 'tests' . DS . 'map.php'));
-
-		$result = file_get_contents(TMP . 'tests' . DS . 'map.php');
-		$expected = <<<TEXT
-<?php
-\$map = array(
-	1 => array(
-		'001_schema_dump' => 'M4af9d151e1484b74ad9d007058157726'),
-	2 => array(
-		'002_create_some_sample_data' => 'M4af9d15154844819b7a0007058157726'),
-	3 => array(
-		'003_add_xyz_support' => 'M4af9d151bf8c4ce5a25e007058157726'),
-);
-?>
-TEXT;
-		$this->assertEqual($result, str_replace("\r\n", "\n", $expected));
-		$this->__unlink('map.php');
-	}
 
 /**
  * testGenerate method
@@ -730,56 +678,37 @@ TEXT;
  * @return void
  */
 	public function testGenerate() {
-		// Remove if exists
-		$this->__unlink('001_Initial_Schema.php', '002_create_some_sample_data.php', 'map.php');
-
 		$this->Shell->expects($this->at(0))->method('in')->will($this->returnValue('n'));
 		$this->Shell->expects($this->at(1))->method('in')->will($this->returnValue('n'));
-		$this->Shell->expects($this->at(2))->method('in')->will($this->returnValue('001 Initial Schema'));
+		$this->Shell->expects($this->at(2))->method('in')->will($this->returnValue('Initial Schema'));
 
-		$this->assertFalse(file_exists(TMP . 'tests' . DS . '001_Initial_Schema.php'));
-		$this->assertFalse(file_exists(TMP . 'tests' . DS . 'map.php'));
 		$this->Shell->generate();
-		$this->assertTrue(file_exists(TMP . 'tests' . DS . '001_Initial_Schema.php'));
-		$this->assertTrue(file_exists(TMP . 'tests' . DS . 'map.php'));
+		$files = glob(TMP . 'tests' . DS . '*initial_schema.php');
+		foreach ($files as $f) {
+			unlink($f);
+		}
+		$this->assertNotEmpty(preg_grep('/([0-9])+_initial_schema\.php$/i', $files));
+	}
 
-		$result = file_get_contents(TMP . 'tests' . DS . 'map.php');
-		$pattern = <<<TEXT
-/^<\?php
-\\\$map = array\(
-	1 => array\(
-		'001_Initial_Schema' => 'M([a-zA-Z0-9]+)'\),
-\);
-\?>$/
-TEXT;
-		$this->assertPattern(str_replace("\r\n", "\n", $pattern), str_replace("\r\n", "\n", $result));
-
-		// Adding other migration to it
+/**
+ * testGenerate2 method
+ *
+ * @return void
+ */
+	public function testGenerate2() {
 		$this->Shell->expects($this->atLeastOnce())->method('err');
 		$this->Shell->expects($this->at(0))->method('in')->will($this->returnValue('n'));
 		$this->Shell->expects($this->at(1))->method('in')->will($this->returnValue('n'));
-		$this->Shell->expects($this->at(2))->method('in')->will($this->returnValue('002-invalid-name'));
-		$this->Shell->expects($this->at(4))->method('in')->will($this->returnValue('002 create some sample_data'));
+		$this->Shell->expects($this->at(2))->method('in')->will($this->returnValue('002 invalid name'));
+		$this->Shell->expects($this->at(4))->method('in')->will($this->returnValue('invalid-name'));
+		$this->Shell->expects($this->at(6))->method('in')->will($this->returnValue('create some sample_data'));
 
-		$this->assertFalse(file_exists(TMP . 'tests' . DS . '002_create_some_sample_data.php'));
 		$this->Shell->generate();
-		$this->assertTrue(file_exists(TMP . 'tests' . DS . '002_create_some_sample_data.php'));
-
-		$result = file_get_contents(TMP . 'tests' . DS . 'map.php');
-		$pattern = <<<TEXT
-/^<\?php
-\\\$map = array\(
-	1 => array\(
-		'001_Initial_Schema' => 'M([a-zA-Z0-9]+)'\),
-	2 => array\(
-		'002_create_some_sample_data' => 'M([a-zA-Z0-9]+)'\),
-\);
-\?>$/
-TEXT;
-		$this->assertPattern(str_replace("\r\n", "\n", $pattern), str_replace("\r\n", "\n", $result));
-
-		// Remove created files
-		$this->__unlink('001_Initial_Schema.php', '002_create_some_sample_data.php', 'map.php');
+		$files = glob(TMP . 'tests' . DS . '*create_some_sample_data.php');
+		foreach ($files as $f) {
+			unlink($f);
+		}
+		$this->assertNotEmpty(preg_grep('/([0-9])+_create_some_sample_data\.php$/i', $files));
 	}
 
 /**
@@ -788,28 +717,24 @@ TEXT;
  * @return void
  */
 	public function testGenerateComparison() {
-		// Remove if exists
-		$this->__unlink('002_drop_slug_field.php', 'map.php');
-
 		$this->Shell->expects($this->at(0))->method('in')->will($this->returnValue('y'));
 		$this->Shell->expects($this->at(2))->method('in')->will($this->returnValue('n'));
-		$this->Shell->expects($this->at(3))->method('in')->will($this->returnValue('002 drop slug field'));
+		$this->Shell->expects($this->at(3))->method('in')->will($this->returnValue('drop slug field'));
 		$this->Shell->expects($this->at(4))->method('in')->will($this->returnValue('y'));
 		$this->Shell->expects($this->at(5))->method('dispatchShell')->with('schema generate --connection test --force');
 
-		$mapping = array(
-			1 => array('class' => 'M4af9d15154844819b7a0007058157726')
-		);
-		$this->Shell->Version->expects($this->any())->method('getMapping')->will($this->returnValue($mapping));
+		$this->Shell->Version->expects($this->any())->method('getMapping')->will($this->returnCallback(array($this, 'returnMapping')));
 		
-		$this->assertFalse(file_exists(TMP . 'tests' . DS . '002_drop_slug_field.php'));
-		$this->assertFalse(file_exists(TMP . 'tests' . DS . 'map.php'));
+		$this->assertEmpty(glob(TMP . 'tests' . DS . '*drop_slug_field.php'));
 		$this->Shell->params['force'] = true;
 		$this->Shell->generate();
-		$this->assertTrue(file_exists(TMP . 'tests' . DS . '002_drop_slug_field.php'));
-		$this->assertTrue(file_exists(TMP . 'tests' . DS . 'map.php'));
+		$files = glob(TMP . 'tests' . DS . '*drop_slug_field.php');
+		$this->assertNotEmpty($files);
 
-		$result = $this->__getMigrationVariable(TMP . 'tests' . DS . '002_drop_slug_field.php');
+		$result = $this->__getMigrationVariable(current($files));
+		foreach ($files as $f) {
+			unlink($f);
+		}
 		$this->assertNoPattern('/\'schema_migrations\'/', $result);
 
 		$pattern = <<<TEXT
@@ -827,9 +752,12 @@ TEXT;
 			\),/
 TEXT;
 		$this->assertPattern(str_replace("\r\n", "\n", $pattern), $result);
+	}
 
-		// Remove created files
-		$this->__unlink('002_drop_slug_field.php', 'map.php');
+	public function returnMapping() {
+		return array(
+			gmdate('U') => array('class' => 'M4af9d15154844819b7a0007058157726')
+		);
 	}
 
 /**
@@ -838,61 +766,29 @@ TEXT;
  * @return void
  */
 	public function testGenerateDump() {
-		// Remove if exists
-		$this->__unlink('001_schema_dump.php', 'map.php');
-
 		$this->Shell->expects($this->at(0))->method('in')->will($this->returnValue('y'));
 		$this->Shell->expects($this->at(2))->method('in')->will($this->returnValue('n'));
-		$this->Shell->expects($this->at(3))->method('in')->will($this->returnValue('001 schema dump'));
+		$this->Shell->expects($this->at(3))->method('in')->will($this->returnValue('schema dump'));
 
 		$mapping = array(
-			1 => array('class' => 'M4af9d15154844819b7a0007058157726')
+			gmdate('U') => array('class' => 'M4af9d15154844819b7a0007058157726')
 		);
-		$this->Shell->Version->expects($this->any())->method('getMapping')->will($this->returnValue($mapping));
+		$this->Shell->Version->expects($this->any())->method('getMapping')->will($this->returnCallback(array($this, 'returnMapping')));
 		
-		$this->assertFalse(file_exists(TMP . 'tests' . DS . '001_schema_dump.php'));
-		$this->assertFalse(file_exists(TMP . 'tests' . DS . 'map.php'));
+		$this->assertEmpty(glob(TMP . 'tests' . DS . '*schema_dump.php'));
 		$this->Shell->type = 'TestMigrationPlugin2';
 		$this->Shell->params['force'] = true;
 		$this->Shell->generate();
-		$this->assertTrue(file_exists(TMP . 'tests' . DS . '001_schema_dump.php'));
-		$this->assertTrue(file_exists(TMP . 'tests' . DS . 'map.php'));
+		$files = glob(TMP . 'tests' . DS . '*schema_dump.php');
+		$this->assertNotEmpty($files);
 
-		$result = file_get_contents(TMP . 'tests' . DS . 'map.php');
-		$pattern = <<<TEXT
-/^<\?php
-\\\$map = array\(
-	1 => array\(
-		'001_schema_dump' => 'M([a-zA-Z0-9]+)'\),
-\);
-\?>$/
-TEXT;
-		$this->assertPattern(str_replace("\r\n", "\n", $pattern), str_replace("\r\n", "\n", $result));
+		$result = $this->__getMigrationVariable(current($files));
+		foreach ($files as $f) {
+			unlink($f);
+		}
 
-		$result = $this->__getMigrationVariable(TMP . 'tests' . DS . '001_schema_dump.php');
-		$pattern = <<<TEXT
-/^	public \\\$migration = array\(
-		'up' => array\(
-			'create_table' => array\(
-				'articles' => array\(/
-TEXT;
-		$this->assertPattern(str_replace("\r\n", "\n", $pattern), $result);
-
-		$pattern = <<<TEXT
-/				\),
-			\),
-		\),
-		'down' => array\(
-			'drop_table' => array\(
-				'articles'
-			\),
-		\),
-	\);$/
-TEXT;
-		$this->assertPattern(str_replace("\r\n", "\n", $pattern), $result);
-
-		// Remove created files
-		$this->__unlink('001_schema_dump.php', 'map.php');
+		$expected = file_get_contents(CakePlugin::path('Migrations') . '/Test/Fixture/test_migration.txt');
+		$this->assertEquals($expected, $result);
 	}
 
 /**

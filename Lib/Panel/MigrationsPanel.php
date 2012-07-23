@@ -19,7 +19,7 @@ App::import('Lib', 'Migrations.MigrationVersion');
  *
  * @@@
  * public $components = array('DebugKit.Toolbar' => array(
- *    'panels' => array('migrations')
+ *    'panels' => array('Migrations.migrations')
  * ));
  * @@@
  *
@@ -61,7 +61,7 @@ class MigrationsPanel extends DebugPanel {
  *
  * @return void
  */
-	function startup(&$controller) {
+	function startup(Controller $controller) {
 		return parent::startup($controller);
 	}
 
@@ -70,7 +70,7 @@ class MigrationsPanel extends DebugPanel {
  *
  * @return array
  */
-	function beforeRender(&$controller) {
+	function beforeRender(Controller $controller) {
 		$v = new MigrationVersion();
 		$map = array();
 		foreach (App::objects('plugin') as $plugin) {

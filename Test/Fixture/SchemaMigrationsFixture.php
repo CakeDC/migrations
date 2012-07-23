@@ -19,8 +19,8 @@ class SchemaMigrationsFixture extends CakeTestFixture {
  *
  */
 	public $records = array(
-		array('id' => '1', 'class' => 'M4af6e0f0a1284147a0b100ca58157726', 'type' => 'migrations', 'created' => '2009-11-10 00:55:34'),
-		array('id' => '2', 'class' => 'M4ec50d1f7a284842b1b770fdcbdd56cb', 'type' => 'migrations', 'created' => '2011-11-18 13:53:32')
+		array('id' => '1', 'class' => 'InitMigrations', 'type' => 'migrations', 'created' => '2009-11-10 00:55:34'),
+		array('id' => '2', 'class' => 'ConvertVersionToClassNames', 'type' => 'migrations', 'created' => '2011-11-18 13:53:32')
 	);
 }
 ?>
