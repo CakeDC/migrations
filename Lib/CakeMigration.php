@@ -293,7 +293,12 @@ class CakeMigration extends Object {
 					__d('migrations', 'Table "%s" already exists in database.', $this->db->fullTableName($newName, false, false))
 				);
 			}
-			$sql = 'RENAME TABLE ' . $this->db->fullTableName($oldName) . ' TO ' . $this->db->fullTableName($newName) . ';';
+
+			if($this->db instanceof MySQL) {
+				$sql = 'RENAME TABLE ' . $this->db->fullTableName($oldName) . ' TO ' . $this->db->fullTableName($newName) . ';';
+			} else {
+				$sql = 'ALTER TABLE ' . $oldName . ' RENAME TO ' . $newName . ';';
+			}
 
 			$this->_invokeCallbacks('beforeAction', 'rename_table', array('old_name' => $oldName, 'new_name' => $newName));
 			if (@$this->db->execute($sql) === false) {
@@ -358,6 +363,7 @@ class CakeMigration extends Object {
 						));
 						break;
 					case 'rename':
+						die("ae");
 						$sql = $this->db->alterSchema(array(
 							$table => array('change' => array($field => array_merge($tableFields[$field], array('name' => $col))))
 						));
