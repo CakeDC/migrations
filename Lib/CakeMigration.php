@@ -293,7 +293,8 @@ class CakeMigration extends Object {
 					__d('migrations', 'Table "%s" already exists in database.', $this->db->fullTableName($newName, false, false))
 				);
 			}
-			$sql = 'RENAME TABLE ' . $this->db->fullTableName($oldName) . ' TO ' . $this->db->fullTableName($newName) . ';';
+
+			$sql = 'ALTER TABLE ' . $this->db->fullTableName($oldName) . ' RENAME TO ' . $newName . ';';
 
 			$this->_invokeCallbacks('beforeAction', 'rename_table', array('old_name' => $oldName, 'new_name' => $newName));
 			if (@$this->db->execute($sql) === false) {
