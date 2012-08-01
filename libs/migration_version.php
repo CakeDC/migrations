@@ -273,15 +273,17 @@ class MigrationVersion {
 			$found = true;
 		} else {
 			$paths = Configure::read('pluginPaths');
-			foreach ($paths as $path) {
-				if (file_exists($path . $type) && is_dir($path . $type)) {
-					if (!file_exists($path . $type . DS . 'config' . DS . 'migrations' . DS . $name . '.php')) {
-						return false;
-					}
+			if(!empty($paths)) {
+				foreach ($paths as $path) {
+					if (file_exists($path . $type) && is_dir($path . $type)) {
+						if (!file_exists($path . $type . DS . 'config' . DS . 'migrations' . DS . $name . '.php')) {
+							return false;
+						}
 
-					include $path . $type . DS . 'config' . DS . 'migrations' . DS . $name . '.php';
-					$found = true;
-					break;
+						include $path . $type . DS . 'config' . DS . 'migrations' . DS . $name . '.php';
+						$found = true;
+						break;
+					}
 				}
 			}
  		}
