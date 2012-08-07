@@ -273,7 +273,7 @@ class MigrationVersion {
 				$migration->info = $info;
 				try {
 					$result = $migration->run($direction, $options);
-				} catch (Exception $e){
+				} catch (Exception $exception){
 					if (!isset($options['reset'])) {
 						$this->resetMigration($options['type']);  
 						$this->setVersion($version, $info['type'], false);
@@ -282,9 +282,8 @@ class MigrationVersion {
 							$errorMessage = __d('migrations', sprintf("There was an error during a migration. \n The error was: '%s' \n Migration will be reset to 0 and then moved up to version '%u' ", $e->getMessage(), $latestVersion));
 							return $errorMessage;	
 						} else{
-							throw $e;
+							throw $exception;
 						}
-						
 					}	
 				}
 				$this->setVersion($version, $info['type'], ($direction == 'up'));
@@ -294,15 +293,25 @@ class MigrationVersion {
 		return true;
 	}
 
+/**
+* Resets the migration to 0.
+* @param $type string type of migration being ran
+* @return void
+*/
 	protected function resetMigration($type){
 		$options['type'] = $type;
 		$options['version'] = 0;
 		$options['reset'] = true;
 		$options['direction'] = 'down';
 		$this->run($options); 
-		return true;
 	}
 
+/**
+* Runs migration to the last well known version defined by $toVersion. 
+* @param $toVersion string name of the version where the migration will run up to.
+* @param $type string type of migration being ran.
+* @return void
+*/
 	protected function restoreMigration($toVersion, $type){
 		$options['type'] = $type;
 		$options['direction'] = 'up';
