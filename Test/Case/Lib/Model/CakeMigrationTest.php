@@ -128,7 +128,7 @@ class CakeMigrationTest extends CakeTestCase {
 			'down' => array('drop_table' => array('migration_posts', 'migration_users'))
 		));
 
-		$sources = $this->db->listSources();
+		$sources = $this->db->listSources(); 
 		$this->assertFalse(in_array($this->db->fullTableName('migration_user', false, false), $sources));
 		$this->assertFalse(in_array($this->db->fullTableName('migration_posts', false, false), $sources));
 		$this->assertTrue($migration->run('up'));
@@ -140,7 +140,7 @@ class CakeMigrationTest extends CakeTestCase {
 			$migration->run('up');
 			$this->fail('No exception triggered');
 		} catch (MigrationException $e) {
-			$this->assertEqual('Error found: Table "' . $this->db->fullTableName('migration_posts', false, false) . '" already exists in database.', $e->getMessage());
+			$this->assertEqual('Table "' . $this->db->fullTableName('migration_posts', false, false) . '" already exists in database.', $e->getMessage());
 		}
 		
 		$this->assertTrue($migration->run('down'));
@@ -161,15 +161,13 @@ class CakeMigrationTest extends CakeTestCase {
 			'up' => array('rename_table' => array('posts' => 'renamed_posts')),
 			'down' => array('rename_table' => array('renamed_posts' => 'posts'))
 		));
-
+		
 		$sources = $this->db->listSources();
 		$this->assertTrue(in_array($this->db->fullTableName('posts', false, false), $sources));
 		$this->assertFalse(in_array($this->db->fullTableName('renamed_posts', false, false), $sources));
-		$a = $migration->run('up');
-		debug($a);
-		/*$this->assertTrue($migration->run('up'));
-
-		$sources = $this->db->listSources();
+		
+		$this->assertTrue($migration->run('up')); 
+		$sources = $this->db->listSources(); 
 		$this->assertFalse(in_array($this->db->fullTableName('posts', false, false), $sources));
 		$this->assertTrue(in_array($this->db->fullTableName('renamed_posts', false, false), $sources));
 
@@ -177,13 +175,13 @@ class CakeMigrationTest extends CakeTestCase {
 			$migration->run('up');
 			$this->fail('No exception triggered');
 		} catch (MigrationException $e) {
-			$this->assertEqual('Table "' . $this->db->fullTableName('posts', false, false) . '" does not exists in database.', $e->getMessage());
+			$this->assertEqual($e->getMessage(), 'Table "' . $this->db->fullTableName('posts', false, false) .'" does not exists in database.');
 		}
-
+        
 		$this->assertTrue($migration->run('down'));
 		$sources = $this->db->listSources();
 		$this->assertTrue(in_array($this->db->fullTableName('posts', false, false), $sources));
-		$this->assertFalse(in_array($this->db->fullTableName('renamed_posts', false, false), $sources));*/
+		$this->assertFalse(in_array($this->db->fullTableName('renamed_posts', false, false), $sources));
 	}
 
 /**
@@ -322,7 +320,7 @@ class CakeMigrationTest extends CakeTestCase {
 				'create_field' => array(
 					'posts' => array(
 						'title' => array('type' => 'string', 'null' => false, 'length' => 255),
-						'published' => array('type' => 'string', 'null' => true, 'length' => 1),
+						'published' => array('type' => 'string', 'null' => true, 'length' => 1, 'default' => 'N'),
 						'indexes' => array('NEW_INDEX' => array('column' => 'published', 'unique' => false))
 					)
 				)

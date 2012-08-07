@@ -229,12 +229,12 @@ class CakeMigration extends Object {
 						__d('migrations', 'Migration action type (%s) is not one of valid actions type.'), $type
 					), E_USER_NOTICE);
 			}
-			//debug($type);
+
 			try {
 				$result = $this->{$methodName}($type, $info, $options);
 			} catch (Exception $e){
 				throw new MigrationException($this, sprintf(
-						__d('migrations', 'Error found: %s'), $e->getMessage()
+						__d('migrations', '%s'), $e->getMessage()
 					));
 			}
 			
@@ -346,7 +346,6 @@ class CakeMigration extends Object {
  * @return boolean Return true in case of success, otherwise false
  */
 	protected function _alterTable($type, $tables) {
-		debug($type);
 		foreach ($tables as $table => $fields) {
 			$indexes = array();
 			if (isset($fields['indexes'])) {
