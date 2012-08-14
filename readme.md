@@ -37,7 +37,7 @@ offering flexibility and easy management of your schema and data states.
 
 To get all pending changes into your database run:
 
-	cake Migrations.migration all
+	cake Migrations.migration run all
 
 #### Reseting your database ###
 
