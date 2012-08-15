@@ -236,7 +236,8 @@ class MigrationShellTest extends CakeTestCase {
 			'type' => 'TestMigrationPlugin',
 			'callback' => $this->Shell,
 			'version' => 0,
-			'direction' => 'down'
+			'direction' => 'down',
+			'reset' => true
 		)));
 		$this->Shell->args = array('reset');
 		$this->assertTrue($this->Shell->run());
