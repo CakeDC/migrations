@@ -352,7 +352,7 @@ TEXT;
 /Running migrations:
 All migrations have completed./
 TEXT;
-		$this->assertPattern(str_replace("\r\n", "\n", $pattern), str_replace("\r\n", "\n", $result));
+		$this->assertPattern(str_replace("\r\n", "\n", $pattern), str_replace("\n\n", "\n", $result));
 	}
 
 /**
