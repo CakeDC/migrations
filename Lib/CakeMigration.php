@@ -237,9 +237,6 @@ class CakeMigration extends Object {
 						__d('migrations', '%s'), $e->getMessage()
 					));
 			}
-			
-			
-			
 		}
 		return $result;
 	}
