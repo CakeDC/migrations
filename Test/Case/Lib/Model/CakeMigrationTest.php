@@ -301,33 +301,6 @@ class CakeMigrationTest extends CakeTestCase {
 		$this->assertEqual($indexes['PRIMARY']['column'], 'id');
 		$this->assertFalse(array_key_exists('key', $fields['published']));
 		$this->assertFalse(array_key_exists('key', $fields['title']));
-		/*$migration = new TestCakeMigration(array(
-			'up' => array(
-				'drop_field' => array(
-					'posts' => array('title')
-				),
-				'create_field' => array(
-					'posts' => array(
-						'title' => array('type' => 'string', 'null' => false, 'length' => 255),
-						'indexes' => array('NEW_INDEX' => array('column' => 'title', 'unique' => false))
-					)
-				)
-			),
-			'down' => array(
-				'drop_field' => array(
-					'posts' => array('published', 'title', 'indexes' => array('NEW_INDEX'))
-				),
-				'create_field' => array(
-					'posts' => array(
-						'title' => array('type' => 'string', 'null' => false, 'length' => 255),
-						'published' => array('type' => 'string', 'null' => true, 'length' => 1, 'default' => 'N'),
-						'indexes' => array('NEW_INDEX' => array('column' => 'published', 'unique' => false))
-					)
-				)
-			)
-			)
-		);*/
-		
 		$migration = new TestCakeMigration(array(
 			'up' => array(
 				'drop_field' => array(
@@ -353,17 +326,12 @@ class CakeMigrationTest extends CakeTestCase {
 			)
 		);
 
-
-
 		$this->assertTrue($migration->run('up'));
 		$indexes = $this->db->index($model);
-		
-		
 		$this->assertArrayHasKey('NEW_INDEX', $indexes);
 		$this->assertEqual($indexes['NEW_INDEX']['column'], 'title');
 		$this->assertEqual($indexes['NEW_INDEX']['unique'], 0);
-
-
+		
 		$migration2 = new TestCakeMigration(array(
 			'up' => array(
 				'drop_field' => array(
@@ -415,20 +383,6 @@ class CakeMigrationTest extends CakeTestCase {
 		$this->assertEqual($indexes['PRIMARY']['column'], 'id');
 		$this->assertFalse(array_key_exists('key', $fields['published']));
 		$this->assertFalse(array_key_exists('key', $fields['title']));
-
-		/*
-		$this->assertTrue($migration->run('down'));
-		$fields = $this->db->describe($model);
-		$indexes = $this->db->index($model); 
-		debug($indexes);
-		
-		$indexesAfterMigrationDown = count($indexes);
-		$this->assertEqual($indexesAfterMigrationUp, $indexesAfterMigrationDown);
-		$this->assertTrue(array_key_exists('key', $fields['published']));
-		$this->assertEqual($fields['published']['type'], 'string');
-		$this->assertEqual($fields['published']['null'], true);
-		$this->assertEqual($fields['published']['length'], 1);
-		$this->assertTrue($migration->run('down'));*/
 	}
 
 /**
