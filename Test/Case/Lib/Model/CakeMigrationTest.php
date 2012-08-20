@@ -603,6 +603,49 @@ class CakeMigrationTest extends CakeTestCase {
 		$this->assertEqual(array_keys($result), array('beforeMigration', 'beforeAction', 'afterAction', 'afterMigration'));
 	}
 
+	public function testTruncateLongIndexKey(){
+		$migration = new TestCakeMigration(array(
+			'up' => array(
+				'create_table' => array(
+					'migration_categories' => array(
+						'id' => array(
+							'type'    => 'string',
+							'length ' => 36,
+							'null'    => false,
+							'key'     => 'primary'),
+						'description' => array(
+								'type'    => 'string',
+								'null'    => false,
+								'length' => 256,
+								'default' => NULL),
+						'info' => array(
+								'type'    => 'string',
+								'length' => 256,
+								'null'    => false,
+								'default' => NULL),
+						'indexes' => array(
+						        'TESTING_INDEX' => array(
+						            'column' => array('description', 'info'),
+						            'unique' => 1)
+						)
+					)
+				)
+			),
+			'down' => array(
+				'drop_table' => array('migration_categories')
+			)
+		));
+		$sources = $this->db->listSources(); 
+		$this->assertFalse(in_array($this->db->fullTableName('migration_categories', false, false), $sources));
+		try {
+			$migration->run('up');
+			$this->fail('No exception triggered');
+		} catch (MigrationException $e) {
+			$this->assertPattern('/SQL Error/', $e->getMessage());
+		}
+		$this->assertFalse(in_array($this->db->fullTableName('migration_categories', false, false), $sources));
+	}
+
 /**
  * testGenerateModel method
  *

@@ -279,7 +279,9 @@ class MigrationVersion {
 						$this->setVersion($version, $info['type'], false);
 						$this->restoreMigration($latestVersion, $options['type']);
 						if ($latestVersion > 0) {
-							$errorMessage = __d('migrations', sprintf("There was an error during a migration. \n The error was: '%s' \n Migration will be reset to 0 and then moved up to version '%u' ", $e->getMessage(), $latestVersion));
+							$mapping = $this->getMapping($options['type']);
+							$latestVersionName = '#' . number_format($mapping[$latestVersion]['version'] / 100, 2, '', '') . ' ' . $mapping[$latestVersion]['name'];
+							$errorMessage = __d('migrations', sprintf("There was an error during a migration. \n The error was: '%s' \n Migration will be reset to 0 and then moved up to version '%s' ", $exception->getMessage(), $latestVersionName));
 							return $errorMessage;	
 						} else{
 							throw $exception;

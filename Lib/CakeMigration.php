@@ -178,7 +178,6 @@ class CakeMigration extends Object {
 				return false;
 			}
 		} catch (Exception $e) {
-
 			$this->db->rollback($null);
 			throw $e;
 		}
@@ -269,10 +268,11 @@ class CakeMigration extends Object {
 				);
 			}
 			$this->Schema->tables = array($table => $fields);
-
 			$this->_invokeCallbacks('beforeAction', 'create_table', array('table' => $table));
-			if (@$this->db->execute($this->db->createSchema($this->Schema)) === false) {
-				throw new MigrationException($this, __d('migrations', 'SQL Error: %s', $this->db->error));
+			try {
+				$this->db->execute($this->db->createSchema($this->Schema));
+			} catch (Exception $exception) {
+				throw new MigrationException($this, __d('migrations', 'SQL Error: %s', $exception->getMessage()));
 			}
 			$this->_invokeCallbacks('afterAction', 'create_table', array('table' => $table));
 		}
@@ -359,7 +359,6 @@ class CakeMigration extends Object {
 				try {
 					$tableFields = $this->db->describe($model);
 				} catch (Exception $e) {
-					debug ($model);
 					throw new MigrationException($this, sprintf(
 						__d('migrations', 'Table "%s" does not exists.'), $table
 					));
