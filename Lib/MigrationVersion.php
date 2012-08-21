@@ -63,6 +63,7 @@ class MigrationVersion {
 			'class' => 'Migrations.SchemaMigration',
 			'ds' => $this->connection
 		));
+		$this->Version->setDataSource($this->connection);
 		if (!isset($options['autoinit']) || $options['autoinit'] !== false) {
 			$this->__initMigrations();
 		}
@@ -76,11 +77,13 @@ class MigrationVersion {
  */
 	public function getVersion($type) {
 		$mapping = $this->getMapping($type);
-		krsort($mapping);
+		if($mapping !== false) {
+			krsort($mapping);
 
-		foreach ($mapping as $version => $info) {
-			if ($info['migrated'] !== null) {
-				return $version;
+			foreach ($mapping as $version => $info) {
+				if ($info['migrated'] !== null) {
+					return $version;
+				}
 			}
 		}
 		return 0;
@@ -256,19 +259,34 @@ class MigrationVersion {
 		if ($direction == 'down') {
 			krsort($mapping);
 		}
-
+		
 		foreach ($mapping as $version => $info) {
 			if (($direction == 'up' && $version > $targetVersion)
 				|| ($direction == 'down' && $version < $targetVersion)) {
 				break;
 			} else if (($direction == 'up' && $info['migrated'] === null)
 				|| ($direction == 'down' && $info['migrated'] !== null)) {
-
+				
 				$migration = $this->getMigration($info['name'], $info['class'], $info['type'], $options);
 				$migration->Version = $this;
 				$migration->info = $info;
-				$migration->run($direction);
-
+				try {
+					$result = $migration->run($direction, $options);
+				} catch (Exception $exception){
+					if (!isset($options['reset'])) {
+						$this->resetMigration($options['type']);  
+						$this->setVersion($version, $info['type'], false);
+						$this->restoreMigration($latestVersion, $options['type']);
+						if ($latestVersion > 0) {
+							$mapping = $this->getMapping($options['type']);
+							$latestVersionName = '#' . number_format($mapping[$latestVersion]['version'] / 100, 2, '', '') . ' ' . $mapping[$latestVersion]['name'];
+							$errorMessage = __d('migrations', sprintf("There was an error during a migration. \n The error was: '%s' \n Migration will be reset to 0 and then moved up to version '%s' ", $exception->getMessage(), $latestVersionName));
+							return $errorMessage;	
+						} else{
+							throw $exception;
+						}
+					}	
+				}
 				$this->setVersion($version, $info['type'], ($direction == 'up'));
 			}
 		}
@@ -276,6 +294,33 @@ class MigrationVersion {
 		return true;
 	}
 
+/**
+* Resets the migration to 0.
+* @param $type string type of migration being ran
+* @return void
+*/
+	protected function resetMigration($type){
+		$options['type'] = $type;
+		$options['version'] = 0;
+		$options['reset'] = true;
+		$options['direction'] = 'down';
+		$this->run($options); 
+	}
+
+/**
+* Runs migration to the last well known version defined by $toVersion. 
+* @param $toVersion string name of the version where the migration will run up to.
+* @param $type string type of migration being ran.
+* @return void
+*/
+	protected function restoreMigration($toVersion, $type){
+		$options['type'] = $type;
+		$options['direction'] = 'up';
+		$options['version'] = $toVersion;
+		$this->run($options);
+	}
+
+	
 /**
  * Initialize the migrations schema and keep it up-to-date
  *

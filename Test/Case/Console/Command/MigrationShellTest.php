@@ -236,7 +236,8 @@ class MigrationShellTest extends CakeTestCase {
 			'type' => 'TestMigrationPlugin',
 			'callback' => $this->Shell,
 			'version' => 0,
-			'direction' => 'down'
+			'direction' => 'down',
+			'reset' => true
 		)));
 		$this->Shell->args = array('reset');
 		$this->assertTrue($this->Shell->run());
@@ -351,7 +352,7 @@ TEXT;
 /Running migrations:
 All migrations have completed./
 TEXT;
-		$this->assertPattern(str_replace("\r\n", "\n", $pattern), str_replace("\r\n", "\n", $result));
+		$this->assertPattern(str_replace("\r\n", "\n", $pattern), str_replace("\n\n", "\n", $result));
 	}
 
 /**
@@ -804,9 +805,9 @@ TEXT;
 /Migrations Plugin
 
 Current version:
-  #002 002_convert_version_to_class_names
+  #003 003_increase_class_name_length
 Latest version:
-  #002 002_convert_version_to_class_names/
+  #003 003_increase_class_name_length/
 TEXT;
 		$this->assertPattern(str_replace("\r\n", "\n", $pattern), $result);
 
@@ -816,7 +817,7 @@ TEXT;
 		$result = $this->Shell->output;
 		$this->assertNoPattern(str_replace("\r\n", "\n", $pattern), $result);
 
-		$this->Shell->Version->setVersion(2, 'migrations', false);
+		$this->Shell->Version->setVersion(3, 'migrations', false);
 		$this->Shell->output = '';
 		$this->Shell->args = array('outdated');
 		$this->Shell->status();
@@ -825,9 +826,9 @@ TEXT;
 /Migrations Plugin
 
 Current version:
-  #001 001_init_migrations
+  #002 002_convert_version_to_class_names
 Latest version:
-  #002 002_convert_version_to_class_names/
+  #003 003_increase_class_name_length/
 TEXT;
 		$this->assertPattern(str_replace("\r\n", "\n", $pattern), $result);
 		$this->Shell->Version->setVersion(1, 'migrations');

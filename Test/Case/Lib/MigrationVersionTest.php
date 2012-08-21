@@ -52,7 +52,7 @@ class MigrationVersionTest extends CakeTestCase {
 		$db->cacheSources = false;
 		$Schema = new CakeSchema(array('connection' => 'test'));
 		$Schema->tables = array('schema_migrations' => array());
-
+		
 		$db->execute($db->dropSchema($Schema));
 		$this->assertFalse(in_array($db->fullTableName('schema_migrations', false, false), $db->listSources()));
 
@@ -101,6 +101,13 @@ class MigrationVersionTest extends CakeTestCase {
 				'class' => 'ConvertVersionToClassNames',
 				'type' => 'Migrations',
 				'migrated' => '2011-11-18 13:53:32'
+			),
+			3 => array(
+					'version' => 3,
+					'name' => '003_increase_class_name_length',
+					'class' => 'IncreaseClassNameLength',
+					'type' => 'Migrations',
+					'migrated' => null
 			)
 		);
 		$this->assertEqual($result, $expected);

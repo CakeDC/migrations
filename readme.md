@@ -194,12 +194,7 @@ Directives exist (Create, Drop, Rename) to handle other field operations.
 
 	'alter_field' => array(
 		'categories' => array(
-			'indexes' => array(
-				'NAMES' => false,
-				'NAME' => array(
-					'column' => 'name',
-					'unique' => 0),
-			)
+			'length' => 11
 		)
 	)
 
@@ -218,6 +213,30 @@ Directives exist (Create, Drop, Alter) to handle creation and deletion of fields
 		),
 	)
 
+#### Alter Index ####
+
+In order to add a new index to an existing field, you need to drop the field and create it again passing the index definition in an array.
+
+	'drop_field' => array(
+		'posts' => array('title')
+	),
+	'create_field' => array(
+		'posts' => array(
+			'title' => array('type' => 'string', 'length' => 255, 'null' => false),
+			'indexes' => array('UNIQUE_TITLE' => array('column' => 'title', 'unique' => true))
+		)
+	)
+
+Likewise, if you want to drop an index then you need to drop the field including the indexes you want to drop, then you create the field again.
+	
+	'drop_field' => array(
+		'posts' => array('title', 'indexes' => array('UNIQUE_TITLE'))
+	),
+	'create_field' => array(
+		'posts' => array(
+			'title' => array('type' => 'string', 'null' => true, 'length' => 255)
+		)
+	)
 
 ## Requirements ##
 
