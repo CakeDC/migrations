@@ -267,7 +267,6 @@ class MigrationVersion {
 			} else if (($direction == 'up' && $info['migrated'] === null)
 				|| ($direction == 'down' && $info['migrated'] !== null)) {
 				
-				unset($options['callback']);
 				$migration = $this->getMigration($info['name'], $info['class'], $info['type'], $options);
 				$migration->Version = $this;
 				$migration->info = $info;
