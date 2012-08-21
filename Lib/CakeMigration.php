@@ -154,7 +154,7 @@ class CakeMigration extends Object {
  * @param string $direction, up or down direction of migration process
  * @return boolean Status of the process
  */
-	public function run($direction, $options = array()) {
+	public function run($direction) {
 		if (!in_array($direction, array('up', 'down'))) {
 			throw new MigrationException($this, sprintf(
 				__d('migrations', 'Migration direction (%s) is not one of valid directions.'), $direction
@@ -170,7 +170,7 @@ class CakeMigration extends Object {
 
 		try {
 			$this->_invokeCallbacks('beforeMigration', $direction);
-			$result = $this->_run($options); 
+			$result = $this->_run(); 
 			$this->_clearCache();
 			$this->_invokeCallbacks('afterMigration', $direction);
 
@@ -192,7 +192,7 @@ class CakeMigration extends Object {
  *
  * @return void
  */
-	protected function _run($options) {
+	protected function _run() {
 		$result = true;
 		//force the order of migration types
 		uksort($this->migration[$this->direction], array($this, 'migration_order'));
@@ -230,7 +230,7 @@ class CakeMigration extends Object {
 			}
 
 			try {
-				$result = $this->{$methodName}($type, $info, $options);
+				$result = $this->{$methodName}($type, $info);
 			} catch (Exception $e){
 				throw new MigrationException($this, sprintf(
 						__d('migrations', '%s'), $e->getMessage()
@@ -260,7 +260,7 @@ class CakeMigration extends Object {
  * @param array $tables List of tables to be created
  * @return boolean Return true in case of success, otherwise false
  */
-	protected function _createTable($type, $tables, $options) {
+	protected function _createTable($type, $tables) {
 		foreach ($tables as $table => $fields) {
 			if (in_array($this->db->fullTableName($table, false, false), $this->db->listSources())) {
 				throw new MigrationException($this,
@@ -286,9 +286,9 @@ class CakeMigration extends Object {
  * @param array $tables List of tables to be dropped
  * @return boolean Return true in case of success, otherwise false
  */
-	protected function _dropTable($type, $tables, $options) {
+	protected function _dropTable($type, $tables) {
 		foreach ($tables as $table) {
-			if (!in_array($this->db->fullTableName($table, false, false), $this->db->listSources()) && !isset($options['reset'])) {
+			if (!in_array($this->db->fullTableName($table, false, false), $this->db->listSources()) ) {
 				throw new MigrationException($this,
 					__d('migrations', 'Table "%s" does not exists in database.', $this->db->fullTableName($table, false, false))
 				);
@@ -311,7 +311,7 @@ class CakeMigration extends Object {
  * @param array $tables List of tables to be renamed
  * @return boolean Return true in case of success, otherwise false
  */
-	protected function _renameTable($type, $tables, $options) {
+	protected function _renameTable($type, $tables) {
 		foreach ($tables as $oldName => $newName) {
 			$sources = $this->db->listSources();
 			
