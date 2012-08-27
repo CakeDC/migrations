@@ -53,11 +53,11 @@ To get all pending changes into your database run:
 
 #### Running migrations for plugins ###
 
-	cake migration run all --plugin Users
+	cake Migrations.migration run all --plugin Users
 
 #### Getting the status of available/applied Migrations ###
 
-	cake migration status
+	cake Migrations.migration status
 
 ### Migration shell return codes
 
