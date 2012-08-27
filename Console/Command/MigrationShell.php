@@ -364,15 +364,6 @@ class MigrationShell extends Shell {
 	}
 
 /**
- * Generate a new migration file
- *
- * @see generate
- */
-	public function add() {
-		return $this->generate();
-	}
-
-/**
  * Displays a status of all plugin and app migrations
  *
  * @return void

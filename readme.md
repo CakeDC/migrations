@@ -37,23 +37,27 @@ offering flexibility and easy management of your schema and data states.
 
 To get all pending changes into your database run:
 
-	cake Migrations.migration all
+	cake Migrations.migration run all
 
 #### Reseting your database ###
 
-	cake Migrations.migration reset
+	cake Migrations.migration run reset
 
 #### Downgrade to previous version ###
 
-	cake Migrations.migration down
+	cake Migrations.migration run down
 
 #### Upgrade to next version ###
 
-	cake Migrations.migration up
+	cake Migrations.migration run up
 
 #### Running migrations for plugins ###
 
-	cake migration all --plugin Users
+	cake migration run all --plugin Users
+
+#### Getting the status of available/applied Migrations ###
+
+	cake migration status
 
 ### Migration shell return codes
 
