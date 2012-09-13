@@ -124,13 +124,9 @@ class MigrationShell extends Shell {
 					'help' => __('Disables automatic creation of migrations table and running any internal plugin migrations')))
 			->addSubcommand('status', array(
 				'help' => __('Displays a status of all plugin and app migrations.')))
-			->addSubcommand('all', array(
-				'help' => __('Bake a complete MVC. optional <name> of a Model')))
 			->addSubcommand('run', array(
 				'help' => __('Run a migration to given direction or version.')))
 			->addSubcommand('generate', array(
-				'help' => __('Generates a migration file.')))
-			->addSubcommand('add', array(
 				'help' => __('Generates a migration file.')));
 	}
 
