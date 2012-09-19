@@ -59,13 +59,24 @@ class MigrationVersion {
 			$this->connection = $options['connection'];
 		}
 
+		$this->initVersion();
+
+		if (!isset($options['autoinit']) || $options['autoinit'] !== false) {
+			$this->__initMigrations();
+		}
+	}
+
+/**
+ * get a new SchemaMigration instance
+ *
+ * @return void
+ */
+
+	public function initVersion() {
 		$this->Version = ClassRegistry::init(array(
 			'class' => 'Migrations.SchemaMigration',
 			'ds' => $this->connection
 		));
-		if (!isset($options['autoinit']) || $options['autoinit'] !== false) {
-			$this->__initMigrations();
-		}
 	}
 
 /**
