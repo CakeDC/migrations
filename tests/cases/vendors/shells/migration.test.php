@@ -177,7 +177,7 @@ class MigrationShellTest extends CakeTestCase {
 		$this->Shell->path = TMP . 'tests' . DS;
 		$this->Shell->connection = 'test_suite';
 
-		$plugins = $this->plugins = Configure::read('pluginPaths');
+		$plugins = $this->plugins = App::path('plugins');
 		$plugins[] = dirname(dirname(dirname(dirname(__FILE__)))) . DS . 'test_app' . DS . 'plugins' . DS;
 		Configure::write('pluginPaths', $plugins);
 	}
@@ -645,7 +645,7 @@ TEXT;
 /^<\?php
 \\\$map = array\(
 	1 => array\(
-		'001_initial_schema' => 'M([a-zA-Z0-9]+)'\),
+		'001_initial_schema' => 'M([a-zA-Z0-9_]+)'\),
 \);
 \?>$/
 TEXT;
@@ -653,7 +653,7 @@ TEXT;
 
 		// Adding other migration to it
 		$this->Shell->expectCallCount('err', 1);
-		$this->Shell->setReturnValueAt(2, 'in', '002_invalid_name');
+		$this->Shell->setReturnValueAt(2, 'in', '002_invalid_name!');
 		$this->Shell->setReturnValueAt(3, 'in', '002 create some sample data');
 		$this->Shell->setReturnValueAt(4, 'in', 'n');
 
@@ -666,9 +666,9 @@ TEXT;
 /^<\?php
 \\\$map = array\(
 	1 => array\(
-		'001_initial_schema' => 'M([a-zA-Z0-9]+)'\),
+		'001_initial_schema' => 'M([a-zA-Z0-9_]+)'\),
 	2 => array\(
-		'002_create_some_sample_data' => 'M([a-zA-Z0-9]+)'\),
+		'002_create_some_sample_data' => 'M([a-zA-Z0-9_]+)'\),
 \);
 \?>$/
 TEXT;
@@ -740,7 +740,7 @@ TEXT;
 /^<\?php
 \\\$map = array\(
 	1 => array\(
-		'001_schema_dump' => 'M([a-zA-Z0-9]+)'\),
+		'001_schema_dump' => 'M([a-zA-Z0-9_]+)'\),
 \);
 \?>$/
 TEXT;

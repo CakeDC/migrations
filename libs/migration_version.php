@@ -272,7 +272,7 @@ class MigrationVersion {
 			include CONFIGS . 'migrations' . DS . $name . '.php';
 			$found = true;
 		} else {
-			$paths = Configure::read('pluginPaths');
+			$paths = App::path('plugins');
 			if(!empty($paths)) {
 				foreach ($paths as $path) {
 					if (file_exists($path . $type) && is_dir($path . $type)) {
