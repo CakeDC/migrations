@@ -294,8 +294,14 @@ class CakeMigration extends Object {
 						$model = new Model(array('table' => $table, 'ds' => $this->connection));
 						$tableFields = $this->db->describe($model);
 
+						//Remove any un-specified fields
+						//So that we don't inadvertently try to set a collation for an integer changed from a string
+						//We need to preserve 'type' because it's required for the query
+						$prevcol = $tableFields[$field];
+						$prevcol = array_intersect_key($prevcol, array_merge(array('type' => null), $col));
+
 						$sql = $this->db->alterSchema(array(
-							$table => array('change' => array($field => array_merge($tableFields[$field], $col)))
+							$table => array('change' => array($field => array_merge($prevcol, $col)))
 						));
 						break;
 					case 'rename':

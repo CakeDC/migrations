@@ -430,6 +430,14 @@ TEXT;
 						$migration['down']['drop_field'][$table]['indexes'] = array_keys($indexes['indexes']);
 					}
 				} else if ($type == 'change') {
+					//Check for left-over string fields
+					//An awkward workaround because CakeSchema gives us bad change data
+					foreach($fields as $fieldname => &$colarr) {
+						if($colarr['type'] != 'string') {
+							if(array_key_exists('collate',$colarr)) { unset($colarr['collate']); }
+							if(array_key_exists('charset',$colarr)) { unset($colarr['charset']); }
+						}
+					}
 					$migration['up']['alter_field'][$table] = $fields;
 					$migration['down']['alter_field'][$table] = array_intersect_key($oldTables[$table], $fields);
 				} else {
