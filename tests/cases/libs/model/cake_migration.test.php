@@ -309,6 +309,32 @@ class CakeMigrationTest extends CakeTestCase {
 		$this->assertTrue(isset($fields['published']));
 		$this->assertFalse(isset($fields['renamed_published']));
 		$this->assertEqual($fields['published']['default'], 'N');
+
+		// Test changing from string to integer
+		$migration = new TestCakeMigration(array(
+			'up' => array(
+				'alter_field' => array(
+					'posts' => array('published' => array('type' => 'integer'))
+				)
+			),
+			'down' => array(
+				'alter_field' => array(
+					'posts' => array('published' => array('type' => 'string'))
+				)
+			)
+		));
+
+		$fields = $this->db->describe($model);
+		$this->assertEqual($fields['published']['type'], 'string');
+
+		$this->assertTrue($migration->run('up'));
+		$fields = $this->db->describe($model);
+		$this->assertEqual($fields['published']['type'], 'integer');
+
+		$this->assertTrue($migration->run('down'));
+		$fields = $this->db->describe($model);
+		$this->assertEqual($fields['published']['type'], 'string');
+
 	}
 
 /**
