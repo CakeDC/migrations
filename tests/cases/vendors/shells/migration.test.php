@@ -584,7 +584,7 @@ class MigrationShellTest extends CakeTestCase {
 				'users'
 			),
 			'drop_field' => array(
-				'posts' => array('views', 'indexes' => array('VIEW_COUNT')),
+				'posts' => array('views','indexes' => array('VIEW_COUNT')),
 			),
 		),
 	);
