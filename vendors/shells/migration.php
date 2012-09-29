@@ -434,7 +434,7 @@ TEXT;
 					//Check for left-over string fields
 					//An awkward workaround because CakeSchema gives us bad change data
 					foreach($fields as $fieldname => &$colarr) {
-						if($colarr['type'] != 'string') {
+						if(array_key_exists('type',$colarr) && $colarr['type'] != 'string') {
 							if(array_key_exists('collate',$colarr)) { unset($colarr['collate']); }
 							if(array_key_exists('charset',$colarr)) { unset($colarr['charset']); }
 						}
