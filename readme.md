@@ -13,7 +13,7 @@ As an application is developed, changes to the database may be required, and man
 
 - Unzip or clone this plugin into your app/Plugin/Migrations folder or the shared plugins folder for your CakePHP installation.
 - Add the plugin to your app/Config/bootstrap.php using `CakePlugin::load('Migrations')`
-- Run `Console/cake Migrations.migration -p Migrations` to initialized the `schema_migrations` table
+- Run `Console/cake Migrations.migration run all -p Migrations` to initialized the `schema_migrations` table
 
 ### Generating your first migration ###
 
@@ -33,39 +33,39 @@ After generating or being supplied a set of migrations, you can process them to 
 This is the crux of the migrations plugin, allowing migration of schemas up and down the migration chain,
 offering flexibility and easy management of your schema and data states.
 
-#### Runing all pending migrations ###
+#### Runing all pending migrations ####
 
 To get all pending changes into your database run:
 
 	cake Migrations.migration run all
 
-#### Reseting your database ###
+#### Reseting your database ####
 
 	cake Migrations.migration run reset
 
-#### Downgrade to previous version ###
+#### Downgrade to previous version ####
 
 	cake Migrations.migration run down
 
-#### Upgrade to next version ###
+#### Upgrade to next version ####
 
 	cake Migrations.migration run up
 
-#### Running migrations for plugins ###
+#### Running migrations for plugins ####
 
 	cake Migrations.migration run all --plugin Users
 
-#### Getting the status of available/applied Migrations ###
+#### Getting the status of available/applied Migrations ####
 
 	cake Migrations.migration status
 
-### Migration shell return codes
+### Migration shell return codes ###
 
 0 = Success
 1 = No migrations available
 2 = Not a valid migration version
 
-###  Auto migration files ### 
+### Auto migration files ###
 
 Once you have Generated your first Migration you will probably do more changes to your database.
 To simplify the generation of new migration you can do Schema Diffs. To this, you need to follow the steps:
@@ -272,7 +272,7 @@ Copyright 2009-2011, [Cake Development Corporation](http://cakedc.com)
 Licensed under [The MIT License](http://www.opensource.org/licenses/mit-license.php)<br/>
 Redistributions of files must retain the above copyright notice.
 
-## Copyright ###
+## Copyright ##
 
 Copyright 2009-2012<br/>
 [Cake Development Corporation](http://cakedc.com)<br/>

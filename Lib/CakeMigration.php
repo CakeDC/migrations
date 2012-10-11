@@ -185,8 +185,6 @@ class CakeMigration extends Object {
 		return $this->db->commit($null);
 	}
 
-
-
 /**
  * Run migration commands
  *
@@ -288,7 +286,7 @@ class CakeMigration extends Object {
  */
 	protected function _dropTable($type, $tables) {
 		foreach ($tables as $table) {
-			if (!in_array($this->db->fullTableName($table, false, false), $this->db->listSources()) ) {
+			if (!in_array($this->db->fullTableName($table, false, false), $this->db->listSources())) {
 				throw new MigrationException($this,
 					__d('migrations', 'Table "%s" does not exists in database.', $this->db->fullTableName($table, false, false))
 				);
@@ -314,7 +312,6 @@ class CakeMigration extends Object {
 	protected function _renameTable($type, $tables) {
 		foreach ($tables as $oldName => $newName) {
 			$sources = $this->db->listSources();
-			
 			if (!in_array($this->db->fullTableName($oldName, false, false), $sources)) {
 				throw new MigrationException($this,
 					__d('migrations', 'Table "%s" does not exists in database.', $this->db->fullTableName($oldName, false, false))
@@ -324,13 +321,14 @@ class CakeMigration extends Object {
 					__d('migrations', 'Table "%s" already exists in database.', $this->db->fullTableName($newName, false, false))
 				);
 			}
-			$sql = 'RENAME TABLE ' . $this->db->fullTableName($oldName) . ' TO ' . $this->db->fullTableName($newName) . ';';
+
+			$sql = 'ALTER TABLE ' . $this->db->fullTableName($oldName) . ' RENAME TO ' . $newName . ';';
+
 			$this->_invokeCallbacks('beforeAction', 'rename_table', array('old_name' => $oldName, 'new_name' => $newName));
 			if (@$this->db->execute($sql) === false) {
 				throw new MigrationException($this, __d('migrations', 'SQL Error: %s', $this->db->error));
 			}
 			$this->_invokeCallbacks('afterAction', 'rename_table', array('old_name' => $oldName, 'new_name' => $newName));
-
 		}
 		return true;
 	}
@@ -402,12 +400,11 @@ class CakeMigration extends Object {
 						$sql = $this->db->alterSchema(array(
 							$table => array('change' => array($field => $def))
 						));
-
 						break;
 					case 'rename':
 						$sql = $this->db->alterSchema(array(
 							$table => array('change' => array($field => array_merge($tableFields[$field], array('name' => $col))))
-						)); 
+						));
 						break;
 				}
 
