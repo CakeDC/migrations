@@ -23,8 +23,8 @@ class TestMigrationShell extends MigrationShell {
  * @param $string
  * @return void
  */
-	function out($string = null) {
-		$this->output .= $string . "\n";
+	function out($message = null, $newlines = 1, $level = 1) {
+		$this->output .= $message . "\n";
 	}
 
 /**
