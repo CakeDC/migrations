@@ -504,9 +504,14 @@ class CakeMigration extends Object {
 		ClassRegistry::flush();
 
 		// Refresh the model, in case something changed
-		if ($this->Version instanceof MigrationVersion) {
-			$this->Version->initVersion();
+		$options = array(
+			'class' => 'Migrations.SchemaMigration',
+			'ds' => $this->connection);
+		if ($this->Version === null) {
+			$this->Version = new stdClass();
 		}
+		$this->Version->Version = ClassRegistry::init($options);
+		$this->Version->Version->setDataSource($this->connection);
 	}
 
 /**
