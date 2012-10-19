@@ -217,7 +217,7 @@ class MigrationVersion {
 		}
 
 		$defaults = array(
-			'connection' => $this->connection
+			'connection' => null
 		);
 		$options = array_merge($defaults, $options);
 		return new $class($options);
@@ -333,6 +333,7 @@ class MigrationVersion {
 
 			list($name, $class) = each($map[1]);
 			$migration = $this->getMigration($name, $class, 'Migrations');
+			$migration->Version = $this;
 			$migration->run('up');
 			$this->setVersion(1, 'Migrations');
 		}
