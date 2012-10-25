@@ -635,6 +635,10 @@ TEXT;
 			return APP;
 		} else {
 			$paths = Configure::read('pluginPaths');
+			if (empty($paths)) {
+				Configure::write('pluginPaths', array(APP.'plugins/'));
+				$paths = Configure::read('pluginPaths');
+			}
 			foreach ($paths as $path) {
 				if (file_exists($path . $type) && is_dir($path . $type)) {
 					return $path . $type . DS;
