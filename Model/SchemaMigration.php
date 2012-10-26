@@ -23,4 +23,3 @@
 class SchemaMigration extends Model {
 
 }
-?>

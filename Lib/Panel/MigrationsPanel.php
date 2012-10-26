@@ -57,20 +57,11 @@ class MigrationsPanel extends DebugPanel {
 	public $output = '';
 
 /**
- * startup
- *
- * @return void
- */
-	function startup(Controller $controller) {
-		return parent::startup($controller);
-	}
-
-/**
  * beforeRender Callback
  *
  * @return array
  */
-	function beforeRender(Controller $controller) {
+	public function beforeRender(Controller $controller) {
 		$v = new MigrationVersion();
 		$map = array();
 		foreach (App::objects('plugin') as $plugin) {
@@ -85,4 +76,5 @@ class MigrationsPanel extends DebugPanel {
 		}
 		return $map;
 	}
+
 }

@@ -41,5 +41,5 @@ class AnotherMigrationPluginTestMigration extends CakeMigration {
 	public function after($direction) {
 		return true;
 	}
+
 }
-?>

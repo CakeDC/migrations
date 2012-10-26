@@ -183,9 +183,9 @@ class MigrationShell extends Shell {
 			'callback' => &$this
 		);
 		$result = $this->_execute($options, $once);
-		if($result !== true){
+		if ($result !== true) {
 			$this->out(__d('migrations', $result));
-		} 
+		}
 
 		$this->out(__d('migrations', 'All migrations have completed.'));
 		$this->out('');
@@ -196,7 +196,6 @@ class MigrationShell extends Shell {
 		$result = true;
 		try {
 			$result = $this->Version->run($options);
-			
 		} catch (MigrationException $e) {
 			$this->out(__d('migrations', 'An error occurred when processing the migration:'));
 			$this->out('  ' . sprintf(__d('migrations', 'Migration: %s'), $e->Migration->info['name']));
@@ -236,10 +235,9 @@ class MigrationShell extends Shell {
 		return $options;
 	}
 
-
 	protected function _promptVersionOptions($mapping, $latestVersion) {
 		if (isset($this->args[0]) && is_numeric($this->args[0])) {
-			$options['version'] = (int) $this->args[0];
+			$options['version'] = (int)$this->args[0];
 
 			$valid = isset($mapping[$options['version']]) || ($options['version'] === 0 && $latestVersion > 0);
 			if (!$valid) {
@@ -259,13 +257,13 @@ class MigrationShell extends Shell {
 					continue;
 				}
 
-				$valid = is_numeric($response) && isset($mapping[(int) $response]);
+				$valid = is_numeric($response) && isset($mapping[(int)$response]);
 				if ($valid) {
-					$options['version'] = (int) $response;
+					$options['version'] = (int)$response;
 					$direction = 'up';
-					if (empty($mapping[(int) $response]['migrated'])) {
+					if (empty($mapping[(int)$response]['migrated'])) {
 						$direction = 'up';
-					} else if ((int) $response <= $latestVersion) {
+					} else if ((int)$response <= $latestVersion) {
 						$direction = 'down';
 					}
 					break;
@@ -669,7 +667,7 @@ class MigrationShell extends Shell {
 		extract($vars);
 		ob_start();
 		ob_implicit_flush(0);
-		include(dirname(__FILE__) . DS . 'Templates' . DS . $template . '.ctp');
+		include (dirname(__FILE__) . DS . 'Templates' . DS . $template . '.ctp');
 		$content = ob_get_clean();
 
 		return $content;
@@ -727,6 +725,5 @@ class MigrationShell extends Shell {
 			$this->out('      > ' . $message);
 		}
 	}
-}
-?>
 
+}

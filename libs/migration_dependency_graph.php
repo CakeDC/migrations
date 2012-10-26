@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This class is a adjacency matrix representation of a graph
  *
@@ -6,6 +7,7 @@
  * @see http://en.wikipedia.org/wiki/Topological_sorting
  */
 class MigrationDependencyGraph {
+
 /**
  * Stores the adjacency matrix
  *
@@ -14,6 +16,7 @@ class MigrationDependencyGraph {
  * @access private
  */
 	private $__adjMatrix = null;
+
 /**
  * Stores the number of vertices in the graph
  *
@@ -21,6 +24,7 @@ class MigrationDependencyGraph {
  * @access private
  */
 	private $__vertexCount = 0;
+
 /**
  * Stores the number of edges in the graph
  *
@@ -28,6 +32,7 @@ class MigrationDependencyGraph {
  * @access private
  */
 	private $__edgeCount = 0;
+
 /**
  * Vertex List (the array attached to it is for the dfs algorithm)
  *
@@ -35,6 +40,7 @@ class MigrationDependencyGraph {
  * @access private
  */
 	private $__vertexList = array();
+
 /**
  * Defaults for the dfs data stored in the vertexList
  *
@@ -42,6 +48,7 @@ class MigrationDependencyGraph {
  * @access private
  */
 	private $__dfsDefaults = array('color' => 0, 'discovery' => null, 'finish' => null);
+
 /**
  * Result from topo sort (uses DFS)
  *
@@ -49,6 +56,7 @@ class MigrationDependencyGraph {
  * @access private
  */
 	private $__topologicalOrder = array();
+
 /**
  * Depth First Search time counter
  *
@@ -56,6 +64,7 @@ class MigrationDependencyGraph {
  * @access private
  */
 	private $__time = 0;
+
 /**
  * Default Constructor
  *
@@ -71,6 +80,7 @@ class MigrationDependencyGraph {
 			}
 		}
 	}
+
 /**
  * Depth First Search
  *
@@ -90,6 +100,7 @@ class MigrationDependencyGraph {
 		}
 		return $this->__topologicalOrder;
 	}
+
 /**
  * Private depth first search helper function
  *
@@ -113,12 +124,14 @@ class MigrationDependencyGraph {
 			array_unshift($this->__topologicalOrder, $vertex);
 		}
 	}
+
 /**
  * Returns array of outgoing edges (the names of the vertex at the other end)
  *
  * @param string $vertex the key of the vertex
  * @return array
  * @access public
+ * @throws Exception
  */
 	public function getOutgoingEdges($vertex) {
 		if (!$this->vertexExists($vertex)) {
@@ -126,6 +139,7 @@ class MigrationDependencyGraph {
 		}
 		return array_keys($this->__adjMatrix[$vertex]);
 	}
+
 /**
  * Returns array of incoming edges (this is expensive
  * and should not be used if possible)
@@ -133,6 +147,7 @@ class MigrationDependencyGraph {
  * @param string $vertex the key of the vertex
  * @return array
  * @access public
+ * @throws Exception
  */
 	public function getIncomingEdges($vertex) {
 		if (!$this->vertexExists($vertex)) {
@@ -146,6 +161,7 @@ class MigrationDependencyGraph {
 		}
 		return $incomingEdges;
 	}
+
 /**
  * Adds a new vertex to the graph
  *
@@ -158,6 +174,7 @@ class MigrationDependencyGraph {
 		$this->__vertexList[$key] = $this->__dfsDefaults;
 		return ++$this->__vertexCount;
 	}
+
 /**
  * Adds an edge to the graph
  *
@@ -166,6 +183,7 @@ class MigrationDependencyGraph {
  * @param string $value the value or weight of the edge
  * @return integer the number of edges
  * @access public
+ * @throws Exception
  */
 	public function addEdge($v1, $v2, $value = true) {
 		if (!$this->vertexExists($v1) || !$this->vertexExists($v2)) {
@@ -174,6 +192,7 @@ class MigrationDependencyGraph {
 		$this->__adjMatrix[$v1][$v2] = $value;
 		return ++$this->__edgeCount;
 	}
+
 /**
  * Removes an edge from the graph
  *
@@ -181,6 +200,7 @@ class MigrationDependencyGraph {
  * @param string $v2 the key for the second vertex
  * @return integer the number of edges
  * @access public
+ * @throws Exception
  */
 	public function removeEdge($v1, $v2) {
 		if (!$this->vertexExists($v1) || !$this->vertexExists($v2)) {
@@ -189,6 +209,7 @@ class MigrationDependencyGraph {
 		unset($this->__adjMatrix[$v1][$v2]);
 		return --$this->__edgeCount;
 	}
+
 /**
  * Returns true if there is an edge between the
  * two vertices
@@ -197,6 +218,7 @@ class MigrationDependencyGraph {
  * @param string $v2 the key for the second vertex
  * @return boolean true if the edge exists
  * @access public
+ * @throws Exception
  */
 	public function hasEdge($v1, $v2) {
 		if (!$this->vertexExists($v1) || !$this->vertexExists($v2)) {
@@ -204,6 +226,7 @@ class MigrationDependencyGraph {
 		}
 		return isset($this->__adjMatrix[$v1][$v2]);
 	}
+
 /**
  * Returns the number of edges in the graph
  *
@@ -213,6 +236,7 @@ class MigrationDependencyGraph {
 	public function getEdgeCount() {
 		return $this->__edgeCount;
 	}
+
 /**
  * Returns the number of vertices in the graph
  *
@@ -222,6 +246,7 @@ class MigrationDependencyGraph {
 	public function getVertexCount() {
 		return $this->__vertexCount;
 	}
+
 /**
  * Returns true if the vertex exists in the graph
  *
@@ -232,6 +257,7 @@ class MigrationDependencyGraph {
 	public function vertexExists($vertex) {
 		return in_array($vertex, $this->getVertexList());
 	}
+
 /**
  * Returns list of vertex keys
  *
@@ -242,4 +268,3 @@ class MigrationDependencyGraph {
 		return array_keys($this->__vertexList);
 	}
 }
-?>

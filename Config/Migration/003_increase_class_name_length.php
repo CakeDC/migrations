@@ -19,14 +19,14 @@ class IncreaseClassNameLength extends CakeMigration {
 		'up' => array(
 			'alter_field' => array(
 				'schema_migrations' => array(
-					'class' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 255, 'name' => 'class')
+					'class' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 255, 'name' => 'class')
 				)
 			)
 		),
 		'down' => array(
 			'alter_field' => array(
 				'schema_migrations' => array(
-					'class' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 33, 'name' => 'class')
+					'class' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 33, 'name' => 'class')
 				)
 			)
 		)
@@ -53,6 +53,5 @@ class IncreaseClassNameLength extends CakeMigration {
 	public function after($direction) {
 		return true;
 	}
-}
 
-?>
+}
