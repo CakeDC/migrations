@@ -19,10 +19,10 @@ class InitMigrations extends CakeMigration {
 		'up' => array(
 			'create_table' => array(
 				'schema_migrations' => array(
-					'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
-					'class' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 33),
-					'type' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 50),
-					'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
+					'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'primary'),
+					'class' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 33),
+					'type' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 50),
+					'created' => array('type' => 'datetime', 'null' => false, 'default' => null),
 					'indexes' => array(
 						'PRIMARY' => array('column' => 'id', 'unique' => 1)
 					)
@@ -57,5 +57,5 @@ class InitMigrations extends CakeMigration {
 	public function after($direction) {
 		return true;
 	}
+
 }
-?>
