@@ -28,13 +28,12 @@ class MigrationVersionTest extends CakeTestCase {
  * @return void
  **/
 	function startTest() {
+		$plugins = $this->plugins = Configure::read('pluginPaths');
+		$plugins[] = dirname(dirname(dirname(__FILE__))) . DS . 'test_app' . DS . 'plugins' . DS ;
+		Configure::write('pluginPaths', $plugins);
 		$this->Version =& new MigrationVersion(array(
 			'connection' => 'test_suite'
 		));
-
-		$plugins = $this->plugins = Configure::read('pluginPaths');
-		$plugins[] = dirname(dirname(dirname(__FILE__))) . DS . 'test_app' . DS . 'plugins' . DS;
-		Configure::write('pluginPaths', $plugins);
 	}
 
 /**
