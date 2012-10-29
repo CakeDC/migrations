@@ -645,7 +645,9 @@ TEXT;
 		} else {
 			$paths = Configure::read('pluginPaths');
 			if (empty($paths)) {
-				Configure::write('pluginPaths', array(APP.'plugins/'));
+				$pluginPaths[] = APP . 'plugins' . DS;
+				$pluginPaths[] = CORE_PATH . 'plugins' . DS;
+				Configure::write('pluginPaths', $pluginPaths);
 				$paths = Configure::read('pluginPaths');
 			}
 			foreach ($paths as $path) {
