@@ -2,6 +2,106 @@
 App::uses('CakeMigration', 'Migrations.Lib');
 App::uses('MigrationVersion', 'Migrations.Lib');
 
+/**
+ * TestMigrationVersionStub
+ *
+ * @package       migrations
+ * @subpackage    migrations.tests.cases.libs
+ */
+class TestMigrationVersionStub extends MigrationVersion {
+	private $mapping = array(
+			1 => array('version' => 1, 'name' => 'migration001', 'class' => 'TestCakeMigration', 'type' => 'mocks', 'migrated' => null),
+			2 => array('version' => 2, 'name' => 'migration002', 'class' => 'TestExceptionCakeMigration', 'type' => 'mocks', 'migrated' => null)
+	);
+
+	public function __construct($options = array()) {
+
+	}
+
+	public function getMapping($type, $cache = true) {
+		return $this->mapping;
+	}
+
+	public function setVersion($version, $type, $migrated = true) {
+		$this->mapping[$version]['migrated'] = $migrated ? $migrated : null;
+	}
+
+	public function getVersion($type) {
+		if ($this->mapping[1]['migrated'] === true) {
+			return 1;
+		}
+		return 0;
+	}
+
+	public function getMigration($name, $class, $type) {
+		if ($name == 'migration001') {
+			return new TestCakeMigration(array(
+					'up' => array('create_table' => array(
+							'posts' => array(
+									'id' => array('type' => 'integer', 'key' => 'primary'),
+									'content' => array('type' => 'string', 'length' => 255)
+							))
+					),
+					'down' => array('drop_table' => array('posts'))
+			));
+		} else {
+			return new TestExceptionCakeMigration(array(
+					'up' => array('create_field' => array(
+							'posts' => array('user_id' => array('type' => 'integer', 'null' => false))
+					)),
+					'down' => array('drop_field' => array(
+							'posts' => array('user_id')
+					))
+			));
+		}
+	}
+}
+
+/**
+ * TestCakeMigration
+ *
+ * @package       migrations
+ * @subpackage    migrations.tests.cases.libs
+ */
+class TestCakeMigration extends CakeMigration {
+
+	/**
+	 * Connection used
+	 *
+	 * @var string
+	 */
+	public $connection = 'test';
+}
+
+
+/**
+ * TestExceptionCakeMigration
+ *
+ * @package       migrations
+ * @subpackage    migrations.tests.cases.libs
+ */
+class TestExceptionCakeMigration extends CakeMigration {
+
+	/**
+	 * Connection used
+	 *
+	 * @var string
+	 */
+	public $connection = 'test';
+
+	/**
+	 * after method
+	 *
+	 * @return void
+	 */
+	public function after($direction) {
+		if ($direction != 'down') {
+			throw new Exception('Boom goes the dynamite.');
+		}
+		return true;
+	}
+}
+
 class MigrationVersionTest extends CakeTestCase {
 
 /**
@@ -300,5 +400,30 @@ class MigrationVersionTest extends CakeTestCase {
 			}
 		}
 		return $mapping;
+	}
+
+	/**
+	 * testRunDoesNotLooseDataOnError
+	 *
+	 * @return void
+	 */
+	public function testRunDoesNotLooseDataOnError() {
+		$Version = new TestMigrationVersionStub();
+
+		$Version->Version = ClassRegistry::init(array(
+				'class' => 'schema_migrations', 'ds' => 'test'));
+
+		// run migration001
+		$this->assertTrue($Version->run(array('direction' => 'up', 'type' => 'mocks')));
+		// check that it matches 001's schema
+
+		// add data
+		$model = new Model(array('table' => 'posts', 'ds' => 'test'));
+		$model->save(array('id' => 1, 'content' => 'abcdefg'));
+		$this->assertEqual($model->find('count'), 1);
+
+		// run migration002
+		$this->assertNotEqual($Version->run(array('direction' => 'up', 'type' => 'mocks')), true);
+		$this->assertEqual($model->find('count'), 1);
 	}
 }
