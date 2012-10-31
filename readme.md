@@ -311,7 +311,7 @@ Example 2: Prompt the user to insert data
 
 	public function after($direction) {
 		$Status = ClassRegistry::init('Status');
-		if ($direction == 'up') { //add 2 records to statues table
+		if ($direction == 'up') {
 			$this->callback->out('Please enter a default status below:');
 			$data['Status']['name'] = $this->callback->in('What is the name of the default status?');
 			$Status->create(); 
