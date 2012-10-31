@@ -4,7 +4,8 @@ Version 2.1 for cake 2.x
 
 This migrations plugin enables developers to quickly and easily manage and migrate between database schema versions.
 
-As an application is developed, changes to the database may be required, and managing that in teams can get extremely difficult. Migrations enables you to share and co-ordinate database changes in an iterative manner, removing the complexity of handling these changes.
+As an application is developed, changes to the database may be required, and managing that in teams can get extremely difficult. Migrations enables you to share and co-ordinate database changes in an iterative manner, removing the complexity of handling these changes. 
+This is not a backup tool, however you can make use of callbacks if you want to backup data or execute extra queries. We highly recommend not to run Migrations in a production environment directly without doing a backup and running it first in a staging environment.
 
 ## Installing ##
 
@@ -241,6 +242,86 @@ Likewise, if you want to drop an index then you need to drop the field including
 			'title' => array('type' => 'string', 'null' => true, 'length' => 255)
 		)
 	)
+
+## Callbacks ##
+
+You can make use of callbacks in order to execute extra operations, for example, to fill tables with predefined data, you can even use the shell to ask the user for data that is going to be inserted.
+
+Example 1: Create table statuses and fill it with some default data
+
+	public $migration = array(
+		'up' => array(
+			'create_table' => array(
+				'statuses' => array(
+					'id' => array(
+						'type' => 'string',
+						'length' => 36,
+						'null' => false,
+						'key' => 'primary'),
+					'name' => array(
+						'type' => 'text',
+						'null' => false,
+						'default' => NULL),
+				)
+			)
+		),
+		'down' => array(
+			'drop_table' => array('statuses')
+		),
+	);
+
+	public function after($direction) {
+		$Status = ClassRegistry::init('Status');
+		if ($direction == 'up') { //add 2 records to statues table
+			$data['Status'][0]['id'] = '59a6a2c0-2368-11e2-81c1-0800200c9a66';
+			$data['Status'][0]['name'] = 'Published';
+			$data['Status'][1]['id'] = '59a6a2c1-2368-11e2-81c1-0800200c9a67';
+			$data['Status'][1]['name'] = 'Unpublished';
+			$Status->create();
+			if ($Status->saveAll($data)){
+				echo "Statues table has been initialized";
+			}
+		} else if ($direction == 'down') {
+			//do more work here
+		}
+	}
+
+Example 2: Prompt the user to insert data
+
+	public $migration = array(
+		'up' => array(
+			'create_table' => array(
+				'statuses' => array(
+					'id' => array(
+						'type' => 'string',
+						'length' => 36,
+						'null' => false,
+						'key' => 'primary'),
+					'name' => array(
+						'type' => 'text',
+						'null' => false,
+						'default' => NULL),
+				)
+			)
+		),
+		'down' => array(
+			'drop_table' => array('statuses')
+		),
+	);
+
+	public function after($direction) {
+		$Status = ClassRegistry::init('Status');
+		if ($direction == 'up') { //add 2 records to statues table
+			$this->callback->out('Please enter a default status below:');
+			$data['Status']['name'] = $this->callback->in('What is the name of the default status?');
+			$Status->create(); 
+			if ($Status->save($data)){
+				echo "Statues table has been initialized";
+			}
+		} else if ($direction == 'down') {
+			//do more work here
+		}
+	}
 
 ## Requirements ##
 
