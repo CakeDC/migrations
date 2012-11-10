@@ -151,6 +151,33 @@ class CakeMigrationTest extends CakeTestCase {
 		$this->assertFalse(in_array($this->db->fullTableName('migration_posts', false, false), $sources));
 	}
 
+	public function testRunDownWithPrefix() {
+		$options = ConnectionManager::getDataSource('test')->config;
+		$prefix = 'prefix_';
+		$options['prefix'] = $prefix;
+		ConnectionManager::create('test2', $options);
+		
+		$migration = new TestCakeMigration(array(
+			'up' => array('create_table' => array('migration_posts' => $this->tables['posts'], 'migration_users' => $this->tables['users'])),
+			'down' => array('drop_table' => array('migration_posts', 'migration_users')),
+			'connection' => 'test2'
+		));
+		
+		$sources = $this->db->listSources();
+		$this->assertFalse(in_array($this->db->fullTableName($prefix . 'migration_user', false, false), $sources));
+		$this->assertFalse(in_array($this->db->fullTableName($prefix . 'migration_posts', false, false), $sources));
+		$this->assertTrue($migration->run('up'));
+		$sources = $this->db->listSources();
+		$this->assertTrue(in_array($this->db->fullTableName($prefix . 'migration_users', false, false), $sources));
+		$this->assertTrue(in_array($this->db->fullTableName($prefix . 'migration_posts', false, false), $sources));
+		
+		$this->assertTrue($migration->run('down'));
+		$sources = $this->db->listSources();
+		$this->assertFalse(in_array($this->db->fullTableName($prefix . 'migration_users', false, false), $sources));
+		$this->assertFalse(in_array($this->db->fullTableName($prefix . 'migration_posts', false, false), $sources));
+		
+	}
+
 /**
  * testRenameTable method
  *
