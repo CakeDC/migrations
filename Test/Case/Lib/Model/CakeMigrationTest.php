@@ -150,7 +150,10 @@ class CakeMigrationTest extends CakeTestCase {
 		$this->assertFalse(in_array($this->db->fullTableName('migration_users', false, false), $sources));
 		$this->assertFalse(in_array($this->db->fullTableName('migration_posts', false, false), $sources));
 	}
-
+/**
+* test create and drop tables with a prefix
+* @return void
+*/
 	public function testRunDownWithPrefix() {
 		$options = ConnectionManager::getDataSource('test')->config;
 		$prefix = 'prefix_';
