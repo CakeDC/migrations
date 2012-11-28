@@ -72,8 +72,10 @@ class MigrationsPanel extends DebugPanel {
  */
 	function beforeRender(Controller $controller) {
 		$v = new MigrationVersion();
-		$map = array();
-		foreach (App::objects('plugin') as $plugin) {
+		$map = $migrations = array();
+
+		$migrations = Hash::merge(array('app'), App::objects('plugin'));
+		foreach ($migrations as $plugin) {
 			try {
 				$map[$plugin] = array(
 					'map' => $v->getMapping($plugin),
