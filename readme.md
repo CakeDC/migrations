@@ -14,7 +14,7 @@ This is not a backup tool, however you can make use of callbacks if you want to 
 
 - Unzip or clone this plugin into your app/Plugin/Migrations folder or the shared plugins folder for your CakePHP installation.
 - Add the plugin to your app/Config/bootstrap.php using `CakePlugin::load('Migrations')`
-- Run `Console/cake Migrations.migration run all -p Migrations` to initialized the `schema_migrations` table
+- Run `Console/cake Migrations.migration run all -p Migrations` to initialize the `schema_migrations` table
 
 ### Generating your first migration ###
 
