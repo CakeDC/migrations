@@ -19,6 +19,7 @@ App::uses('CakeMigration', 'Migrations.Lib');
 App::uses('ConnectionManager', 'Model');
 App::uses('Inflector', 'Utility');
 App::uses('Folder', 'Utility');
+App::uses('ClassRegistry', 'Utility');
 
 /**
  * Migration version management.
