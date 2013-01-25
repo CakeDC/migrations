@@ -298,7 +298,11 @@ class MigrationVersion {
 			}
 		}
 
-		return $result;
+		if (isset($result)) {
+			return $result;
+		}
+
+		return true;
 	}
 
 /**
