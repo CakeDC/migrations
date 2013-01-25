@@ -284,28 +284,21 @@ class MigrationVersion {
 				$migration = $this->getMigration($info['name'], $info['class'], $info['type'], $options);
 				$migration->Version = $this;
 				$migration->info = $info;
+
 				try {
 					$result = $migration->run($direction, $options);
 				} catch (Exception $exception){
-					if (!isset($options['reset'])) {
-						$this->resetMigration($options['type']);
-						$this->setVersion($version, $info['type'], false);
-						$this->restoreMigration($latestVersion, $options['type']);
-						if ($latestVersion > 0) {
-							$mapping = $this->getMapping($options['type']);
-							$latestVersionName = '#' . number_format($mapping[$latestVersion]['version'] / 100, 2, '', '') . ' ' . $mapping[$latestVersion]['name'];
-							$errorMessage = __d('migrations', sprintf("There was an error during a migration. \n The error was: '%s' \n Migration will be reset to 0 and then moved up to version '%s' ", $exception->getMessage(), $latestVersionName));
-							return $errorMessage;
-						} else {
-							throw $exception;
-						}
-					}
+					$mapping = $this->getMapping($options['type']);
+					$latestVersionName = '#' . number_format($mapping[$latestVersion]['version'] / 100, 2, '', '') . ' ' . $mapping[$latestVersion]['name'];
+					$errorMessage = __d('migrations', sprintf("There was an error during a migration. \n The error was: '%s' \n You must resolve the issue manually and try again.", $exception->getMessage(), $latestVersionName));
+					return $errorMessage;
 				}
+
 				$this->setVersion($version, $info['type'], ($direction == 'up'));
 			}
 		}
 
-		return true;
+		return $result;
 	}
 
 /**
