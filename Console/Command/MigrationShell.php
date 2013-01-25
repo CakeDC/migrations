@@ -25,7 +25,7 @@ App::uses('String', 'Utility');
  * @package       migrations
  * @subpackage    migrations.vendors.shells
  */
-class MigrationShell extends Shell {
+class MigrationShell extends AppShell {
 
 /**
  * Connection used
