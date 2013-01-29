@@ -51,6 +51,13 @@ class MigrationVersion {
 	private $__mapping = array();
 
 /**
+ * Hash of a migration
+ *
+ * @var string
+ */
+	private $__migrationHash = null;
+
+/**
  * Constructor
  *
  * @param array $options optional load object properties
@@ -124,7 +131,9 @@ class MigrationVersion {
 		if ($migrated) {
 			$this->Version->create();
 			$result = $this->Version->save(array(
-				$field => $value, 'type' => $type
+				$field => $value,
+				'type' => $type,
+				'hash' => $this->__migrationHash
 			));
 		} else {
 			$conditions = array(
@@ -381,7 +390,10 @@ class MigrationVersion {
 			));
 		}
 
-		include $path . $name . '.php';
+		$file = $path . $name . '.php';
+		include $file;
+		$this->__migrationHash = sha1_file($file);
+
 		return true;
 	}
 
