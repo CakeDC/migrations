@@ -59,6 +59,7 @@ class MigrationVersion {
 			$this->connection = $options['connection'];
 		}
 
+    App::uses('ClassRegistry', 'Utility');
 		$this->Version = ClassRegistry::init(array(
 			'class' => 'Migrations.SchemaMigration',
 			'ds' => $this->connection
