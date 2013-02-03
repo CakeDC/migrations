@@ -78,7 +78,9 @@ class MigrationShell extends AppShell {
 			$this->type = $this->params['plugin'];
 		}
 		$this->path = $this->_getPath() . 'Config' . DS . 'Migration' . DS;
-		$this->Version = new MigrationVersion(array(
+
+		$this->Version =& new MigrationVersion(array(
+			'precheck' => $this->params['precheck'],
 			'connection' => $this->connection,
 			'autoinit' => !$this->params['no-auto-init']
 		));
@@ -108,6 +110,11 @@ class MigrationShell extends AppShell {
 			'')
 			->addOption('plugin', array(
 					'short' => 'p',
+					'help' => __('Plugin name to be used')))
+			->addOption('precheck', array(
+					'short' => 'm', 
+					'default' => 'exception', 
+					'choices' => array('exception', 'condition'),
 					'help' => __('Plugin name to be used')))
 			->addOption('force', array(
 					'short' => 'f',
@@ -158,10 +165,15 @@ class MigrationShell extends AppShell {
 		}
 		$latestVersion = $this->Version->getVersion($this->type);
 
+		$options = array(
+			'precheck' => $this->params['precheck'],
+			'type' => $this->type,
+			'callback' => &$this);
+
 		$once = false; //In case of exception run shell again (all, reset, migration number)
 		if (isset($this->args[0]) && in_array($this->args[0], array('up', 'down'))) {
 			$once = true;
-			$options = $this->_singleStepOptions($mapping, $latestVersion);
+			$options = $this->_singleStepOptions($mapping, $latestVersion, $options);
 		} else if (isset($this->args[0]) && $this->args[0] == 'all') {
 			end($mapping);
 			$options['version'] = key($mapping);
@@ -218,7 +230,8 @@ class MigrationShell extends AppShell {
 		return $result;
 	}
 
-	protected function _singleStepOptions($mapping, $latestVersion) {
+	protected function _singleStepOptions($mapping, $latestVersion, $default = array()) {
+		$options = $default;
 		$versions = array_keys($mapping);
 		$flipped = array_flip($versions);
 		$versionNumber = isset($flipped[$latestVersion]) ? $flipped[$latestVersion] : -1;

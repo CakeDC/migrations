@@ -51,6 +51,13 @@ class MigrationVersion {
 	private $__mapping = array();
 
 /**
+ * Precheck mode
+ *
+ * @var string
+ */
+	public $precheck = 'exception';
+
+/**
  * Constructor
  *
  * @param array $options optional load object properties
@@ -58,6 +65,9 @@ class MigrationVersion {
 	public function __construct($options = array()) {
 		if (!empty($options['connection'])) {
 			$this->connection = $options['connection'];
+		}
+		if (!empty($options['precheck'])) {
+			$this->precheck = $options['precheck'];
 		}
 
 		$this->initVersion();
@@ -230,8 +240,8 @@ class MigrationVersion {
 		}
 
 		$defaults = array(
-			'connection' => $this->connection
-		);
+			'connection' => $this->connection,
+			'precheck' => $this->precheck);
 		$options = array_merge($defaults, $options);
 		return new $class($options);
 	}
