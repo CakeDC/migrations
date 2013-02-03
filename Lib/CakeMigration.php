@@ -1,17 +1,16 @@
 <?php
-
 /**
  * CakePHP Migrations
  *
- * Copyright 2009 - 2010, Cake Development Corporation
- *                        1785 E. Sahara Avenue, Suite 490-423
- *                        Las Vegas, Nevada 89104
+ * Copyright 2009 - 2013, Cake Development Corporation
+ *						1785 E. Sahara Avenue, Suite 490-423
+ *						Las Vegas, Nevada 89104
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright 2009 - 2010, Cake Development Corporation
- * @link      http://codaset.com/cakedc/migrations/
+ * @copyright 2009 - 2013, Cake Development Corporation
+ * @link	  http://codaset.com/cakedc/migrations/
  * @package   plugns.migrations
  * @license   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -20,8 +19,8 @@ App::uses('CakeSchema', 'Model');
 /**
  * Base Class for Migration management
  *
- * @package       migrations
- * @subpackage    migrations.libs.model
+ * @package	   migrations
+ * @subpackage	migrations.libs.model
  */
 class CakeMigration extends Object {
 
@@ -155,9 +154,9 @@ class CakeMigration extends Object {
 			}
 		}
 
-        if (empty($options['precheck'])) {
-            $options['precheck'] = 'exception';
-        }
+		if (empty($options['precheck'])) {
+			$options['precheck'] = 'exception';
+		}
 
 		if (!empty($options['precheck'])) {
 			$klass = 'Precheck' . Inflector::camelize($options['precheck']);
@@ -249,9 +248,7 @@ class CakeMigration extends Object {
 			try {
 				$result = $this->{$methodName}($type, $info);
 			} catch (Exception $e) {
-				throw new MigrationException($this, sprintf(
-						__d('migrations', '%s'), $e->getMessage()
-					));
+				throw new MigrationException($this, sprintf(__d('migrations', '%s'), $e->getMessage()));
 			}
 		}
 		return $result;
@@ -419,10 +416,10 @@ class CakeMigration extends Object {
 						));
 						break;
 					case 'rename':
-                        $data = array();
-                        if (array_key_exists($field, $tableFields)) {
-                            $data = $tableFields[$field];
-                        }
+						$data = array();
+						if (array_key_exists($field, $tableFields)) {
+							$data = $tableFields[$field];
+						}
 						$sql = $this->db->alterSchema(array(
 							$table => array('change' => array($field => array_merge($data, array('name' => $col))))
 						));
@@ -579,8 +576,8 @@ class CakeMigration extends Object {
 /**
  * Exception used when something goes wrong on migrations
  *
- * @package       migrations
- * @subpackage    migrations.libs.model
+ * @package	   migrations
+ * @subpackage	migrations.libs.model
  */
 class MigrationException extends Exception {
 
