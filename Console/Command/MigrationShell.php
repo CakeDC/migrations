@@ -74,16 +74,21 @@ class MigrationShell extends AppShell {
 		if (!empty($this->params['connection'])) {
 			$this->connection = $this->params['connection'];
 		}
+
 		if (!empty($this->params['plugin'])) {
 			$this->type = $this->params['plugin'];
 		}
+
+		if (!isset($this->params['precheck'])) {
+			$this->params['precheck'] = true;
+		}
+
 		$this->path = $this->_getPath() . 'Config' . DS . 'Migration' . DS;
 
 		$this->Version =& new MigrationVersion(array(
 			'precheck' => $this->params['precheck'],
 			'connection' => $this->connection,
-			'autoinit' => !$this->params['no-auto-init']
-		));
+			'autoinit' => !$this->params['no-auto-init']));
 
 		$this->__messages = array(
 			'create_table' => __d('migrations', 'Creating table :table.'),
