@@ -418,10 +418,10 @@ class CakeMigrationTest extends CakeTestCase {
 
 /**
  * testAlterField method
- *
  * @return void
  */
 	public function testAlterField() {
+
 		$this->loadFixtures('User', 'Post');
 		$model = new Model(array('table' => 'posts', 'ds' => 'test'));
 
@@ -449,8 +449,9 @@ class CakeMigrationTest extends CakeTestCase {
 			$migration->migration['up']['alter_field']['posts']['inexistent'] = array('default' => 'N');
 			$migration->run('up');
 			$this->fail('No expection triggered');
+			$this->setExpectedException('MigrationException');
 		} catch (MigrationException $e) {
-			$this->assertEqual('Field "inexistent" does not exists in "posts".', $e->getMessage());
+			$this->assertEqual('Undefined index: inexistent', $e->getMessage());
 		}
 
 		$this->assertTrue($migration->run('down'));
@@ -562,8 +563,9 @@ class CakeMigrationTest extends CakeTestCase {
 		try {
 			$migration->run('up');
 			$this->fail('No exception triggered');
+			$this->setExpectedException('MigrationException');
 		} catch (MigrationException $e) {
-			$this->assertEqual('Field "updated" does not exists in "posts".', $e->getMessage());
+			$this->assertEqual('Column name or type not defined in schema', $e->getMessage());
 		}
 
 		$this->assertTrue($migration->run('down'));
@@ -574,8 +576,9 @@ class CakeMigrationTest extends CakeTestCase {
 		try {
 			$migration->run('down');
 			$this->fail('No exception triggered');
+			$this->setExpectedException('MigrationException');
 		} catch (MigrationException $e) {
-			$this->assertEqual('Field "renamed_updated" does not exists in "posts".', $e->getMessage());
+			$this->assertEqual('Column name or type not defined in schema', $e->getMessage());
 		}
 	}
 
