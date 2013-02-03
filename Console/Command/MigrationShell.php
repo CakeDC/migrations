@@ -111,29 +111,29 @@ class MigrationShell extends AppShell {
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
 		return $parser->description(
-			'The Migration shell.' .
-			'')
+				'The Migration shell.' .
+				'')
 			->addOption('plugin', array(
-					'short' => 'p',
-					'help' => __('Plugin name to be used')))
+				'short' => 'p',
+				'help' => __('Plugin name to be used')))
 			->addOption('precheck', array(
-					'short' => 'm', 
-					'default' => 'exception', 
-					'choices' => array('exception', 'condition'),
-					'help' => __('Plugin name to be used')))
+				'short' => 'm',
+				'default' => 'exception',
+				'choices' => array('exception', 'condition'),
+				'help' => __('Plugin name to be used')))
 			->addOption('force', array(
-					'short' => 'f',
-					'boolean' => true,
-					'help' => __('Force \'generate\' to compare all tables.')))
+				'short' => 'f',
+				'boolean' => true,
+				'help' => __('Force \'generate\' to compare all tables.')))
 			->addOption('connection', array(
-					'short' => 'c',
-					'default' => 'default',
-					'help' => __('Set db config <config>. Uses \'default\' if none is specified.')))
+				'short' => 'c',
+				'default' => 'default',
+				'help' => __('Set db config <config>. Uses \'default\' if none is specified.')))
 			->addOption('no-auto-init', array(
-					'short' => 'n',
-					'boolean' => true,
-					'default' => false,
-					'help' => __('Disables automatic creation of migrations table and running any internal plugin migrations')))
+				'short' => 'n',
+				'boolean' => true,
+				'default' => false,
+				'help' => __('Disables automatic creation of migrations table and running any internal plugin migrations')))
 			->addSubcommand('status', array(
 				'help' => __('Displays a status of all plugin and app migrations.')))
 			->addSubcommand('run', array(
@@ -293,6 +293,7 @@ class MigrationShell extends AppShell {
 		}
 		return compact('direction') + $options;
 	}
+
 /**
  * Generate a new migration file
  *
