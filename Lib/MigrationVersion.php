@@ -20,6 +20,7 @@ App::uses('ConnectionManager', 'Model');
 App::uses('Inflector', 'Utility');
 App::uses('Folder', 'Utility');
 App::uses('ClassRegistry', 'Utility');
+App::uses('MigrationVersionException', 'Migrations.Lig');
 
 /**
  * Migration version management.
@@ -153,6 +154,7 @@ class MigrationVersion {
  * Get mapping for the given type
  *
  * @param string $type Can be 'app' or a plugin name
+ * @param boolean $cache
  * @return mixed False in case of no file found or empty mapping, array with mapping
  */
 	public function getMapping($type, $cache = true) {
@@ -169,14 +171,11 @@ class MigrationVersion {
 		}
 
 		$migrated = $this->Version->find('all', array(
+			'recursive' => -1,
 			'conditions' => array(
 				'OR' => array(
 					array($this->Version->alias . '.type' => Inflector::underscore($type)),
-					array($this->Version->alias . '.type' => $type),
-				)
-			),
-			'recursive' => -1,
-		));
+					array($this->Version->alias . '.type' => $type)))));
 
 		// For BC, 002 was not applied yet.
 		$bc = ($this->Version->schema('class') === null);
@@ -468,15 +467,5 @@ class MigrationVersion {
 		}
 		return $mapping;
 	}
-}
-
-/**
- * Usually used when migrations file/class or map files are not found
- *
- * @package       migrations
- * @subpackage    migrations.libs
- */
-class MigrationVersionException extends Exception {
-
 }
 
