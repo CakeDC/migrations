@@ -14,7 +14,7 @@
  * @package   plugns.migrations
  * @license   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('Shell', 'Console');
+App::uses('AppShell', 'Console/Command');
 App::uses('CakeSchema', 'Model');
 App::uses('MigrationVersion', 'Migrations.Lib');
 App::uses('String', 'Utility');
@@ -185,7 +185,7 @@ class MigrationShell extends AppShell {
 		$result = $this->_execute($options, $once);
 		if($result !== true){
 			$this->out(__d('migrations', $result));
-		} 
+		}
 
 		$this->out(__d('migrations', 'All migrations have completed.'));
 		$this->out('');
@@ -196,7 +196,7 @@ class MigrationShell extends AppShell {
 		$result = true;
 		try {
 			$result = $this->Version->run($options);
-			
+
 		} catch (MigrationException $e) {
 			$this->out(__d('migrations', 'An error occurred when processing the migration:'));
 			$this->out('  ' . sprintf(__d('migrations', 'Migration: %s'), $e->Migration->info['name']));
