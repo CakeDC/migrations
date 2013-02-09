@@ -74,7 +74,7 @@ class MigrationsPanel extends DebugPanel {
 		$v = new MigrationVersion();
 		$map = $migrations = array();
 
-		$migrations = Hash::merge(array('app'), App::objects('plugin'));
+		$migrations = Hash::merge(array('app'), CakePlugin::loaded());
 		foreach ($migrations as $plugin) {
 			try {
 				$map[$plugin] = array(
