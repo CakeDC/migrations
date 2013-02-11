@@ -120,7 +120,7 @@ class MigrationShell extends AppShell {
 				'short' => 'm',
 				'default' => 'exception',
 				'choices' => array('exception', 'condition'),
-				'help' => __('Plugin name to be used')))
+				'help' => __('Database checking mode')))
 			->addOption('force', array(
 				'short' => 'f',
 				'boolean' => true,

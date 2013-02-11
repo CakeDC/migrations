@@ -44,6 +44,15 @@ To get all pending changes into your database run:
 
 	cake Migrations.migration run all
 
+#### Checking migration mode	####
+
+Currently migration system supports two checking modes: exception-based and condition-based.
+If database already have some db modification applied and you will try to execute same migration again, then migration system throw  exception about this. This is exception mode for migrations system. Exception-based checking mode is common mode that have been used by the system from begining. 
+
+Condition-based is new  mode that work differently. When system run migration it checks that migration possible to apply based on db structure. For example table possible to create if it not exists in db, and field possible to drop only if table exists and field in db exists.
+	
+To enable condtion-based mode need to pass '--precheck condtion'	to the migration shell.
+	
 #### Reseting your database ####
 
 	cake Migrations.migration run reset
