@@ -581,7 +581,7 @@ class CakeMigrationTest extends CakeTestCase {
 			$this->fail('No exception triggered');
 			$this->setExpectedException('MigrationException');
 		} catch (MigrationException $e) {
-			$this->assertEqual('Column name or type not defined in schema', $e->getMessage());
+			$this->assertEqual('Field "renamed_updated" already exists in "posts".', $e->getMessage());
 		}
 
 		$this->assertTrue($migration->run('down'));
@@ -594,7 +594,7 @@ class CakeMigrationTest extends CakeTestCase {
 			$this->fail('No exception triggered');
 			$this->setExpectedException('MigrationException');
 		} catch (MigrationException $e) {
-			$this->assertEqual('Column name or type not defined in schema', $e->getMessage());
+			$this->assertEqual('Field "updated" already exists in "posts".', $e->getMessage());
 		}
 	}
 
