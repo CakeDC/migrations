@@ -1,5 +1,4 @@
 <?php 
-App::uses('PrecheckBase', 'Migrations.Lib');
 /**
  * CakePHP Migrations
  *
@@ -15,22 +14,51 @@ App::uses('PrecheckBase', 'Migrations.Lib');
  * @package   plugns.migrations
  * @license   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
+App::uses('PrecheckBase', 'Migrations.Lib');
+
 class PrecheckCondition extends PrecheckBase {
 
+/**
+ * Perform check before table drop.
+ *
+ * @param string $table
+ * @return bool
+ */
 	public function checkDropTable($table) {
 		return $this->tableExists($table);
 	}
 
+/**
+ * Perform check before table create.
+ *
+ * @param string $table
+ * @return bool
+ */
 	public function checkCreateTable($table) {
 		return !$this->tableExists($table);
 	}
 
+/**
+ * Perform check before field drop.
+ *
+ * @param string $table
+ * @param string $field
+ * @return bool
+ */
 	public function checkDropField($table, $field) {
-		return $this->tableExists($table);
+		return $this->tableExists($table) && $this->fieldExists($table, $field);
 	}
 
+/**
+ * Perform check before field create.
+ *
+ * @param string $table
+ * @param string $field
+ * @return bool
+ */
 	public function checkAddField($table, $field) {
-		return !$this->fieldExists($table, $field);
+		return $this->tableExists($table) && !$this->fieldExists($table, $field);
 	}
 
 }

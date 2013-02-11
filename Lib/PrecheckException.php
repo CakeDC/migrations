@@ -1,5 +1,4 @@
 <?php 
-App::uses('PrecheckBase', 'Migrations.Lib');
 /**
  * CakePHP Migrations
  *
@@ -15,8 +14,17 @@ App::uses('PrecheckBase', 'Migrations.Lib');
  * @package   plugns.migrations
  * @license   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+App::uses('PrecheckBase', 'Migrations.Lib');
+
 class PrecheckException extends PrecheckBase {
 
+/**
+ * Check that table exists.
+ *
+ * @param string $table
+ * @throws MigrationException
+ * @return bool
+ */
 	public function checkDropTable($table) {
 		if (!$this->tableExists($table)) {
 			throw new MigrationException($this->migration,
@@ -26,6 +34,13 @@ class PrecheckException extends PrecheckBase {
 		return true;
 	}
 
+/**
+ * Check that table exists.
+ *
+ * @param string $table
+ * @throws MigrationException
+ * @return bool
+ */
 	public function checkCreateTable($table) {
 		if ($this->tableExists($table)) {
 			throw new MigrationException($this->migration,
@@ -35,8 +50,16 @@ class PrecheckException extends PrecheckBase {
 		return true;
 	}
 
+/**
+ * Perform check before field drop.
+ *
+ * @param string $table
+ * @param string $field
+ * @throws MigrationException
+ * @return bool
+ */
 	public function checkDropField($table, $field) {
-		if (!$this->fieldExists($table, $field)) {
+		if ($this->tableExists($table) && !$this->fieldExists($table, $field)) {
 			throw new MigrationException($this->migration, sprintf(
 				__d('migrations', 'Field "%s" does not exists in "%s".'), $field, $table
 			));	
@@ -44,8 +67,16 @@ class PrecheckException extends PrecheckBase {
 		return true;
 	}
 
+/**
+ * Perform check before field create.
+ *
+ * @param string $table
+ * @param string $field
+ * @throws MigrationException
+ * @return bool
+ */
 	public function checkAddField($table, $field) {
-		if ($this->fieldExists($table, $field)) {
+		if ($this->tableExists($table) && $this->fieldExists($table, $field)) {
 			throw new MigrationException($this->migration, sprintf(
 				__d('migrations', 'Field "%s" already exists in "%s".'), $field, $table
 			));	

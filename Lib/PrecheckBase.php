@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * CakePHP Migrations
  *
@@ -16,12 +16,64 @@
  */
 abstract class PrecheckBase {
 
+/**
+ * @var CakeMigration
+ */
+	protected $migration;
+
+/**
+ * Perform check before field create.
+ *
+ * @param string $table
+ * @param string $field
+ * @return bool
+ */
+	abstract function checkAddField($table, $field);
+
+/**
+ * Perform check before table create.
+ *
+ * @param string $table
+ * @return bool
+ */
+	abstract function checkCreateTable($table);
+
+/**
+ * Perform check before table drop.
+ *
+ * @param string $table
+ * @return bool
+ */
+	abstract function checkDropTable($table);
+
+/**
+ * Perform check before field drop.
+ *
+ * @param string $table
+ * @param string $field
+ * @return bool
+ */
+	abstract function checkDropField($table, $field);
+
+/**
+ * Check that table exists.
+ *
+ * @param string $table
+ * @return bool
+ */
 	public function tableExists($table) {
 		$this->migration->db->cacheSources = false;
 		$tables = $this->migration->db->listSources();
 		return in_array($this->migration->db->fullTableName($table, false, false), $tables);
 	}
 
+/**
+ * Check that field exists.
+ *
+ * @param string $table
+ * @param string $field
+ * @return bool
+ */
 	public function fieldExists($table, $field) {
 		if (!$this->tableExists($table)) {
 			return false;
@@ -30,6 +82,15 @@ abstract class PrecheckBase {
 		return !empty($fields[$field]);
 	}
 
+/**
+ * Before action precheck callback.
+ *
+ * @param $migration
+ * @param string $type
+ * @param array $data
+ * @throws MigrationException
+ * @return bool
+ */
 	public function beforeAction($migration, $type, $data) {
 		$this->migration = $migration;
 		switch ($type) {
@@ -50,11 +111,9 @@ abstract class PrecheckBase {
 				break;
 			case 'change_field':
 				return true;
-				//return $this->checkDropField($data['table'], $data['field']);
 				break;
 			case 'rename_field':
-				return true;
-				//return $this->checkAddField($data['table'], $data['new_name']) && $this->checkDropField($data['table'], $data['old_name']);
+				return $this->checkAddField($data['table'], $data['new_name']) && $this->checkDropField($data['table'], $data['old_name']);
 				break;
 			case 'add_index':
 			case 'drop_index':
