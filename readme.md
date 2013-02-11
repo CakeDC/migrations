@@ -44,15 +44,6 @@ To get all pending changes into your database run:
 
 	cake Migrations.migration run all
 
-#### Checking migration mode	####
-
-Currently migration system supports two checking modes: exception-based and condition-based.
-If database already have some db modification applied and you will try to execute same migration again, then migration system throw  exception about this. This is exception mode for migrations system. Exception-based checking mode is common mode that have been used by the system from begining. 
-
-Condition-based is new  mode that work differently. When system run migration it checks that migration possible to apply based on db structure. For example table possible to create if it not exists in db, and field possible to drop only if table exists and field in db exists.
-	
-To enable condtion-based mode need to pass '--precheck condtion'	to the migration shell.
-	
 #### Reseting your database ####
 
 	cake Migrations.migration run reset
@@ -72,6 +63,24 @@ To enable condtion-based mode need to pass '--precheck condtion'	to the migratio
 #### Getting the status of available/applied Migrations ####
 
 	cake Migrations.migration status
+
+### Pre-migration checks ###
+
+The migration system supports two checking modes: exception-based and condition-based.
+
+The main difference is that exceptions will make the migration shell fail hard while the condition based check is a more gracefully way to check for possible problems with a migration before exceptions even can happen.
+
+If the database already has some db modification applied and you will try to execute same migration again, then the migration system will throw an exception. This is exception mode for migrations system. Exception-based checking  is the default mode.
+
+Condition based works different. When the system is running a migration it checks that it is possible to apply the migration on the current database structure. For example if it is possible to create a table, if it already exists it will stop before applying the migration.
+
+Another example is dropping a field, the pre migration check will check if the table and field exists and if not it wont apply the migration.
+
+To enable condtion-based mode use '--precheck condition' with the migration shell.
+
+#### Customized pre-migration checks
+
+It is possible to implemented customized checks.
 
 ### Migration shell return codes ###
 
