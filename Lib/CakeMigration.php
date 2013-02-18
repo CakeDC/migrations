@@ -155,13 +155,26 @@ class CakeMigration extends Object {
 		}
 
 		if (empty($options['precheck'])) {
-			$options['precheck'] = 'exception';
-		}
+			App::uses('PrecheckException', 'Migrations.Lib');
+			$this->Precheck = new PrecheckException();
+		} else {
+			$class = Inflector::camelize($options['precheck']);
+			list($plugin, $class) = pluginSplit($class, true);
+			App::uses($class, $plugin . 'Lib');
 
-		if (!empty($options['precheck'])) {
-			$klass = 'Precheck' . Inflector::camelize($options['precheck']);
-			App::uses($klass, 'Migrations.Lib');
-			$this->Precheck = new $klass();
+			if (!class_exists($class)) {
+				throw new MigrationException($this, sprintf(
+					__d('migrations', 'Migration precheck class (%s) could not be loaded.'), $options['precheck']
+				), E_USER_NOTICE);
+			}
+
+			$this->Precheck = new $class();
+
+			if (!is_a($this->Precheck, 'PrecheckBase')) {
+				throw new MigrationException($this, sprintf(
+					__d('migrations', 'Migration precheck class (%s) is not a valid precheck class.'), $class
+				), E_USER_NOTICE);
+			}
 		}
 	}
 

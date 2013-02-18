@@ -119,8 +119,7 @@ class MigrationShell extends AppShell {
 			->addOption('precheck', array(
 				'short' => 'm',
 				'default' => 'exception',
-				'choices' => array('exception', 'condition'),
-				'help' => __('Database checking mode')))
+				'help' => __('Precheck migrations')))
 			->addOption('force', array(
 				'short' => 'f',
 				'boolean' => true,
