@@ -243,6 +243,27 @@ Likewise, if you want to drop an index then you need to drop the field including
 		)
 	)
 
+#### Add an Index ####
+
+You can add an index to an existing field by using syntax like:
+
+   'add_index' => array(
+       array('table' => 'animals', 'fields' => array('name', 'age'), 'name' => 'your_index_name', 'unique' => false)
+   )
+
+Note that `name` is optional and if not supplied the Plugin will automatically generate an index name based on the table and the columns in the index. A potential issue is that some databases (MySQL, Postgres) have a maximum index name of 64 characters. If the auto-generated name of the index is longer than 64 characters than the migration will fail with an error and description. In this case you will need to supply the `name` parameter and provide a valid and appropriate index name.
+
+#### Drop an Index ####
+
+Dropping an existing index is straight-forward:
+
+   'drop_index' => array(
+       array('table' => 'animals', 'fields' => array('name', 'age'), 'name' => 'your_index_name')
+   )
+
+Note that if you created your index using a custom `name` (e.g. in the `add_index` definition) then you will need to provide this same name in the `name` parameter.
+  	
+
 ## Callbacks ##
 
 You can make use of callbacks in order to execute extra operations, for example, to fill tables with predefined data, you can even use the shell to ask the user for data that is going to be inserted.
