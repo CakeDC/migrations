@@ -76,11 +76,13 @@ Condition based works different. When the system is running a migration it check
 
 Another example is dropping a field, the pre migration check will check if the table and field exists and if not it wont apply the migration.
 
-To enable condtion-based mode use '--precheck condition' with the migration shell.
+To enable condtion-based mode use '--precheck Migrations.PrecheckCondition' with the migration shell.
 
 #### Customized pre-migration checks
 
-It is possible to implemented customized checks.
+It is possible to implemented customized pre-checks. Your custom pre-check class has to extend the PrecheckBase class from this plugin. You'll have to put your class into APP/Lib/Migration/<YourClass>.php or inside a plugin.
+
+To run your class use '--precheck YourPrecheckClass' or to load it from another plugin simply follow the dot syntax and use '--precheck YourPlugin.YourPrecheckClass'
 
 ### Migration shell return codes ###
 
