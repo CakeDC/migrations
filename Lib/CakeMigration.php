@@ -221,6 +221,14 @@ class CakeMigration extends Object {
 					$type = 'rename';
 					$methodName = '_alterTable';
 					break;
+				case 'add_index':
+				    $type = 'add';
+				    $methodName = '_addIndex';
+				    break;
+				case 'drop_index':
+				    $type = 'drop';
+				    $methodName = '_dropIndex';
+				    break;
 				default:
 					throw new MigrationException($this, sprintf(
 						__d('migrations', 'Migration action type (%s) is not one of valid actions type.'), $type
@@ -246,11 +254,122 @@ class CakeMigration extends Object {
  * @return int Comparison value
  */
 	protected function migration_order($a, $b){
-		$order = array('drop_table', 'rename_table', 'create_table', 'drop_field', 'rename_field', 'alter_field', 'create_field');
+		$order = array('drop_table', 'rename_table', 'create_table', 'drop_field', 'rename_field', 'alter_field', 'create_field', 'drop_index', 'add_index');
 
 		return array_search($a, $order) - array_search($b, $order);
 	}
 
+/**
+ * Drop Index method
+ * @param $type Type of operation to be done, in this case 'add_index'
+ * @param $info Names of tables and columns
+ * @return boolean Return true in case of success, otherwise false
+ */
+ protected function _dropIndex($type, $index_definitions) {
+     foreach($index_definitions as $index_definition) {
+         if(!array_key_exists('fields', $index_definition)) {
+				throw new MigrationException($this,
+					__d('migrations', 'Missing \'fields\' parameter in index definition: %s', print_r($index_definition,true))
+				);
+         }
+         if(!is_array($index_definition['fields'])) {
+				throw new MigrationException($this,
+					__d('migrations', 'Parameter \'fields\' is not an array in index definition: %s', print_r($index_definition,true))
+				);
+         }
+         // Did the user provide an index name - if not then attempt to generate one from the table and columns.
+         $index_name = NULL;
+         if(array_key_exists('name', $index_definition)) {
+             $index_name = $index_definition['name'];
+         } else {
+             // generate a name for this index
+             $table = $index_definition['table'];
+             $index_name = strtolower("idx_" . $table . "_on_" . implode('_and_', $index_definition['fields']));
+         }
+         $sql = "DROP INDEX " . $index_name;
+         if($this->db->execute($sql) === false) {
+     		throw new MigrationException($this, sprintf(__d('migrations', 'SQL Error: %s'), $this->db->error));
+     	}
+     }
+     
+     return true;
+ }
+
+/**
+ * Create Index method
+ * @param $type Type of operation to be done, in this case 'add_index'
+ * @param $info Names of tables and columns
+ * @return boolean Return true in case of success, otherwise false
+ */
+ protected function _addIndex($type, $index_definitions) {
+     foreach($index_definitions as $index_definition) {
+         /* Sanity check our input */
+         
+         $table_name = NULL;
+         if(!array_key_exists('table', $index_definition)) {
+				throw new MigrationException($this,
+					__d('migrations', 'Missing \'table\' parameter in index definition: %s', print_r($index_definition,true))
+				);
+         } else {
+             $table_name = $index_definition['table'];
+         }
+         
+         if(!array_key_exists('fields', $index_definition)) {
+				throw new MigrationException($this,
+					__d('migrations', 'Missing \'fields\' parameter in index definition: %s', print_r($index_definition,true))
+				);
+         }
+         if(!is_array($index_definition['fields'])) {
+				throw new MigrationException($this,
+					__d('migrations', 'Parameter \'fields\' is not an array in index definition: %s', print_r($index_definition,true))
+				);
+         }
+         
+         $unique_index = false;
+         if(array_key_exists('unique', $index_definition) && is_bool($index_definition['unique'])) {
+             $unique_index = $index_definition['unique'];
+         }
+         
+         // Did the user provide an index name - if not then attempt to generate one from the table and columns.
+         $index_name = NULL;
+         if(array_key_exists('name', $index_definition)) {
+             $index_name = $index_definition['name'];
+         } else {
+             // generate a name for this index
+             $table = $index_definition['table'];
+             $index_name = strtolower("idx_" . $table . "_on_" . implode('_and_', $index_definition['fields']));
+
+             /* Most databases have a limit on index names, both MySQL and Postgres limit this to 64 characters.
+             We're just going to assume 64 is a sane limit for all other databases that Cake supports. Although if this is a problem
+             then we will have to patch each DataSource implementation and add a constant or something that we can use.
+             
+             If the generated index name is greater than 64 characters than fail with an error message prompting
+             the user to manually provide a name for the index. */
+             if(strlen($index_name) > 64) {
+    				throw new MigrationException($this,
+    					__d('migrations', 'The automatically generated index name (%s) is too long. Maximum length is 64 characters. Please use the \'name\' parameter to provide a suitable name.', $index_name)
+    				);
+             }
+         }
+         
+         $alter_indexes_input = array(
+             $index_name => array(
+                 'unique' => $unique_index,
+                 'column' => $index_definition['fields']
+             )
+         );
+         $sql = $this->db->buildIndex(
+            $alter_indexes_input,
+            $table_name
+        );
+    	$this->_invokeCallbacks('beforeAction', $type . '_index', array('table' => $table_name, 'index' => $index_name));
+    	if ($this->db->execute($sql[0]) === false) {
+    		throw new MigrationException($this, sprintf(__d('migrations', 'SQL Error: %s'), $this->db->error));
+    	}
+    	$this->_invokeCallbacks('afterAction', $type . '_index', array('table' => $table_name, 'index' => $index_name));
+     }
+     return true;
+ }
 /**
  * Create Table method
  *
