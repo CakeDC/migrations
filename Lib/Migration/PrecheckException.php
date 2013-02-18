@@ -14,7 +14,7 @@
  * @package   plugns.migrations
  * @license   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('PrecheckBase', 'Migrations.Lib');
+App::uses('PrecheckBase', 'Migrations.Lib/Migration');
 
 class PrecheckException extends PrecheckBase {
 

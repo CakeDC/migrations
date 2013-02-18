@@ -52,7 +52,8 @@ class PrecheckConditionTest extends CakeTestCase {
  * @var array
  */
 	public $fixtures = array(
-		'core.user', 'core.post');
+		'core.user',
+		'core.post');
 
 /**
  * autoFixtures property
@@ -97,7 +98,7 @@ class PrecheckConditionTest extends CakeTestCase {
 				'migration_users' => $this->tables['users'])),
 			'down' => array(
 				'drop_table' => array('migration_posts', 'migration_users')),
-			'precheck' => 'condition'
+			'precheck' => 'Migrations.PrecheckCondition'
 		));
 		$Migration->initDb();
 
@@ -144,7 +145,7 @@ class PrecheckConditionTest extends CakeTestCase {
 				'rename_table' => array('posts' => 'renamed_posts')),
 			'down' => array(
 				'rename_table' => array('renamed_posts' => 'posts')),
-			'precheck' => 'condition'
+			'precheck' => 'Migrations.PrecheckCondition'
 		));
 		$Migration->initDb();
 
@@ -214,7 +215,7 @@ class PrecheckConditionTest extends CakeTestCase {
 			'down' => array(
 				'drop_field' => array('posts' => array('views'))
 			),
-			'precheck' => 'condition'
+			'precheck' => 'Migrations.PrecheckCondition'
 		));
 		$Migration->initDb();
 
@@ -280,7 +281,7 @@ class PrecheckConditionTest extends CakeTestCase {
 					'posts' => array('published' => array('default' => 'N'))
 				)
 			),
-			'precheck' => 'condition'));
+			'precheck' => 'Migrations.PrecheckCondition'));
 		$Migration->initDb();
 
 		$fields = $this->db->describe($Model);
@@ -322,7 +323,7 @@ class PrecheckConditionTest extends CakeTestCase {
 				'rename_field' => array(
 					'posts' => array(
 						'renamed_updated' => 'updated'))),
-			'precheck' => 'condition'));
+			'precheck' => 'Migrations.PrecheckCondition'));
 		$Migration->initDb();
 
 		$fields = $this->db->describe($Model);
@@ -333,7 +334,6 @@ class PrecheckConditionTest extends CakeTestCase {
 			'table' => $this->db->fullTableName('posts', false, false),
 			'old_name' => 'updated',
 			'new_name' => 'renamed_updated')));
-
 
 		$this->assertTrue($Migration->run('up'));
 		$fields = $this->db->describe($Model);
@@ -368,7 +368,6 @@ class PrecheckConditionTest extends CakeTestCase {
 			'table' => $this->db->fullTableName('posts', false, false),
 			'old_name' => 'renamed_updated',
 			'new_name' => 'updated')));
-
 
 		try {
 			$Migration->run('down');

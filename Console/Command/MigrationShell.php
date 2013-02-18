@@ -80,7 +80,7 @@ class MigrationShell extends AppShell {
 		}
 
 		if (!isset($this->params['precheck'])) {
-			$this->params['precheck'] = 'condition';
+			$this->params['precheck'] = 'PrecheckCondition';
 		}
 
 		$this->path = $this->_getPath() . 'Config' . DS . 'Migration' . DS;

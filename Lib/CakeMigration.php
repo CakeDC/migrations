@@ -160,7 +160,7 @@ class CakeMigration extends Object {
 		} else {
 			$class = Inflector::camelize($options['precheck']);
 			list($plugin, $class) = pluginSplit($class, true);
-			App::uses($class, $plugin . 'Lib');
+			App::uses($class, $plugin . 'Lib/Migration');
 
 			if (!class_exists($class)) {
 				throw new MigrationException($this, sprintf(
