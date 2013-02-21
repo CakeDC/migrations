@@ -81,10 +81,6 @@ class MigrationShell extends AppShell {
 			$this->type = $this->params['plugin'];
 		}
 
-		if (!isset($this->params['precheck'])) {
-			$this->params['precheck'] = 'PrecheckCondition';
-		}
-
 		$this->path = $this->_getPath() . 'Config' . DS . 'Migration' . DS;
 
 		$this->Version =& new MigrationVersion(array(
@@ -120,7 +116,7 @@ class MigrationShell extends AppShell {
 				'help' => __('Plugin name to be used')))
 			->addOption('precheck', array(
 				'short' => 'm',
-				'default' => 'exception',
+				'default' => 'Migrations.PrecheckException',
 				'help' => __('Precheck migrations')))
 			->addOption('force', array(
 				'short' => 'f',
