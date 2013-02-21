@@ -64,6 +64,26 @@ To get all pending changes into your database run:
 
 	cake Migrations.migration status
 
+### Pre-migration checks ###
+
+The migration system supports two checking modes: exception-based and condition-based.
+
+The main difference is that exceptions will make the migration shell fail hard while the condition based check is a more gracefully way to check for possible problems with a migration before exceptions even can happen.
+
+If the database already has some db modification applied and you will try to execute same migration again, then the migration system will throw an exception. This is exception mode for migrations system. Exception-based checking  is the default mode.
+
+Condition based works different. When the system is running a migration it checks that it is possible to apply the migration on the current database structure. For example if it is possible to create a table, if it already exists it will stop before applying the migration.
+
+Another example is dropping a field, the pre migration check will check if the table and field exists and if not it wont apply the migration.
+
+To enable condtion-based mode use '--precheck Migrations.PrecheckCondition' with the migration shell.
+
+#### Customized pre-migration checks
+
+It is possible to implemented customized pre-checks. Your custom pre-check class has to extend the PrecheckBase class from this plugin. You'll have to put your class into APP/Lib/Migration/<YourClass>.php or inside a plugin.
+
+To run your class use '--precheck YourPrecheckClass' or to load it from another plugin simply follow the dot syntax and use '--precheck YourPlugin.YourPrecheckClass'
+
 ### Migration shell return codes ###
 
 0 = Success

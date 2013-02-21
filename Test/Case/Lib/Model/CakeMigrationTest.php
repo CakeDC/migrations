@@ -1,4 +1,19 @@
 <?php
+/**
+ * Cake Migrations plugin.
+ *
+ * Copyright 2009 - 2013, Cake Development Corporation
+ *						1785 E. Sahara Avenue, Suite 490-423
+ *						Las Vegas, Nevada 89104
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright 2009 - 2013, Cake Development Corporation
+ * @link	  http://codaset.com/cakedc/migrations/
+ * @package   plugns.migrations
+ * @license   MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
 
 App::uses('CakeMigration', 'Migrations.Lib');
 App::uses('MigrationVersion', 'Migrations.Lib');
@@ -150,10 +165,12 @@ class CakeMigrationTest extends CakeTestCase {
 		$this->assertFalse(in_array($this->db->fullTableName('migration_users', false, false), $sources));
 		$this->assertFalse(in_array($this->db->fullTableName('migration_posts', false, false), $sources));
 	}
+
 /**
-* test create and drop tables with a prefix
-* @return void
-*/
+ * test create and drop tables with a prefix
+ *
+ * @return void
+ */
 	public function testRunDownWithPrefix() {
 		$options = ConnectionManager::getDataSource('test')->config;
 		$prefix = 'prefix_';
@@ -178,7 +195,6 @@ class CakeMigrationTest extends CakeTestCase {
 		$sources = $this->db->listSources();
 		$this->assertFalse(in_array($this->db->fullTableName($prefix . 'migration_users', false, false), $sources));
 		$this->assertFalse(in_array($this->db->fullTableName($prefix . 'migration_posts', false, false), $sources));
-		
 	}
 
 /**
@@ -207,7 +223,7 @@ class CakeMigrationTest extends CakeTestCase {
 			$migration->run('up');
 			$this->fail('No exception triggered');
 		} catch (MigrationException $e) {
-			$this->assertEqual($e->getMessage(), 'Table "' . $this->db->fullTableName('posts', false, false) . '" does not exists in database.');
+			$this->assertEqual($e->getMessage(), 'Table "' . $this->db->fullTableName('renamed_posts', false, false) . '" already exists in database.');
 		}
 
 		$this->assertTrue($migration->run('down'));
@@ -418,10 +434,10 @@ class CakeMigrationTest extends CakeTestCase {
 
 /**
  * testAlterField method
- *
  * @return void
  */
 	public function testAlterField() {
+
 		$this->loadFixtures('User', 'Post');
 		$model = new Model(array('table' => 'posts', 'ds' => 'test'));
 
@@ -449,8 +465,9 @@ class CakeMigrationTest extends CakeTestCase {
 			$migration->migration['up']['alter_field']['posts']['inexistent'] = array('default' => 'N');
 			$migration->run('up');
 			$this->fail('No expection triggered');
+			$this->setExpectedException('MigrationException');
 		} catch (MigrationException $e) {
-			$this->assertEqual('Field "inexistent" does not exists in "posts".', $e->getMessage());
+			$this->assertEqual('Undefined index: inexistent', $e->getMessage());
 		}
 
 		$this->assertTrue($migration->run('down'));
@@ -562,8 +579,9 @@ class CakeMigrationTest extends CakeTestCase {
 		try {
 			$migration->run('up');
 			$this->fail('No exception triggered');
+			$this->setExpectedException('MigrationException');
 		} catch (MigrationException $e) {
-			$this->assertEqual('Field "updated" does not exists in "posts".', $e->getMessage());
+			$this->assertEqual('Field "renamed_updated" already exists in "posts".', $e->getMessage());
 		}
 
 		$this->assertTrue($migration->run('down'));
@@ -574,8 +592,9 @@ class CakeMigrationTest extends CakeTestCase {
 		try {
 			$migration->run('down');
 			$this->fail('No exception triggered');
+			$this->setExpectedException('MigrationException');
 		} catch (MigrationException $e) {
-			$this->assertEqual('Field "renamed_updated" does not exists in "posts".', $e->getMessage());
+			$this->assertEqual('Field "updated" already exists in "posts".', $e->getMessage());
 		}
 	}
 
