@@ -15,9 +15,11 @@
  * @license   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('Shell', 'Console');
+App::uses('AppShell', 'Console/Command');
 App::uses('CakeSchema', 'Model');
 App::uses('MigrationVersion', 'Migrations.Lib');
 App::uses('String', 'Utility');
+App::uses('ClassRegistry', 'Utility');
 
 /**
  * Migration shell.
