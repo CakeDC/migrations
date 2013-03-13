@@ -19,14 +19,14 @@ class ConvertVersionToClassNames extends CakeMigration {
 		'up' => array(
 			'alter_field' => array(
 				'schema_migrations' => array(
-					'version' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 33, 'name' => 'class')
+					'version' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 33, 'name' => 'class')
 				)
 			)
 		),
 		'down' => array(
 			'alter_field' => array(
 				'schema_migrations' => array(
-					'class' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 11, 'name' => 'version')
+					'class' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 11, 'name' => 'version')
 				)
 			)
 		)
@@ -54,6 +54,7 @@ class ConvertVersionToClassNames extends CakeMigration {
  * @param string $direction, up or down direction of migration process
  * @return boolean Should process continue
  * @access public
+ * @throws InternalErrorException
  */
 	public function before($direction) {
 		if ($direction == 'down') {
@@ -94,7 +95,7 @@ class ConvertVersionToClassNames extends CakeMigration {
 		if (isset($schema['version'])) {
 			return;
 		}
-		
+
 		// Do not need, 001 already set it as string
 		// Unset actions, records and mappings, so it wont try again
 		$this->migration = array(
@@ -112,7 +113,7 @@ class ConvertVersionToClassNames extends CakeMigration {
  * @return void 
  */
 	public function checkPlugins() {
-		$types = Set::extract('/Version/type', $this->records);
+		$types = Set::extract('/' . $this->Version->Version->alias . '/type', $this->records);
 		$types = $plugins = array_unique($types);
 
 		// Remove app from it
@@ -128,7 +129,7 @@ class ConvertVersionToClassNames extends CakeMigration {
 /**
  * Check if the version is present in the mappings
  *
- * @throws RuntimeException, MigrationVersionException
+ * @throws RuntimeException MigrationVersionException
  * @return void
  */
 	public function checkRecords() {
@@ -139,7 +140,7 @@ class ConvertVersionToClassNames extends CakeMigration {
 			if (!isset($this->mappings[$type])) {
 				$this->mappings[$type] = $this->Version->getMapping($type);
 			}
-			
+
 			// Existing mapping
 			if (empty($this->mappings[$type][$version])) {
 				throw new RuntimeException(sprintf(
@@ -172,5 +173,5 @@ class ConvertVersionToClassNames extends CakeMigration {
 			$this->Version->Version->saveField('class', $migration['class']);
 		}
 	}
+
 }
-?>

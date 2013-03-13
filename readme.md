@@ -5,16 +5,20 @@ Version 2.1 for cake 2.x
 This migrations plugin enables developers to quickly and easily manage and migrate between database schema versions.
 
 As an application is developed, changes to the database may be required, and managing that in teams can get extremely difficult. Migrations enables you to share and co-ordinate database changes in an iterative manner, removing the complexity of handling these changes. 
-This is not a backup tool, however you can make use of callbacks if you want to backup data or execute extra queries. We highly recommend not to run Migrations in a production environment directly without doing a backup and running it first in a staging environment.
+
+## This is NOT a backup tool
+
+We highly recommend not to run Migrations in a production environment directly without doing a backup first.
+
+However you can make use of the before() and after() callbacks in migrations to add some logic there to trigger a backup script for example.
 
 ## Installing ##
-
 
 ## Usage ##
 
 - Unzip or clone this plugin into your app/Plugin/Migrations folder or the shared plugins folder for your CakePHP installation.
 - Add the plugin to your app/Config/bootstrap.php using `CakePlugin::load('Migrations')`
-- Run `Console/cake Migrations.migration run all -p Migrations` to initialized the `schema_migrations` table
+- Run `Console/cake Migrations.migration run all -p Migrations` to initialize the `schema_migrations` table
 
 ### Generating your first migration ###
 
@@ -59,6 +63,26 @@ To get all pending changes into your database run:
 #### Getting the status of available/applied Migrations ####
 
 	cake Migrations.migration status
+
+### Pre-migration checks ###
+
+The migration system supports two checking modes: exception-based and condition-based.
+
+The main difference is that exceptions will make the migration shell fail hard while the condition based check is a more gracefully way to check for possible problems with a migration before exceptions even can happen.
+
+If the database already has some db modification applied and you will try to execute same migration again, then the migration system will throw an exception. This is exception mode for migrations system. Exception-based checking  is the default mode.
+
+Condition based works different. When the system is running a migration it checks that it is possible to apply the migration on the current database structure. For example if it is possible to create a table, if it already exists it will stop before applying the migration.
+
+Another example is dropping a field, the pre migration check will check if the table and field exists and if not it wont apply the migration.
+
+To enable condtion-based mode use '--precheck Migrations.PrecheckCondition' with the migration shell.
+
+#### Customized pre-migration checks
+
+It is possible to implemented customized pre-checks. Your custom pre-check class has to extend the PrecheckBase class from this plugin. You'll have to put your class into APP/Lib/Migration/<YourClass>.php or inside a plugin.
+
+To run your class use '--precheck YourPrecheckClass' or to load it from another plugin simply follow the dot syntax and use '--precheck YourPlugin.YourPrecheckClass'
 
 ### Migration shell return codes ###
 

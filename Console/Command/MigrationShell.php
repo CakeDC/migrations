@@ -2,22 +2,24 @@
 /**
  * CakePHP Migrations
  *
- * Copyright 2009 - 2010, Cake Development Corporation
+ * Copyright 2009 - 2013, Cake Development Corporation
  *                        1785 E. Sahara Avenue, Suite 490-423
  *                        Las Vegas, Nevada 89104
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright 2009 - 2010, Cake Development Corporation
+ * @copyright 2009 - 2013, Cake Development Corporation
  * @link      http://codaset.com/cakedc/migrations/
  * @package   plugns.migrations
  * @license   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('Shell', 'Console');
+App::uses('AppShell', 'Console/Command');
 App::uses('CakeSchema', 'Model');
 App::uses('MigrationVersion', 'Migrations.Lib');
 App::uses('String', 'Utility');
+App::uses('ClassRegistry', 'Utility');
 
 /**
  * Migration shell.
@@ -74,14 +76,17 @@ class MigrationShell extends AppShell {
 		if (!empty($this->params['connection'])) {
 			$this->connection = $this->params['connection'];
 		}
+
 		if (!empty($this->params['plugin'])) {
 			$this->type = $this->params['plugin'];
 		}
+
 		$this->path = $this->_getPath() . 'Config' . DS . 'Migration' . DS;
-		$this->Version = new MigrationVersion(array(
+
+		$this->Version =& new MigrationVersion(array(
+			'precheck' => $this->params['precheck'],
 			'connection' => $this->connection,
-			'autoinit' => !$this->params['no-auto-init']
-		));
+			'autoinit' => !$this->params['no-auto-init']));
 
 		$this->__messages = array(
 			'create_table' => __d('migrations', 'Creating table :table.'),
@@ -104,24 +109,28 @@ class MigrationShell extends AppShell {
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
 		return $parser->description(
-			'The Migration shell.' .
-			'')
+				'The Migration shell.' .
+				'')
 			->addOption('plugin', array(
-					'short' => 'p',
-					'help' => __('Plugin name to be used')))
+				'short' => 'p',
+				'help' => __('Plugin name to be used')))
+			->addOption('precheck', array(
+				'short' => 'm',
+				'default' => 'Migrations.PrecheckException',
+				'help' => __('Precheck migrations')))
 			->addOption('force', array(
-					'short' => 'f',
-					'boolean' => true,
-					'help' => __('Force \'generate\' to compare all tables.')))
+				'short' => 'f',
+				'boolean' => true,
+				'help' => __('Force \'generate\' to compare all tables.')))
 			->addOption('connection', array(
-					'short' => 'c',
-					'default' => 'default',
-					'help' => __('Set db config <config>. Uses \'default\' if none is specified.')))
+				'short' => 'c',
+				'default' => 'default',
+				'help' => __('Set db config <config>. Uses \'default\' if none is specified.')))
 			->addOption('no-auto-init', array(
-					'short' => 'n',
-					'boolean' => true,
-					'default' => false,
-					'help' => __('Disables automatic creation of migrations table and running any internal plugin migrations')))
+				'short' => 'n',
+				'boolean' => true,
+				'default' => false,
+				'help' => __('Disables automatic creation of migrations table and running any internal plugin migrations')))
 			->addSubcommand('status', array(
 				'help' => __('Displays a status of all plugin and app migrations.')))
 			->addSubcommand('run', array(
@@ -158,10 +167,15 @@ class MigrationShell extends AppShell {
 		}
 		$latestVersion = $this->Version->getVersion($this->type);
 
+		$options = array(
+			'precheck' => isset($this->params['precheck']) ? $this->params['precheck'] : null,
+			'type' => $this->type,
+			'callback' => &$this);
+
 		$once = false; //In case of exception run shell again (all, reset, migration number)
 		if (isset($this->args[0]) && in_array($this->args[0], array('up', 'down'))) {
 			$once = true;
-			$options = $this->_singleStepOptions($mapping, $latestVersion);
+			$options = $this->_singleStepOptions($mapping, $latestVersion, $options);
 		} else if (isset($this->args[0]) && $this->args[0] == 'all') {
 			end($mapping);
 			$options['version'] = key($mapping);
@@ -183,9 +197,9 @@ class MigrationShell extends AppShell {
 			'callback' => &$this
 		);
 		$result = $this->_execute($options, $once);
-		if($result !== true){
+		if ($result !== true) {
 			$this->out(__d('migrations', $result));
-		} 
+		}
 
 		$this->out(__d('migrations', 'All migrations have completed.'));
 		$this->out('');
@@ -196,7 +210,6 @@ class MigrationShell extends AppShell {
 		$result = true;
 		try {
 			$result = $this->Version->run($options);
-			
 		} catch (MigrationException $e) {
 			$this->out(__d('migrations', 'An error occurred when processing the migration:'));
 			$this->out('  ' . sprintf(__d('migrations', 'Migration: %s'), $e->Migration->info['name']));
@@ -219,7 +232,8 @@ class MigrationShell extends AppShell {
 		return $result;
 	}
 
-	protected function _singleStepOptions($mapping, $latestVersion) {
+	protected function _singleStepOptions($mapping, $latestVersion, $default = array()) {
+		$options = $default;
 		$versions = array_keys($mapping);
 		$flipped = array_flip($versions);
 		$versionNumber = isset($flipped[$latestVersion]) ? $flipped[$latestVersion] : -1;
@@ -236,10 +250,9 @@ class MigrationShell extends AppShell {
 		return $options;
 	}
 
-
 	protected function _promptVersionOptions($mapping, $latestVersion) {
 		if (isset($this->args[0]) && is_numeric($this->args[0])) {
-			$options['version'] = (int) $this->args[0];
+			$options['version'] = (int)$this->args[0];
 
 			$valid = isset($mapping[$options['version']]) || ($options['version'] === 0 && $latestVersion > 0);
 			if (!$valid) {
@@ -259,13 +272,13 @@ class MigrationShell extends AppShell {
 					continue;
 				}
 
-				$valid = is_numeric($response) && isset($mapping[(int) $response]);
+				$valid = is_numeric($response) && isset($mapping[(int)$response]);
 				if ($valid) {
-					$options['version'] = (int) $response;
+					$options['version'] = (int)$response;
 					$direction = 'up';
-					if (empty($mapping[(int) $response]['migrated'])) {
+					if (empty($mapping[(int)$response]['migrated'])) {
 						$direction = 'up';
-					} else if ((int) $response <= $latestVersion) {
+					} else if ((int)$response <= $latestVersion) {
 						$direction = 'down';
 					}
 					break;
@@ -277,6 +290,7 @@ class MigrationShell extends AppShell {
 		}
 		return compact('direction') + $options;
 	}
+
 /**
  * Generate a new migration file
  *
@@ -669,7 +683,7 @@ class MigrationShell extends AppShell {
 		extract($vars);
 		ob_start();
 		ob_implicit_flush(0);
-		include(dirname(__FILE__) . DS . 'Templates' . DS . $template . '.ctp');
+		include (dirname(__FILE__) . DS . 'Templates' . DS . $template . '.ctp');
 		$content = ob_get_clean();
 
 		return $content;
@@ -727,6 +741,5 @@ class MigrationShell extends AppShell {
 			$this->out('      > ' . $message);
 		}
 	}
-}
-?>
 
+}
