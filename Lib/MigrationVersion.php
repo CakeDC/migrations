@@ -55,7 +55,7 @@ class MigrationVersion {
  *
  * @var string
  */
-	public $precheck = 'exception';
+	public $precheck = 'Migrations.PrecheckException';
 
 /**
  * Constructor
