@@ -382,7 +382,7 @@ class CakeMigration extends Object {
 				} else {
 					$data = array('table' => $table, 'field' => $field);
 				}
-
+				$callbackData = $data;
 				if ($this->_invokePrecheck('beforeAction', $type . '_field', $data)) {
 					switch ($type) {
 						case 'add':
@@ -415,12 +415,11 @@ class CakeMigration extends Object {
 							break;
 					}
 
-
-					$this->_invokeCallbacks('beforeAction', $type . '_field', $data);
+					$this->_invokeCallbacks('beforeAction', $type . '_field', $callbackData);
 					if (@$this->db->execute($sql) === false) {
 						throw new MigrationException($this, sprintf(__d('migrations', 'SQL Error: %s'), $this->db->error));
 					}
-					$this->_invokeCallbacks('afterAction', $type . '_field', $data);
+					$this->_invokeCallbacks('afterAction', $type . '_field', $callbackData);
 				}
 			}
 
