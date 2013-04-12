@@ -475,6 +475,34 @@ class CakeMigrationTest extends CakeTestCase {
 		$this->assertEqual($fields['published']['default'], 'N');
 	}
 
+	/**
+	 * test the change of fields type.
+	 */
+	public function testAlterFieldType() {
+		$this->loadFixtures('User', 'Post');
+		$model = new Model(array('table' => 'posts', 'ds' => 'test'));
+		$migration = new TestCakeMigration(array(
+			'up' => array(
+				'alter_field' => array(
+					'posts' => array('published' => array('type' => 'integer'))
+				)
+			),
+			'down' => array(
+				'alter_field' => array(
+					'posts' => array('published' => array('type' => 'string', 'length' => 1, 'default' => 'N'))
+				)
+			)
+		));
+		$fields = $this->db->describe($model);
+		$this->assertEquals($fields['published']['type'], 'string');
+		$this->assertTrue($migration->run('up'));
+		$fields = $this->db->describe($model);
+		$this->assertEquals($fields['published']['type'], 'integer');
+		$this->assertTrue($migration->run('down'));
+		$fields = $this->db->describe($model);
+		$this->assertEquals($fields['published']['type'], 'string');
+	}
+
 /**
  * testAlterFieldLength method
  *

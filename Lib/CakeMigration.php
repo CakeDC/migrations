@@ -155,7 +155,7 @@ class CakeMigration extends Object {
 		}
 
 		if (empty($options['precheck'])) {
-			App::uses('PrecheckException', 'Migrations.Lib');
+			App::uses('PrecheckException', 'Migrations.Lib/Migration');
 			$this->Precheck = new PrecheckException();
 		} else {
 			$class = Inflector::camelize($options['precheck']);
@@ -396,7 +396,11 @@ class CakeMigration extends Object {
 							));
 							break;
 						case 'change':
-							$def = array_merge($tableFields[$field], $col);
+							if (!isset($col['type'])) {
+								$def = array_merge($tableFields[$field], $col);
+							} else {
+								$def = $col;
+							}
 							if (!empty($def['length']) && !empty($col['type']) && (substr($col['type'], 0, 4) == 'date' || substr($col['type'], 0, 4) == 'time')) {
 								$def['length'] = null;
 							}
