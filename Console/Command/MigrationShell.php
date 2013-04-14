@@ -182,7 +182,6 @@ class MigrationShell extends AppShell {
 			$options['direction'] = 'up';
 		} else if (isset($this->args[0]) && $this->args[0] == 'reset') {
 			$options['version'] = 0;
-			$options['reset'] = true;
 			$options['direction'] = 'down';
 		} else {
 			$options = $this->_promptVersionOptions($mapping, $latestVersion);
