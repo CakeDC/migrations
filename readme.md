@@ -223,7 +223,7 @@ Directives exist (Create, Drop, Rename) to handle other field operations.
 
 	'alter_field' => array(
 		'categories' => array(
-			'length' => 11
+		    'name' => array('length' => 11)
 		)
 	)
 
