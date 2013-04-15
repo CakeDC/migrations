@@ -155,7 +155,8 @@ class MigrationShellTest extends CakeTestCase {
 		$this->Shell->params = array(
 			'connection' => 'test',
 			'plugin' => 'Migrations',
-			'no-auto-init' => false
+			'no-auto-init' => false,
+			'precheck' => 'Migrations.PrecheckException'
 		);
 		$this->Shell->startup();
 		$this->assertEqual($this->Shell->connection, 'test');
@@ -775,6 +776,7 @@ TEXT;
 		$this->assertEmpty(glob(TMP . 'tests' . DS . '*schema_dump.php'));
 		$this->Shell->type = 'TestMigrationPlugin2';
 		$this->Shell->params['force'] = true;
+		$this->Shell->params['precheck'] = 'Migrations.PrecheckException';
 		$this->Shell->generate();
 		$files = glob(TMP . 'tests' . DS . '*schema_dump.php');
 		$this->assertNotEmpty($files);

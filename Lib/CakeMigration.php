@@ -155,7 +155,7 @@ class CakeMigration extends Object {
 		}
 
 		if (empty($options['precheck'])) {
-			App::uses('PrecheckException', 'Migrations.Lib');
+			App::uses('PrecheckException', 'Migrations.Lib/Migration');
 			$this->Precheck = new PrecheckException();
 		} else {
 			$class = Inflector::camelize($options['precheck']);
@@ -382,7 +382,7 @@ class CakeMigration extends Object {
 				} else {
 					$data = array('table' => $table, 'field' => $field);
 				}
-
+				$callbackData = $data;
 				if ($this->_invokePrecheck('beforeAction', $type . '_field', $data)) {
 					switch ($type) {
 						case 'add':
@@ -396,7 +396,11 @@ class CakeMigration extends Object {
 							));
 							break;
 						case 'change':
-							$def = array_merge($tableFields[$field], $col);
+							if (!isset($col['type']) || $col['type'] == $tableFields[$field]['type']) {
+								$def = array_merge($tableFields[$field], $col);
+							} else {
+								$def = $col;
+							}
 							if (!empty($def['length']) && !empty($col['type']) && (substr($col['type'], 0, 4) == 'date' || substr($col['type'], 0, 4) == 'time')) {
 								$def['length'] = null;
 							}
@@ -415,12 +419,11 @@ class CakeMigration extends Object {
 							break;
 					}
 
-
-					$this->_invokeCallbacks('beforeAction', $type . '_field', $data);
+					$this->_invokeCallbacks('beforeAction', $type . '_field', $callbackData);
 					if (@$this->db->execute($sql) === false) {
 						throw new MigrationException($this, sprintf(__d('migrations', 'SQL Error: %s'), $this->db->error));
 					}
-					$this->_invokeCallbacks('afterAction', $type . '_field', $data);
+					$this->_invokeCallbacks('afterAction', $type . '_field', $callbackData);
 				}
 			}
 
