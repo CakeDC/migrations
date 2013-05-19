@@ -338,7 +338,7 @@ class CakeMigration extends Object {
 	protected function _renameTable($type, $tables) {
 		foreach ($tables as $oldName => $newName) {
 			if ($this->_invokePrecheck('beforeAction', 'rename_table', array('old_name' => $oldName, 'new_name' => $newName))) {
-				$sql = 'ALTER TABLE ' . $this->db->fullTableName($oldName) . ' RENAME TO ' . $this->db->fullTableName($newName) . ';';
+				$sql = 'ALTER TABLE ' . $this->db->fullTableName($oldName) . ' RENAME TO ' . $this->db->fullTableName($newName, true, false) . ';';
 				$this->_invokeCallbacks('beforeAction', 'rename_table', array('old_name' => $oldName, 'new_name' => $newName));
 				if (@$this->db->execute($sql) === false) {
 					throw new MigrationException($this, __d('migrations', 'SQL Error: %s', $this->db->error));
