@@ -58,6 +58,18 @@ class MigrationVersion {
 	public $precheck = 'Migrations.PrecheckException';
 
 /**
+ * Should the run be dry or not.
+ *
+ * If try, the SQL will be outputted to screen rather than
+ * applied to the database
+ *
+ * @var boolean
+ */
+	public $dry = false;
+
+	public $log = array();
+
+/**
  * Constructor
  *
  * @param array $options optional load object properties
@@ -66,10 +78,16 @@ class MigrationVersion {
 		if (!empty($options['connection'])) {
 			$this->connection = $options['connection'];
 		}
+
 		if (!empty($options['precheck'])) {
 			$this->precheck = $options['precheck'];
 		}
 
+		if (!isset($options['dry'])) {
+			$options['dry'] = false;
+		}
+
+		$this->dry = $options['dry'];
 		$this->initVersion();
 
 		if (!isset($options['autoinit']) || $options['autoinit'] !== false) {
@@ -121,6 +139,10 @@ class MigrationVersion {
  * @return boolean
  */
 	public function setVersion($version, $type, $migrated = true) {
+		if ($this->dry) {
+			return true;
+		}
+
 		if ($type !== 'app') {
 			$type = Inflector::camelize($type);
 		}
@@ -297,6 +319,7 @@ class MigrationVersion {
 
 				try {
 					$result = $migration->run($direction, $options);
+					$this->log[$info['name']] = $migration->getQueryLog();
 				} catch (Exception $exception){
 					$mapping = $this->getMapping($options['type']);
 					$latestVersionName = '#' . number_format($mapping[$latestVersion]['version'] / 100, 2, '', '') . ' ' . $mapping[$latestVersion]['name'];
