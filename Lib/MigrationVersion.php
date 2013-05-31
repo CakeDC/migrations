@@ -67,6 +67,13 @@ class MigrationVersion {
  */
 	public $dry = false;
 
+/**
+ * Log of SQL queries generated
+ *
+ * This is used for dry run
+ *
+ * @var array
+ */
 	public $log = array();
 
 /**

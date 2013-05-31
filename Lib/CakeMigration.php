@@ -151,10 +151,21 @@ class CakeMigration extends Object {
 		return true;
 	}
 
+/**
+ * Log a dry run SQL query
+ *
+ * @param str $sql
+ * @return void
+ */
 	public function logQuery($sql) {
 		$this->log[] = $sql;
 	}
 
+/**
+ * Get the SQL query log
+ *
+ * @return array
+ */
 	public function getQueryLog() {
 		return $this->log;
 	}
