@@ -86,7 +86,8 @@ class MigrationShell extends AppShell {
 		$this->Version = new MigrationVersion(array(
 			'precheck' => $this->params['precheck'],
 			'connection' => $this->connection,
-			'autoinit' => !$this->params['no-auto-init']));
+			'autoinit' => !$this->params['no-auto-init'],
+			'dry' => $this->params['dry']));
 
 		$this->__messages = array(
 			'create_table' => __d('migrations', 'Creating table :table.'),
@@ -126,6 +127,11 @@ class MigrationShell extends AppShell {
 				'short' => 'c',
 				'default' => 'default',
 				'help' => __('Set db config <config>. Uses \'default\' if none is specified.')))
+			->addOption('dry', array(
+				'short' => 'd',
+				'boolean' => true,
+				'default' => false,
+				'help' => __('Output the raw SQL queries rather than applying them to the database.')))
 			->addOption('no-auto-init', array(
 				'short' => 'n',
 				'boolean' => true,
@@ -167,9 +173,14 @@ class MigrationShell extends AppShell {
 		}
 		$latestVersion = $this->Version->getVersion($this->type);
 
+		if (!isset($this->params['dry'])) {
+			$this->params['dry'] = false;
+		}
+
 		$options = array(
 			'precheck' => isset($this->params['precheck']) ? $this->params['precheck'] : null,
 			'type' => $this->type,
+			'dry' => $this->params['dry'],
 			'callback' => &$this);
 
 		$once = false; //In case of exception run shell again (all, reset, migration number)
@@ -194,8 +205,16 @@ class MigrationShell extends AppShell {
 		}
 		$options += array(
 			'type' => $this->type,
-			'callback' => &$this
+			'callback' => &$this,
+			'dry' => $this->params['dry']
 		);
+
+		if ($options['dry']) {
+			$this->out('');
+			$this->out(__d('migrations', 'Migration will run dry, no database changes will be made'));
+			$this->out('');
+		}
+
 		$result = $this->_execute($options, $once);
 		if ($result !== true) {
 			$this->out(__d('migrations', $result));
@@ -210,6 +229,7 @@ class MigrationShell extends AppShell {
 		$result = true;
 		try {
 			$result = $this->Version->run($options);
+			$this->_outputLog($this->Version->log);
 		} catch (MigrationException $e) {
 			$this->out(__d('migrations', 'An error occurred when processing the migration:'));
 			$this->out('  ' . sprintf(__d('migrations', 'Migration: %s'), $e->Migration->info['name']));
@@ -230,6 +250,22 @@ class MigrationShell extends AppShell {
 			$this->hr();
 		}
 		return $result;
+	}
+
+	protected function _outputLog($log) {
+		foreach ($log as $migrationName => $queries) {
+			if (empty($queries)) {
+				continue;
+			}
+
+			$this->hr();
+			$this->out(sprintf('SQL for migration %s:', $migrationName));
+			$this->hr();
+			foreach ($queries as $query) {
+				$this->out(str_replace(array("\n", "\t"), '', $query));
+			}
+		}
+		$this->hr();
 	}
 
 	protected function _singleStepOptions($mapping, $latestVersion, $default = array()) {
