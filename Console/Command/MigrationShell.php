@@ -252,6 +252,12 @@ class MigrationShell extends AppShell {
 		return $result;
 	}
 
+/**
+ * Output the SQL log in dry mode
+ *
+ * @param $log array
+ * @return void
+ */
 	protected function _outputLog($log) {
 		foreach ($log as $migrationName => $queries) {
 			if (empty($queries)) {
