@@ -83,7 +83,7 @@ class MigrationShell extends AppShell {
 
 		$this->path = $this->_getPath() . 'Config' . DS . 'Migration' . DS;
 
-		$this->Version =& new MigrationVersion(array(
+		$this->Version = new MigrationVersion(array(
 			'precheck' => $this->params['precheck'],
 			'connection' => $this->connection,
 			'autoinit' => !$this->params['no-auto-init']));
