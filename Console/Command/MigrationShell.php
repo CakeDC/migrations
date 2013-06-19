@@ -34,7 +34,7 @@ class MigrationShell extends AppShell {
  *
  * @var string
  */
-	public $connection = 'default';
+	public $connection = null;
 
 /**
  * Current path to load and save migrations
@@ -83,11 +83,16 @@ class MigrationShell extends AppShell {
 
 		$this->path = $this->_getPath() . 'Config' . DS . 'Migration' . DS;
 
-		$this->Version = new MigrationVersion(array(
+		$options = array(
 			'precheck' => $this->params['precheck'],
-			'connection' => $this->connection,
 			'autoinit' => !$this->params['no-auto-init'],
-			'dry' => $this->params['dry']));
+			'dry' => $this->params['dry']);
+
+		if (!empty($this->connection)) {
+			$options['connection'] = $this->connection;
+		}
+
+		$this->Version = new MigrationVersion($options);
 
 		$this->__messages = array(
 			'create_table' => __d('migrations', 'Creating table :table.'),
@@ -125,7 +130,7 @@ class MigrationShell extends AppShell {
 				'help' => __('Force \'generate\' to compare all tables.')))
 			->addOption('connection', array(
 				'short' => 'c',
-				'default' => 'default',
+				'default' => null,
 				'help' => __('Set db config <config>. Uses \'default\' if none is specified.')))
 			->addOption('dry', array(
 				'short' => 'd',
