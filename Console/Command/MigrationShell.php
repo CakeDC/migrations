@@ -30,11 +30,20 @@ App::uses('ClassRegistry', 'Utility');
 class MigrationShell extends AppShell {
 
 /**
- * Connection used
+ * Connection used for the migration_schema table of the migration versions
  *
- * @var string
+ * @var null|string
  */
 	public $connection = null;
+
+/**
+ * Connection used for the migration
+ *
+ * This can be used to override the connection of migration file
+ *
+ * @var null|string
+ */
+	public $migrationConnection = null;
 
 /**
  * Current path to load and save migrations
@@ -77,6 +86,10 @@ class MigrationShell extends AppShell {
 			$this->connection = $this->params['connection'];
 		}
 
+		if (!empty($this->params['migrationConnection'])) {
+			$this->migrationConnection = $this->params['migrationConnection'];
+		}
+
 		if (!empty($this->params['plugin'])) {
 			$this->type = $this->params['plugin'];
 		}
@@ -90,6 +103,10 @@ class MigrationShell extends AppShell {
 
 		if (!empty($this->connection)) {
 			$options['connection'] = $this->connection;
+		}
+
+		if (!empty($this->migrationConnection)) {
+			$options['migrationConnection'] = $this->migrationConnection;
 		}
 
 		$this->Version = new MigrationVersion($options);
@@ -131,7 +148,11 @@ class MigrationShell extends AppShell {
 			->addOption('connection', array(
 				'short' => 'c',
 				'default' => null,
-				'help' => __('Set db config <config>. Uses \'default\' if none is specified.')))
+				'help' => __('Overrides the \'default\' connection of the MigrationVersion')))
+			->addOption('migrationConnection', array(
+				'short' => 'i',
+				'default' => null,
+				'help' => __('Overrides the \'default\' connection of the CakeMigrations that are applied')))
 			->addOption('dry', array(
 				'short' => 'd',
 				'boolean' => true,
