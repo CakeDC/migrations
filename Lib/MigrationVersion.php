@@ -346,32 +346,6 @@ class MigrationVersion {
 	}
 
 /**
- * Resets the migration to 0.
- * @param $type string type of migration being ran
- * @return void
- */
-	protected function resetMigration($type) {
-		$options['type'] = $type;
-		$options['version'] = 0;
-		$options['reset'] = true;
-		$options['direction'] = 'down';
-		$this->run($options);
-	}
-
-/**
- * Runs migration to the last well known version defined by $toVersion.
- * @param $toVersion string name of the version where the migration will run up to.
- * @param $type string type of migration being ran.
- * @return void
- */
-	protected function restoreMigration($toVersion, $type) {
-		$options['type'] = $type;
-		$options['direction'] = 'up';
-		$options['version'] = $toVersion;
-		$this->run($options);
-	}
-
-/**
  * Initialize the migrations schema and keep it up-to-date
  *
  * @return void
