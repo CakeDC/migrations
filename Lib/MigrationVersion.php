@@ -183,6 +183,7 @@ class MigrationVersion {
  * Get mapping for the given type
  *
  * @param string $type Can be 'app' or a plugin name
+ * @param bool   $cache
  * @return mixed False in case of no file found or empty mapping, array with mapping
  */
 	public function getMapping($type, $cache = true) {
@@ -350,7 +351,7 @@ class MigrationVersion {
  * @param $type string type of migration being ran
  * @return void
  */
-	protected function resetMigration($type) {
+	protected function _resetMigration($type) {
 		$options['type'] = $type;
 		$options['version'] = 0;
 		$options['reset'] = true;
@@ -364,7 +365,7 @@ class MigrationVersion {
  * @param $type string type of migration being ran.
  * @return void
  */
-	protected function restoreMigration($toVersion, $type) {
+	protected function _restoreMigration($toVersion, $type) {
 		$options['type'] = $type;
 		$options['direction'] = 'up';
 		$options['version'] = $toVersion;
@@ -377,6 +378,7 @@ class MigrationVersion {
  * @return void
  */
 	private function __initMigrations() {
+		/** @var DboSource $db */
 		$db = ConnectionManager::getDataSource($this->connection);
 		if (!in_array($db->fullTableName('schema_migrations', false, false), $db->listSources())) {
 			$map = $this->_enumerateMigrations('migrations');
@@ -493,6 +495,7 @@ class MigrationVersion {
 		}
 		return $mapping;
 	}
+
 }
 
 /**
