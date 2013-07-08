@@ -14,6 +14,7 @@ class AllMigrationsPluginTest extends PHPUnit_Framework_TestSuite {
 		// Libs
 		$suite->addTestFile($basePath . 'Lib' . DS . 'MigrationVersionTest.php');
 		$suite->addTestFile($basePath . 'Lib' . DS . 'Model' . DS . 'CakeMigrationTest.php');
+		$suite->addTestFile($basePath . 'Lib' . DS . 'Migration' . DS . 'PrecheckConditionTest.php');
 
 		// Console
 		$suite->addTestFile($basePath . 'Console' . DS . 'Command' . DS . 'MigrationShellTest.php');

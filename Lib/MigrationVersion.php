@@ -2,14 +2,14 @@
 /**
  * CakePHP Migrations
  *
- * Copyright 2009 - 2010, Cake Development Corporation
+ * Copyright 2009 - 2013, Cake Development Corporation
  *                        1785 E. Sahara Avenue, Suite 490-423
  *                        Las Vegas, Nevada 89104
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright 2009 - 2010, Cake Development Corporation
+ * @copyright 2009 - 2013, Cake Development Corporation
  * @link      http://codaset.com/cakedc/migrations/
  * @package   plugns.migrations
  * @license   MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -59,6 +59,32 @@ class MigrationVersion {
 	private $__migrationHash = null;
 
 /**
+ * Precheck mode
+ *
+ * @var string
+ */
+	public $precheck = 'Migrations.PrecheckException';
+
+/**
+ * Should the run be dry or not.
+ *
+ * If try, the SQL will be outputted to screen rather than
+ * applied to the database
+ *
+ * @var boolean
+ */
+	public $dry = false;
+
+/**
+ * Log of SQL queries generated
+ *
+ * This is used for dry run
+ *
+ * @var array
+ */
+	public $log = array();
+
+/**
  * Constructor
  *
  * @param array $options optional load object properties
@@ -68,6 +94,15 @@ class MigrationVersion {
 			$this->connection = $options['connection'];
 		}
 
+		if (!empty($options['precheck'])) {
+			$this->precheck = $options['precheck'];
+		}
+
+		if (!isset($options['dry'])) {
+			$options['dry'] = false;
+		}
+
+		$this->dry = $options['dry'];
 		$this->initVersion();
 
 		if (!isset($options['autoinit']) || $options['autoinit'] !== false) {
@@ -119,6 +154,10 @@ class MigrationVersion {
  * @return boolean
  */
 	public function setVersion($version, $type, $migrated = true) {
+		if ($this->dry) {
+			return true;
+		}
+
 		if ($type !== 'app') {
 			$type = Inflector::camelize($type);
 		}
@@ -238,8 +277,8 @@ class MigrationVersion {
 		}
 
 		$defaults = array(
-			'connection' => $this->connection
-		);
+			'connection' => $this->connection,
+			'precheck' => $this->precheck);
 		$options = array_merge($defaults, $options);
 		return new $class($options);
 	}
@@ -292,25 +331,23 @@ class MigrationVersion {
 				$migration = $this->getMigration($info['name'], $info['class'], $info['type'], $options);
 				$migration->Version = $this;
 				$migration->info = $info;
+
 				try {
 					$result = $migration->run($direction, $options);
+					$this->log[$info['name']] = $migration->getQueryLog();
 				} catch (Exception $exception){
-					if (!isset($options['reset'])) {
-						$this->resetMigration($options['type']);
-						$this->setVersion($version, $info['type'], false);
-						$this->restoreMigration($latestVersion, $options['type']);
-						if ($latestVersion > 0) {
 							$mapping = $this->getMapping($options['type']);
 							$latestVersionName = '#' . number_format($mapping[$latestVersion]['version'] / 100, 2, '', '') . ' ' . $mapping[$latestVersion]['name'];
-							$errorMessage = __d('migrations', sprintf("There was an error during a migration. \n The error was: '%s' \n Migration will be reset to 0 and then moved up to version '%s' ", $exception->getMessage(), $latestVersionName));
+					$errorMessage = __d('migrations', sprintf("There was an error during a migration. \n The error was: '%s' \n You must resolve the issue manually and try again.", $exception->getMessage(), $latestVersionName));
 							return $errorMessage;
-						} else {
-							throw $exception;
 						}
-					}
-				}
+
 				$this->setVersion($version, $info['type'], ($direction == 'up'));
 			}
+		}
+
+		if (isset($result)) {
+			return $result;
 		}
 
 		return true;
@@ -321,7 +358,7 @@ class MigrationVersion {
  * @param $type string type of migration being ran
  * @return void
  */
-	protected function resetMigration($type) {
+	protected function _resetMigration($type) {
 		$options['type'] = $type;
 		$options['version'] = 0;
 		$options['reset'] = true;
@@ -335,7 +372,7 @@ class MigrationVersion {
  * @param $type string type of migration being ran.
  * @return void
  */
-	protected function restoreMigration($toVersion, $type) {
+	protected function _restoreMigration($toVersion, $type) {
 		$options['type'] = $type;
 		$options['direction'] = 'up';
 		$options['version'] = $toVersion;
@@ -348,6 +385,7 @@ class MigrationVersion {
  * @return void
  */
 	private function __initMigrations() {
+		/** @var DboSource $db */
 		$db = ConnectionManager::getDataSource($this->connection);
 		if (!in_array($db->fullTableName('schema_migrations', false, false), $db->listSources())) {
 			$map = $this->_enumerateMigrations('migrations');
@@ -467,5 +505,6 @@ class MigrationVersion {
 		}
 		return $mapping;
 	}
+
 }
 
