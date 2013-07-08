@@ -814,7 +814,7 @@ TEXT;
 Current version:
   #003 003_increase_class_name_length
 Latest version:
-  #003 003_increase_class_name_length/
+  #004 004_add_change_set_hash/
 TEXT;
 		$this->assertPattern(str_replace("\r\n", "\n", $pattern), $result);
 
