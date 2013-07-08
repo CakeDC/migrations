@@ -20,6 +20,7 @@ App::uses('ConnectionManager', 'Model');
 App::uses('Inflector', 'Utility');
 App::uses('Folder', 'Utility');
 App::uses('ClassRegistry', 'Utility');
+App::uses('MigrationVersionException', 'Migrations.Lig');
 
 /**
  * Migration version management.
@@ -49,6 +50,13 @@ class MigrationVersion {
  * @var array
  */
 	private $__mapping = array();
+
+/**
+ * Hash of a migration
+ *
+ * @var string
+ */
+	private $__migrationHash = null;
 
 /**
  * Precheck mode
@@ -163,7 +171,9 @@ class MigrationVersion {
 		if ($migrated) {
 			$this->Version->create();
 			$result = $this->Version->save(array(
-				$field => $value, 'type' => $type
+				$field => $value,
+				'type' => $type,
+				'hash' => $this->__migrationHash
 			));
 		} else {
 			$conditions = array(
@@ -183,7 +193,7 @@ class MigrationVersion {
  * Get mapping for the given type
  *
  * @param string $type Can be 'app' or a plugin name
- * @param bool   $cache
+ * @param boolean $cache
  * @return mixed False in case of no file found or empty mapping, array with mapping
  */
 	public function getMapping($type, $cache = true) {
@@ -200,14 +210,11 @@ class MigrationVersion {
 		}
 
 		$migrated = $this->Version->find('all', array(
+			'recursive' => -1,
 			'conditions' => array(
 				'OR' => array(
 					array($this->Version->alias . '.type' => Inflector::underscore($type)),
-					array($this->Version->alias . '.type' => $type),
-				)
-			),
-			'recursive' => -1,
-		));
+					array($this->Version->alias . '.type' => $type)))));
 
 		// For BC, 002 was not applied yet.
 		$bc = ($this->Version->schema('class') === null);
@@ -329,11 +336,11 @@ class MigrationVersion {
 					$result = $migration->run($direction, $options);
 					$this->log[$info['name']] = $migration->getQueryLog();
 				} catch (Exception $exception){
-					$mapping = $this->getMapping($options['type']);
-					$latestVersionName = '#' . number_format($mapping[$latestVersion]['version'] / 100, 2, '', '') . ' ' . $mapping[$latestVersion]['name'];
+							$mapping = $this->getMapping($options['type']);
+							$latestVersionName = '#' . number_format($mapping[$latestVersion]['version'] / 100, 2, '', '') . ' ' . $mapping[$latestVersion]['name'];
 					$errorMessage = __d('migrations', sprintf("There was an error during a migration. \n The error was: '%s' \n You must resolve the issue manually and try again.", $exception->getMessage(), $latestVersionName));
-					return $errorMessage;
-				}
+							return $errorMessage;
+						}
 
 				$this->setVersion($version, $info['type'], ($direction == 'up'));
 			}
@@ -420,7 +427,10 @@ class MigrationVersion {
 			));
 		}
 
-		include $path . $name . '.php';
+		$file = $path . $name . '.php';
+		include $file;
+		$this->__migrationHash = sha1_file($file);
+
 		return true;
 	}
 
@@ -495,16 +505,6 @@ class MigrationVersion {
 		}
 		return $mapping;
 	}
-
-}
-
-/**
- * Usually used when migrations file/class or map files are not found
- *
- * @package       migrations
- * @subpackage    migrations.libs
- */
-class MigrationVersionException extends Exception {
 
 }
 
