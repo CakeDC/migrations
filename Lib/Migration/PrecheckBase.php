@@ -19,7 +19,7 @@ abstract class PrecheckBase {
 /**
  * @var CakeMigration
  */
-	protected $migration;
+	protected $_migration;
 
 /**
  * Perform check before field create.
@@ -28,7 +28,7 @@ abstract class PrecheckBase {
  * @param string $field
  * @return bool
  */
-	abstract function checkAddField($table, $field);
+	abstract public function checkAddField($table, $field);
 
 /**
  * Perform check before table create.
@@ -36,7 +36,7 @@ abstract class PrecheckBase {
  * @param string $table
  * @return bool
  */
-	abstract function checkCreateTable($table);
+	abstract public function checkCreateTable($table);
 
 /**
  * Perform check before table drop.
@@ -44,7 +44,7 @@ abstract class PrecheckBase {
  * @param string $table
  * @return bool
  */
-	abstract function checkDropTable($table);
+	abstract public function checkDropTable($table);
 
 /**
  * Perform check before field drop.
@@ -53,7 +53,7 @@ abstract class PrecheckBase {
  * @param string $field
  * @return bool
  */
-	abstract function checkDropField($table, $field);
+	abstract public function checkDropField($table, $field);
 
 /**
  * Check that table exists.
@@ -62,9 +62,9 @@ abstract class PrecheckBase {
  * @return bool
  */
 	public function tableExists($table) {
-		$this->migration->db->cacheSources = false;
-		$tables = $this->migration->db->listSources();
-		return in_array($this->migration->db->fullTableName($table, false, false), $tables);
+		$this->_migration->db->cacheSources = false;
+		$tables = $this->_migration->db->listSources();
+		return in_array($this->_migration->db->fullTableName($table, false, false), $tables);
 	}
 
 /**
@@ -78,7 +78,7 @@ abstract class PrecheckBase {
 		if (!$this->tableExists($table)) {
 			return false;
 		}
-		$fields = $this->migration->db->describe($table);
+		$fields = $this->_migration->db->describe($table);
 		return !empty($fields[$field]);
 	}
 
@@ -92,34 +92,27 @@ abstract class PrecheckBase {
  * @return bool
  */
 	public function beforeAction($migration, $type, $data) {
-		$this->migration = $migration;
+		$this->_migration = $migration;
 		switch ($type) {
 			case 'create_table':
 				return $this->checkCreateTable($data['table']);
-				break;
 			case 'drop_table':
 				return $this->checkDropTable($data['table']);
-				break;
 			case 'rename_table':
 				return $this->checkCreateTable($data['new_name']) && $this->checkDropTable($data['old_name']);
-				break;
 			case 'add_field':
 				return $this->checkAddField($data['table'], $data['field']);
-				break;
 			case 'drop_field':
 				return $this->checkDropField($data['table'], $data['field']);
-				break;
 			case 'change_field':
 				return true;
-				break;
 			case 'rename_field':
 				return $this->checkAddField($data['table'], $data['new_name']) && $this->checkDropField($data['table'], $data['old_name']);
-				break;
 			case 'add_index':
 			case 'drop_index':
-				 return true;
+				return true;
 			default:
-				throw new MigrationException($this->migration, sprintf(
+				throw new MigrationException($this->_migration, sprintf(
 					__d('migrations', 'Migration action type (%s) is not one of valid actions type.'), $type
 				), E_USER_NOTICE);
 		}
