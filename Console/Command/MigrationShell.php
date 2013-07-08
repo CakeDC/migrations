@@ -30,11 +30,20 @@ App::uses('ClassRegistry', 'Utility');
 class MigrationShell extends AppShell {
 
 /**
- * Connection used
+ * Connection used for the migration_schema table of the migration versions
  *
- * @var string
+ * @var null|string
  */
-	public $connection = 'default';
+	public $connection = null;
+
+/**
+ * Connection used for the migration
+ *
+ * This can be used to override the connection of migration file
+ *
+ * @var null|string
+ */
+	public $migrationConnection = null;
 
 /**
  * Current path to load and save migrations
@@ -77,17 +86,30 @@ class MigrationShell extends AppShell {
 			$this->connection = $this->params['connection'];
 		}
 
+		if (!empty($this->params['migrationConnection'])) {
+			$this->migrationConnection = $this->params['migrationConnection'];
+		}
+
 		if (!empty($this->params['plugin'])) {
 			$this->type = $this->params['plugin'];
 		}
 
 		$this->path = $this->_getPath() . 'Config' . DS . 'Migration' . DS;
 
-		$this->Version = new MigrationVersion(array(
+		$options = array(
 			'precheck' => $this->params['precheck'],
-			'connection' => $this->connection,
 			'autoinit' => !$this->params['no-auto-init'],
-			'dry' => $this->params['dry']));
+			'dry' => $this->params['dry']);
+
+		if (!empty($this->connection)) {
+			$options['connection'] = $this->connection;
+		}
+
+		if (!empty($this->migrationConnection)) {
+			$options['migrationConnection'] = $this->migrationConnection;
+		}
+
+		$this->Version = new MigrationVersion($options);
 
 		$this->__messages = array(
 			'create_table' => __d('migrations', 'Creating table :table.'),
@@ -125,8 +147,12 @@ class MigrationShell extends AppShell {
 				'help' => __('Force \'generate\' to compare all tables.')))
 			->addOption('connection', array(
 				'short' => 'c',
-				'default' => 'default',
-				'help' => __('Set db config <config>. Uses \'default\' if none is specified.')))
+				'default' => null,
+				'help' => __('Overrides the \'default\' connection of the MigrationVersion')))
+			->addOption('migrationConnection', array(
+				'short' => 'i',
+				'default' => null,
+				'help' => __('Overrides the \'default\' connection of the CakeMigrations that are applied')))
 			->addOption('dry', array(
 				'short' => 'd',
 				'boolean' => true,

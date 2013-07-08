@@ -31,11 +31,20 @@ App::uses('MigrationVersionException', 'Migrations.Lig');
 class MigrationVersion {
 
 /**
- * Connection used
+ * Connection used for the migration_schema table of the migration versions
  *
  * @var string
  */
 	public $connection = 'default';
+
+/**
+ * Connection used for the migration
+ *
+ * This can be used to override the connection of migration file
+ *
+ * @var null|string
+ */
+	public $migrationConnection = null;
 
 /**
  * Instance of SchemaMigrations model
@@ -96,6 +105,10 @@ class MigrationVersion {
 
 		if (!empty($options['precheck'])) {
 			$this->precheck = $options['precheck'];
+		}
+
+		if (!empty($options['migrationConnection'])) {
+			$this->migrationConnection = $options['migrationConnection'];
 		}
 
 		if (!isset($options['dry'])) {
@@ -277,8 +290,12 @@ class MigrationVersion {
 		}
 
 		$defaults = array(
-			'connection' => $this->connection,
 			'precheck' => $this->precheck);
+
+		if (!empty($this->migrationConnection)) {
+			$defaults['connection'] = $this->migrationConnection;
+		}
+
 		$options = array_merge($defaults, $options);
 		return new $class($options);
 	}
@@ -301,7 +318,7 @@ class MigrationVersion {
 		if (!empty($options['direction'])) {
 			$direction = $options['direction'];
 		}
-		// Check direction and targetVersion
+
 		if (isset($options['version'])) {
 			$targetVersion = $options['version'];
 			$direction = ($targetVersion < $latestVersion) ? 'down' : $direction;
@@ -355,6 +372,7 @@ class MigrationVersion {
 
 /**
  * Resets the migration to 0.
+ *
  * @param $type string type of migration being ran
  * @return void
  */
@@ -368,6 +386,7 @@ class MigrationVersion {
 
 /**
  * Runs migration to the last well known version defined by $toVersion.
+ *
  * @param $toVersion string name of the version where the migration will run up to.
  * @param $type string type of migration being ran.
  * @return void
