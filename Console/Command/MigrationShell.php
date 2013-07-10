@@ -310,7 +310,7 @@ class MigrationShell extends AppShell {
 				if (strtolower($response) === 'q') {
 					return $this->_stop();
 				} else if (strtolower($response) === 'c') {
-					$this->_clear();
+					$this->clear();
 					continue;
 				}
 
@@ -490,15 +490,6 @@ class MigrationShell extends AppShell {
 				$this->out(__d('migrations', 'not applied'));
 			}
 		}
-	}
-
-/**
- * Clear the console
- *
- * @return void
- */
-	protected function _clear() {
-		$this->Dispatch->clear();
 	}
 
 /**
