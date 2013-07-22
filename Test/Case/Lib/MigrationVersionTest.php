@@ -55,7 +55,6 @@ class MigrationVersionTest extends CakeTestCase {
  * @return void
  **/
 	public function tearDown() {
-		//App::build(array('plugins' => $this->plugins), true);
 		unset($this->Version, $this->plugins);
 	}
 
@@ -125,6 +124,13 @@ class MigrationVersionTest extends CakeTestCase {
 					'class' => 'IncreaseClassNameLength',
 					'type' => 'Migrations',
 					'migrated' => null
+			),
+			4 => array(
+				'version' => (int) 4,
+				'name' => '004_add_change_set_hash',
+				'class' => 'AddChangeSetHash',
+				'type' => 'Migrations',
+				'migrated' => null
 			)
 		);
 		$this->assertEqual($result, $expected);
