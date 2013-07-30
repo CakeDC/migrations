@@ -794,7 +794,6 @@ TEXT;
 		foreach ($files as $f) {
 			unlink($f);
 		}
-
 		$expected = file_get_contents(CakePlugin::path('Migrations') . '/Test/Fixture/test_migration.txt');
 		$this->assertEquals($expected, $result);
 	}

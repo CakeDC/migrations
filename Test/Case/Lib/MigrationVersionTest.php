@@ -17,6 +17,7 @@
  */
 
 App::uses('CakeMigration', 'Migrations.Lib');
+App::uses('CakeSchema', 'Model');
 App::uses('MigrationVersion', 'Migrations.Lib');
 
 class MigrationVersionTest extends CakeTestCase {
@@ -73,7 +74,7 @@ class MigrationVersionTest extends CakeTestCase {
 		$db->execute($db->dropSchema($Schema));
 		$this->assertFalse(in_array($db->fullTableName('schema_migrations', false, false), $db->listSources()));
 
-		$this->Version = new MigrationVersion(array('connection' => 'test'));
+		$this->Version = new MigrationVersion(array('connection' => 'test', 'migrationConnection' => 'test'));
 		$this->assertTrue(in_array($db->fullTableName('schema_migrations', false, false), $db->listSources()));
 	}
 
