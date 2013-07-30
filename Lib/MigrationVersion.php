@@ -20,7 +20,7 @@ App::uses('ConnectionManager', 'Model');
 App::uses('Inflector', 'Utility');
 App::uses('Folder', 'Utility');
 App::uses('ClassRegistry', 'Utility');
-App::uses('MigrationVersionException', 'Migrations.Lig');
+App::uses('MigrationVersionException', 'Migrations.Lib');
 
 /**
  * Migration version management.
