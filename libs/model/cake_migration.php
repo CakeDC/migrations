@@ -157,9 +157,11 @@ class CakeMigration extends Object {
 		}
 		$this->direction = $direction;
 
-		$this->db =& ConnectionManager::getDataSource($this->connection);
+		$connection = !empty($this->migration['connection']) ? $this->migration['connection'] : $this->connection;
+
+		$this->db =& ConnectionManager::getDataSource($connection);
 		$this->db->cacheSources = false;
-		$this->Schema = new CakeSchema(array('connection' => $this->connection));
+		$this->Schema = new CakeSchema(array('connection' => $connection));
 
 		if (!$this->__invokeCallbacks('beforeMigration', $direction)) {
 			return false;
@@ -291,7 +293,7 @@ class CakeMigration extends Object {
 						));
 						break;
 					case 'change':
-						$model = new Model(array('table' => $table, 'ds' => $this->connection));
+						$model = new Model(array('table' => $table, 'ds' => $connection));
 						$tableFields = $this->db->describe($model);
 
 						//Remove any un-specified fields
@@ -305,7 +307,7 @@ class CakeMigration extends Object {
 						));
 						break;
 					case 'rename':
-						$model = new Model(array('table' => $table, 'ds' => $this->connection));
+						$model = new Model(array('table' => $table, 'ds' => $connection));
 						$tableFields = $this->db->describe($model);
 
 						$sql = $this->db->alterSchema(array(
@@ -395,8 +397,9 @@ class CakeMigration extends Object {
 		if (empty($table)) {
 			$table = Inflector::tableize($name);
 		}
+		$connection = !empty($this->migration['connection']) ? $this->migration['connection'] : $this->connection;
 		$defaults = array(
-			'name' => $name, 'table' => $table, 'ds' => $this->connection
+			'name' => $name, 'table' => $table, 'ds' => $connection
 		);
 		$options = array_merge($defaults, $options);
 
