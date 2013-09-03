@@ -471,7 +471,7 @@ class MigrationShell extends AppShell {
 	protected function _fromComparison($migration, $comparison, $oldTables, $currentTables) {
 		foreach ($comparison as $table => $actions) {
 			if (!isset($oldTables[$table])) {
-				$migration['up']['create_table'][$table] = $actions['add'];
+				$migration['up']['create_table'][$table] = $actions['create'];
 				$migration['down']['drop_table'][] = $table;
 				continue;
 			}
