@@ -436,7 +436,9 @@ class CakeMigration extends Object {
 			foreach ($fields as $field => $col) {
 				$model = new Model(array('table' => $table, 'ds' => $this->connection));
 				$tableFields = $this->db->describe($model);
-
+				$tableFields['indexes'] = $this->db->index($model);
+				$tableFields['tableParameters'] = $this->db->readTableParameters($this->db->fullTableName($model, false, false));
+				
 				if ($type === 'drop') {
 					$field = $col;
 				}
