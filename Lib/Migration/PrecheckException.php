@@ -27,8 +27,8 @@ class PrecheckException extends PrecheckBase {
  */
 	public function checkDropTable($table) {
 		if (!$this->tableExists($table)) {
-			throw new MigrationException($this->migration,
-				__d('migrations', 'Table "%s" does not exists in database.', $this->migration->db->fullTableName($table, false, false))
+			throw new MigrationException($this->_migration,
+				__d('migrations', 'Table "%s" does not exists in database.', $this->_migration->db->fullTableName($table, false, false))
 			);
 		}
 		return true;
@@ -43,8 +43,8 @@ class PrecheckException extends PrecheckBase {
  */
 	public function checkCreateTable($table) {
 		if ($this->tableExists($table)) {
-			throw new MigrationException($this->migration,
-				__d('migrations', 'Table "%s" already exists in database.', $this->migration->db->fullTableName($table, false, false))
+			throw new MigrationException($this->_migration,
+				__d('migrations', 'Table "%s" already exists in database.', $this->_migration->db->fullTableName($table, false, false))
 			);
 		}
 		return true;
@@ -60,9 +60,9 @@ class PrecheckException extends PrecheckBase {
  */
 	public function checkDropField($table, $field) {
 		if ($this->tableExists($table) && !$this->fieldExists($table, $field)) {
-			throw new MigrationException($this->migration, sprintf(
+			throw new MigrationException($this->_migration, sprintf(
 				__d('migrations', 'Field "%s" does not exists in "%s".'), $field, $table
-			));	
+			));
 		}
 		return true;
 	}
@@ -77,9 +77,9 @@ class PrecheckException extends PrecheckBase {
  */
 	public function checkAddField($table, $field) {
 		if ($this->tableExists($table) && $this->fieldExists($table, $field)) {
-			throw new MigrationException($this->migration, sprintf(
+			throw new MigrationException($this->_migration, sprintf(
 				__d('migrations', 'Field "%s" already exists in "%s".'), $field, $table
-			));	
+			));
 		}
 		return true;
 	}

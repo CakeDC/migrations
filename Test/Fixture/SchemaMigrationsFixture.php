@@ -16,7 +16,8 @@ class SchemaMigrationsFixture extends CakeTestFixture {
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => null),
 		'indexes' => array(
 			'PRIMARY' => array('column' => 'id', 'unique' => 1)
-	));
+		)
+	);
 
 /**
  *

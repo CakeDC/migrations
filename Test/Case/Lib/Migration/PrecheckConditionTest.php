@@ -40,8 +40,8 @@ class TestPrecheckCakeMigration extends CakeMigration {
 	public function initDb() {
 		$this->db = ConnectionManager::getDataSource($this->connection);
 		$this->db->cacheSources = false;
-
 	}
+
 }
 
 class PrecheckConditionTest extends CakeTestCase {
@@ -61,6 +61,11 @@ class PrecheckConditionTest extends CakeTestCase {
  * @var array
  */
 	public $autoFixtures = false;
+
+/**
+ * @var DboSource
+ */
+	public $db;
 
 /**
  * tables property
@@ -125,7 +130,6 @@ class PrecheckConditionTest extends CakeTestCase {
 		$this->assertTrue($Migration->Precheck->beforeAction($Migration, 'create_table', array('table' => $this->db->fullTableName('no_table', false, false))));
 		$this->assertFalse($Migration->Precheck->beforeAction($Migration, 'drop_table', array('table' => $this->db->fullTableName('no_table', false, false))));
 
-
 		$this->assertTrue($Migration->run('down'));
 		$sources = $this->db->listSources();
 		$this->assertFalse(in_array($this->db->fullTableName('migration_users', false, false), $sources));
@@ -148,7 +152,6 @@ class PrecheckConditionTest extends CakeTestCase {
 			'precheck' => 'Migrations.PrecheckCondition'
 		));
 		$Migration->initDb();
-
 
 		$this->assertTrue($Migration->Precheck->beforeAction($Migration, 'rename_table', array(
 			'old_name' => $this->db->fullTableName('posts', false, false),
@@ -173,7 +176,6 @@ class PrecheckConditionTest extends CakeTestCase {
 			'new_name' => $this->db->fullTableName('posts', false, false),
 		)));
 
-
 		try {
 			$Migration->run('up');
 		} catch (MigrationException $e) {
@@ -195,7 +197,6 @@ class PrecheckConditionTest extends CakeTestCase {
 		$this->assertTrue(in_array($this->db->fullTableName('posts', false, false), $sources));
 		$this->assertFalse(in_array($this->db->fullTableName('renamed_posts', false, false), $sources));
 	}
-
 
 /**
  * testCreateDropField method
@@ -236,7 +237,6 @@ class PrecheckConditionTest extends CakeTestCase {
 		$this->assertTrue($Migration->Precheck->beforeAction($Migration, 'drop_field', array(
 			'table' => $this->db->fullTableName('posts', false, false),
 			'field' => 'views')));
-
 
 		try {
 			$Migration->run('up');
@@ -294,7 +294,7 @@ class PrecheckConditionTest extends CakeTestCase {
 		try {
 			$Migration->migration['up']['alter_field']['posts']['inexistent'] = array('default' => 'N');
 			$Migration->run('up');
-			$this->fail('No expection triggered');
+			$this->fail('No expectation triggered');
 			$this->setExpectedException('MigrationException');
 		} catch (MigrationException $e) {
 			$this->assertEqual('Undefined index: inexistent', $e->getMessage());

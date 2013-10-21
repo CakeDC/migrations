@@ -20,6 +20,7 @@ App::uses('ConnectionManager', 'Model');
 App::uses('Inflector', 'Utility');
 App::uses('Folder', 'Utility');
 App::uses('ClassRegistry', 'Utility');
+App::uses('MigrationVersionException', 'Migrations.Lib');
 
 /**
  * Migration version management.
@@ -30,11 +31,20 @@ App::uses('ClassRegistry', 'Utility');
 class MigrationVersion {
 
 /**
- * Connection used
+ * Connection used for the migration_schema table of the migration versions
  *
  * @var string
  */
 	public $connection = 'default';
+
+/**
+ * Connection used for the migration
+ *
+ * This can be used to override the connection of migration file
+ *
+ * @var null|string
+ */
+	public $migrationConnection = null;
 
 /**
  * Instance of SchemaMigrations model
@@ -58,6 +68,25 @@ class MigrationVersion {
 	public $precheck = 'Migrations.PrecheckException';
 
 /**
+ * Should the run be dry or not.
+ *
+ * If try, the SQL will be outputted to screen rather than
+ * applied to the database
+ *
+ * @var boolean
+ */
+	public $dry = false;
+
+/**
+ * Log of SQL queries generated
+ *
+ * This is used for dry run
+ *
+ * @var array
+ */
+	public $log = array();
+
+/**
  * Constructor
  *
  * @param array $options optional load object properties
@@ -66,10 +95,20 @@ class MigrationVersion {
 		if (!empty($options['connection'])) {
 			$this->connection = $options['connection'];
 		}
+
 		if (!empty($options['precheck'])) {
 			$this->precheck = $options['precheck'];
 		}
 
+		if (!empty($options['migrationConnection'])) {
+			$this->migrationConnection = $options['migrationConnection'];
+		}
+
+		if (!isset($options['dry'])) {
+			$options['dry'] = false;
+		}
+
+		$this->dry = $options['dry'];
 		$this->initVersion();
 
 		if (!isset($options['autoinit']) || $options['autoinit'] !== false) {
@@ -121,6 +160,10 @@ class MigrationVersion {
  * @return boolean
  */
 	public function setVersion($version, $type, $migrated = true) {
+		if ($this->dry) {
+			return true;
+		}
+
 		if ($type !== 'app') {
 			$type = Inflector::camelize($type);
 		}
@@ -154,6 +197,7 @@ class MigrationVersion {
  * Get mapping for the given type
  *
  * @param string $type Can be 'app' or a plugin name
+ * @param bool   $cache
  * @return mixed False in case of no file found or empty mapping, array with mapping
  */
 	public function getMapping($type, $cache = true) {
@@ -240,8 +284,12 @@ class MigrationVersion {
 		}
 
 		$defaults = array(
-			'connection' => $this->connection,
 			'precheck' => $this->precheck);
+
+		if (!empty($this->migrationConnection)) {
+			$defaults['connection'] = $this->migrationConnection;
+		}
+
 		$options = array_merge($defaults, $options);
 		return new $class($options);
 	}
@@ -264,7 +312,7 @@ class MigrationVersion {
 		if (!empty($options['direction'])) {
 			$direction = $options['direction'];
 		}
-		// Check direction and targetVersion
+
 		if (isset($options['version'])) {
 			$targetVersion = $options['version'];
 			$direction = ($targetVersion < $latestVersion) ? 'down' : $direction;
@@ -297,6 +345,7 @@ class MigrationVersion {
 
 				try {
 					$result = $migration->run($direction, $options);
+					$this->log[$info['name']] = $migration->getQueryLog();
 				} catch (Exception $exception){
 					$mapping = $this->getMapping($options['type']);
 					$latestVersionName = '#' . number_format($mapping[$latestVersion]['version'] / 100, 2, '', '') . ' ' . $mapping[$latestVersion]['name'];
@@ -317,10 +366,11 @@ class MigrationVersion {
 
 /**
  * Resets the migration to 0.
+ *
  * @param $type string type of migration being ran
  * @return void
  */
-	protected function resetMigration($type) {
+	protected function _resetMigration($type) {
 		$options['type'] = $type;
 		$options['version'] = 0;
 		$options['reset'] = true;
@@ -330,11 +380,12 @@ class MigrationVersion {
 
 /**
  * Runs migration to the last well known version defined by $toVersion.
+ *
  * @param $toVersion string name of the version where the migration will run up to.
  * @param $type string type of migration being ran.
  * @return void
  */
-	protected function restoreMigration($toVersion, $type) {
+	protected function _restoreMigration($toVersion, $type) {
 		$options['type'] = $type;
 		$options['direction'] = 'up';
 		$options['version'] = $toVersion;
@@ -347,6 +398,7 @@ class MigrationVersion {
  * @return void
  */
 	private function __initMigrations() {
+		/** @var DboSource $db */
 		$db = ConnectionManager::getDataSource($this->connection);
 		if (!in_array($db->fullTableName('schema_migrations', false, false), $db->listSources())) {
 			$map = $this->_enumerateMigrations('migrations');
@@ -463,6 +515,7 @@ class MigrationVersion {
 		}
 		return $mapping;
 	}
+
 }
 
 /**

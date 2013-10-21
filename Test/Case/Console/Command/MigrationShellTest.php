@@ -156,6 +156,7 @@ class MigrationShellTest extends CakeTestCase {
 			'connection' => 'test',
 			'plugin' => 'Migrations',
 			'no-auto-init' => false,
+			'dry' => false,
 			'precheck' => 'Migrations.PrecheckException'
 		);
 		$this->Shell->startup();
@@ -195,6 +196,7 @@ class MigrationShellTest extends CakeTestCase {
 			'callback' => $this->Shell,
 			'direction' => 'up',
 			'version' => 1,
+			'dry' => false,
 			'precheck' => null)));
 		$this->Shell->args = array('up');
 		$this->assertTrue($this->Shell->run());
@@ -216,6 +218,7 @@ class MigrationShellTest extends CakeTestCase {
 			'callback' => $this->Shell,
 			'direction' => 'down',
 			'version' => 1,
+			'dry' => false,
 			'precheck' => null)));
 		$this->Shell->args = array('down');
 		$this->assertTrue($this->Shell->run());
@@ -227,6 +230,7 @@ class MigrationShellTest extends CakeTestCase {
 			'callback' => $this->Shell,
 			'version' => 10,
 			'direction' => 'up',
+			'dry' => false,
 			'precheck' => null)));
 		$this->Shell->args = array('all');
 		$this->assertTrue($this->Shell->run());
@@ -239,6 +243,7 @@ class MigrationShellTest extends CakeTestCase {
 			'version' => 0,
 			'direction' => 'down',
 			'reset' => true,
+			'dry' => false,
 			'precheck' => null)));
 		$this->Shell->args = array('reset');
 		$this->assertTrue($this->Shell->run());
@@ -249,7 +254,8 @@ class MigrationShellTest extends CakeTestCase {
 			'type' => 'TestMigrationPlugin',
 			'callback' => $this->Shell,
 			'version' => 1,
-			'direction' => 'up')));
+			'direction' => 'up',
+			'dry' => false)));
 		$this->Shell->expects($this->at(2))->method('in')->will($this->returnValue(0));
 		$this->Shell->expects($this->at(4))->method('in')->will($this->returnValue(11));
 		$this->Shell->expects($this->at(6))->method('in')->will($this->returnValue(1));
@@ -262,7 +268,8 @@ class MigrationShellTest extends CakeTestCase {
 			'type' => 'TestMigrationPlugin',
 			'callback' => $this->Shell,
 			'version' => 10,
-			'direction' => 'up')));
+			'direction' => 'up',
+			'dry' => false)));
 		$this->Shell->expects($this->at(2))->method('in')->will($this->returnValue(10));
 		$this->Shell->args = array();
 		$this->assertTrue($this->Shell->run());
@@ -272,7 +279,8 @@ class MigrationShellTest extends CakeTestCase {
 		$this->Shell->Version->expects($this->at(2))->method('run')->with($this->equalTo(array(
 			'type' => 'TestMigrationPlugin',
 			'callback' => $this->Shell,
-			'version' => 1)));
+			'version' => 1,
+			'dry' => false)));
 		$this->Shell->args = array('1');
 		$this->assertTrue($this->Shell->run());
 
@@ -776,6 +784,7 @@ TEXT;
 		$this->assertEmpty(glob(TMP . 'tests' . DS . '*schema_dump.php'));
 		$this->Shell->type = 'TestMigrationPlugin2';
 		$this->Shell->params['force'] = true;
+		$this->Shell->params['dry'] = false;
 		$this->Shell->params['precheck'] = 'Migrations.PrecheckException';
 		$this->Shell->generate();
 		$files = glob(TMP . 'tests' . DS . '*schema_dump.php');
@@ -785,7 +794,6 @@ TEXT;
 		foreach ($files as $f) {
 			unlink($f);
 		}
-
 		$expected = file_get_contents(CakePlugin::path('Migrations') . '/Test/Fixture/test_migration.txt');
 		$this->assertEquals($expected, $result);
 	}
