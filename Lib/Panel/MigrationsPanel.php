@@ -59,6 +59,7 @@ class MigrationsPanel extends DebugPanel {
 /**
  * beforeRender Callback
  *
+ * @param Controller $controller
  * @return array
  */
 	public function beforeRender(Controller $controller) {
