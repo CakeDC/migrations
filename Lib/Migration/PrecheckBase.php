@@ -14,6 +14,11 @@
  * @package   plugns.migrations
  * @license   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Migrations\Lib\Migration;
+
+use Cake\Database\ConnectionManager;
+use Migrations\Model\Datasource\DboSource;
+
 abstract class PrecheckBase {
 
 /**
@@ -63,8 +68,10 @@ abstract class PrecheckBase {
  */
 	public function tableExists($table) {
 		$this->_migration->db->cacheSources = false;
-		$tables = $this->_migration->db->listSources();
-		return in_array($this->_migration->db->fullTableName($table, false, false), $tables);
+		$db = ConnectionManager::get($this->_migration->connection);
+		$driver = DboSource::get($db);
+		$tables = $db->schemaCollection()->listTables();
+		return in_array($driver->fullTableName($table, false, false), $tables);
 	}
 
 /**

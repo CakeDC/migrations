@@ -14,7 +14,20 @@
  * @package   plugns.migrations
  * @license   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('CakeSchema', 'Model');
+namespace Migrations\Lib;
+
+use Object;
+use Exception;
+use Cake\Core\App;
+use Cake\Cache\Cache;
+use Cake\Model\Model;
+use Cake\Utility\Inflector;
+use Cake\Utility\ClassRegistry;
+use Cake\Database\ConnectionManager;
+use Migrations\Model\CakeSchema;
+use Migrations\Model\Datasource\DboSource;
+use Migrations\Lib\MigrationException;
+use Migrations\Lib\Migration\PrecheckException;
 
 /**
  * Base Class for Migration management
@@ -199,12 +212,11 @@ class CakeMigration extends Object {
 		}
 
 		if (empty($options['precheck'])) {
-			App::uses('PrecheckException', 'Migrations.Lib/Migration');
 			$this->Precheck = new PrecheckException();
 		} else {
 			$class = Inflector::camelize($options['precheck']);
 			list($plugin, $class) = pluginSplit($class, true);
-			App::uses($class, $plugin . 'Lib/Migration');
+			$class = strtr($plugin, ['.' => '']) . '\\Lib\\Migration\\' . $class;
 
 			if (!class_exists($class)) {
 				throw new MigrationException($this, sprintf(
@@ -214,7 +226,7 @@ class CakeMigration extends Object {
 
 			$this->Precheck = new $class();
 
-			if (!is_a($this->Precheck, 'PrecheckBase')) {
+			if (!is_a($this->Precheck, 'Migrations\\Lib\\Migration\\PrecheckBase')) {
 				throw new MigrationException($this, sprintf(
 					__d('migrations', 'Migration precheck class (%s) is not a valid precheck class.'), $class
 				), E_USER_NOTICE);
@@ -238,11 +250,16 @@ class CakeMigration extends Object {
 		$this->direction = $direction;
 
 		$null = null;
-		$this->db = ConnectionManager::getDataSource($this->connection);
+		$db = ConnectionManager::get($this->connection);
+		$driver = DboSource::get($db);
+		if (!isset($this->db) && $driver) {
+			$this->db = $driver;
+		}
 		$this->db->cacheSources = false;
 		$this->db->begin($null);
 		$this->Schema = new CakeSchema(array('connection' => $this->connection));
 
+		$ret = false;
 		try {
 			$this->_invokeCallbacks('beforeMigration', $direction);
 			$result = $this->_run();
@@ -252,12 +269,14 @@ class CakeMigration extends Object {
 			if (!$result) {
 				return false;
 			}
+
+			$ret = $this->db->commit($null);
 		} catch (Exception $e) {
 			$this->db->rollback($null);
 			throw $e;
 		}
 
-		return $this->db->commit($null);
+		return $ret;
 	}
 
 /**
@@ -641,32 +660,4 @@ class CakeMigration extends Object {
 		return new AppModel($options);
 	}
 
-}
-
-/**
- * Exception used when something goes wrong on migrations
- *
- * @package	   migrations
- * @subpackage	migrations.libs.model
- */
-class MigrationException extends Exception {
-
-/**
- * Reference to the Migration being processed on time the error ocurred
- * @var CakeMigration
- */
-	public $Migration;
-
-/**
- * Constructor
- *
- * @param CakeMigration $Migration Reference to the Migration
- * @param string $message Message explaining the error
- * @param int $code Error code
- * @return \MigrationException
- */
-	public function __construct($Migration, $message = '', $code = 0) {
-		parent::__construct($message, $code);
-		$this->Migration = $Migration;
-	}
 }

@@ -8,9 +8,12 @@
  * @copyright Copyright 2010, Cake Development Corporation (http://cakedc.com)
  * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Migrations\Lib\Panel;
 
-//App::import('File', 'Migration', true, array(APP . 'plugins' . DS . 'migrations' . DS . 'libs' . DS ), 'migration.php');
-App::import('Lib', 'Migrations.MigrationVersion');
+use Cake\Core\Plugin;
+use Cake\Utility\Hash;
+use Migrations\Lib\MigrationVersion;
+use Migrations\Lib\MigrationVersionException;
 
 /**
  * Migrations Panel for DebugKit
@@ -66,7 +69,7 @@ class MigrationsPanel extends DebugPanel {
 		$v = new MigrationVersion();
 		$map = $migrations = array();
 
-		$migrations = Hash::merge(array('app'), CakePlugin::loaded());
+		$migrations = Hash::merge(array('app'), Plugin::loaded());
 		foreach ($migrations as $plugin) {
 			try {
 				$map[$plugin] = array(

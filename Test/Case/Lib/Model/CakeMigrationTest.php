@@ -187,7 +187,7 @@ class CakeMigrationTest extends CakeTestCase {
  * @return void
  */
 	public function testRunDownWithPrefix() {
-		$options = ConnectionManager::getDataSource('test')->config;
+		$options = ConnectionManager::get('test')->config;
 		$prefix = 'prefix_';
 		$options['prefix'] = $prefix;
 		ConnectionManager::create('test2', $options);

@@ -1,4 +1,8 @@
 <?php
+namespace Migrations\Config\Migration;
+
+use Migrations\Lib\CakeMigration;
+
 class IncreaseClassNameLength extends CakeMigration {
 
 /**

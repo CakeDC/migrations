@@ -14,12 +14,18 @@
  * @package   plugns.migrations
  * @license   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('Shell', 'Console');
-App::uses('AppShell', 'Console/Command');
-App::uses('CakeSchema', 'Model');
-App::uses('MigrationVersion', 'Migrations.Lib');
-App::uses('String', 'Utility');
-App::uses('ClassRegistry', 'Utility');
+namespace Migrations\Console\Command;
+
+use App\Console\Command\AppShell;
+use Cake\Core\App;
+use Cake\Utility\File;
+use Cake\Utility\String;
+use Cake\Utility\Inflector;
+use Cake\Utility\ClassRegistry;
+use Migrations\Lib\MigrationVersion;
+use Migrations\Lib\MigrationException;
+use Migrations\Lib\MigrationVersionException;
+use Migrations\Model\CakeSchema;
 
 /**
  * Migration shell.
@@ -447,7 +453,7 @@ class MigrationShell extends AppShell {
  * @return void
  */
 	public function status() {
-		$types = CakePlugin::loaded();
+		$types = Plugin::loaded();
 		ksort($types);
 		array_unshift($types, 'App');
 
@@ -629,7 +635,7 @@ class MigrationShell extends AppShell {
  * @return void
  */
 	protected function _updateSchema() {
-		$command = 'schema generate --connection ' . $this->connection;
+		$command = 'Migrations.schema generate --connection ' . $this->connection;
 		if (!empty($this->params['plugin'])) {
 			$command .= ' --plugin ' . $this->params['plugin'];
 		}

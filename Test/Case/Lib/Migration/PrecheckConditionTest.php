@@ -38,7 +38,7 @@ class TestPrecheckCakeMigration extends CakeMigration {
  * Initialize db connection
  */
 	public function initDb() {
-		$this->db = ConnectionManager::getDataSource($this->connection);
+		$this->db = ConnectionManager::get($this->connection);
 		$this->db->cacheSources = false;
 	}
 

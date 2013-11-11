@@ -66,7 +66,7 @@ class MigrationVersionTest extends CakeTestCase {
  * @return void
  */
 	public function testInitialTableCreation() {
-		$db = ConnectionManager::getDataSource('test');
+		$db = ConnectionManager::get('test');
 		$db->cacheSources = false;
 		$Schema = new CakeSchema(array('connection' => 'test'));
 		$Schema->tables = array('schema_migrations' => array());

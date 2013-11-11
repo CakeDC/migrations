@@ -14,16 +14,17 @@
  * @package   plugns.migrations
  * @license   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Migrations\Lib;
+
+use Exception;
+
 /**
- * Default model for manipulating schema migrations
- * 
- * There is no custom logic yet, but it needs to extends Model instead of AppModel. That is the
- * reason why a ghost model cannot be used instead
+ * Usually used when migrations file/class or map files are not found
+ *
+ * @package       migrations
+ * @subpackage    migrations.libs
  */
-namespace Migrations\Model;
-
-use Cake\Model\Model;
-
-class SchemaMigration extends Model {
+class MigrationVersionException extends Exception {
 
 }
+

@@ -14,13 +14,17 @@
  * @package   plugns.migrations
  * @license   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Migrations\Lib;
 
-App::uses('CakeMigration', 'Migrations.Lib');
-App::uses('ConnectionManager', 'Model');
-App::uses('Inflector', 'Utility');
-App::uses('Folder', 'Utility');
-App::uses('ClassRegistry', 'Utility');
-App::uses('MigrationVersionException', 'Migrations.Lib');
+use Cake\Core\Plugin;
+use Cake\Utility\Set;
+use Cake\Utility\Folder;
+use Cake\Utility\Inflector;
+use Cake\Utility\ClassRegistry;
+use Cake\Database\ConnectionManager;
+use Migrations\Lib\MigrationException;
+use Migrations\Lib\MigrationVersionException;
+use Migrations\Model\Datasource\DboSource;
 
 /**
  * Migration version management.
@@ -276,6 +280,8 @@ class MigrationVersion {
  * @throws MigrationVersionException
  */
 	public function getMigration($name, $class, $type, $options = array()) {
+		$class = 'Migrations\\Config\\Migration\\' . $class;
+
 		if (!class_exists($class) && (!$this->__loadFile($name, $type) || !class_exists($class))) {
 			throw new MigrationVersionException(sprintf(
 				__d('migrations', 'Class `%1$s` not found on file `%2$s` for %3$s.'),
@@ -398,9 +404,10 @@ class MigrationVersion {
  * @return void
  */
 	private function __initMigrations() {
-		/** @var DboSource $db */
-		$db = ConnectionManager::getDataSource($this->connection);
-		if (!in_array($db->fullTableName('schema_migrations', false, false), $db->listSources())) {
+		$db = ConnectionManager::get($this->connection);
+		$driver = DboSource::get($db);
+
+		if (!in_array($driver->fullTableName('schema_migrations', false, false), $db->schemaCollection()->listTables())) {
 			$map = $this->_enumerateMigrations('migrations');
 
 			list($name, $class) = each($map[1]);
@@ -430,7 +437,7 @@ class MigrationVersion {
 	private function __loadFile($name, $type) {
 		$path = APP . 'Config' . DS . 'Migration' . DS;
 		if ($type != 'app') {
-			$path = CakePlugin::path(Inflector::camelize($type)) . 'Config' . DS . 'Migration' . DS;
+			$path = Plugin::path(Inflector::camelize($type)) . 'Config' . DS . 'Migration' . DS;
 		}
 
 		if (!file_exists($path . $name . '.php')) {
@@ -469,7 +476,7 @@ class MigrationVersion {
 		$mapping = array();
 		$path = APP . 'Config' . DS . 'Migration' . DS;
 		if ($type != 'app') {
-			$path = CakePlugin::path(Inflector::camelize($type)) . 'Config' . DS . 'Migration' . DS;
+			$path = Plugin::path(Inflector::camelize($type)) . 'Config' . DS . 'Migration' . DS;
 		}
 		if (!file_exists($path)) {
 			return $mapping;
@@ -496,7 +503,7 @@ class MigrationVersion {
 		$mapping = array();
 		$path = APP . 'Config' . DS . 'Migration' . DS;
 		if ($type != 'app') {
-			$path = CakePlugin::path(Inflector::camelize($type)) . 'Config' . DS . 'Migration' . DS;
+			$path = Plugin::path(Inflector::camelize($type)) . 'Config' . DS . 'Migration' . DS;
 		}
 		if (!file_exists($path)) {
 			return $mapping;
@@ -517,14 +524,3 @@ class MigrationVersion {
 	}
 
 }
-
-/**
- * Usually used when migrations file/class or map files are not found
- *
- * @package       migrations
- * @subpackage    migrations.libs
- */
-class MigrationVersionException extends Exception {
-
-}
-

@@ -1,4 +1,12 @@
 <?php
+namespace Migrations\Config\Migration;
+
+use RuntimeException;
+use Cake\Core\Plugin;
+use Cake\Error\InternalErrorException;
+use Cake\Utility\Set;
+use Migrations\Lib\CakeMigration;
+
 class ConvertVersionToClassNames extends CakeMigration {
 
 /**
@@ -123,7 +131,7 @@ class ConvertVersionToClassNames extends CakeMigration {
 		}
 
 		// Try to load them
-		CakePlugin::load($plugins);
+		Plugin::load($plugins);
 	}
 
 /**
