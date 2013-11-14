@@ -16,6 +16,10 @@
  */
 echo "<?php\n";
 ?>
+namespace Migrations\Config\Migration;
+
+use Migrations\Lib\CakeMigration;
+
 class <?php echo $class; ?> extends CakeMigration {
 
 /**

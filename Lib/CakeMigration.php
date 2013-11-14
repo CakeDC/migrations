@@ -91,11 +91,18 @@ class CakeMigration extends Object {
 	public $connection = 'default';
 
 /**
+ * Database Connection used
+ *
+ * @var Connection
+ */
+	public $db = null;
+
+/**
  * DataSource used
  *
  * @var DboSource
  */
-	public $db = null;
+	public $dataSource = null;
 
 /**
  * MigrationVersion instance
@@ -251,12 +258,12 @@ class CakeMigration extends Object {
 
 		$null = null;
 		$db = ConnectionManager::get($this->connection);
-		$driver = DboSource::get($db);
-		if (!isset($this->db) && $driver) {
-			$this->db = $driver;
+		if (!isset($this->db) && $db) {
+			$this->db = $db;
 		}
-		$this->db->cacheSources = false;
-		$this->db->begin($null);
+		$this->dataSource = DboSource::get($db);
+		$this->dataSource->cacheSources = false;
+		$this->dataSource->begin($null);
 		$this->Schema = new CakeSchema(array('connection' => $this->connection));
 
 		$ret = false;
@@ -270,9 +277,9 @@ class CakeMigration extends Object {
 				return false;
 			}
 
-			$ret = $this->db->commit($null);
+			$ret = $this->dataSource->commit($null);
 		} catch (Exception $e) {
-			$this->db->rollback($null);
+			$this->dataSource->rollback($null);
 			throw $e;
 		}
 
@@ -357,14 +364,14 @@ class CakeMigration extends Object {
 				$this->Schema->tables = array($table => $fields);
 				$this->_invokeCallbacks('beforeAction', 'create_table', array('table' => $table));
 				try {
-					$sql = $this->db->createSchema($this->Schema);
+					$sql = $this->dataSource->createSchema($this->Schema);
 
 					if ($this->dry) {
 						$this->logQuery($sql);
 						continue;
 					}
 
-					$this->db->execute($sql);
+					$this->dataSource->execute($sql);
 				} catch (Exception $exception) {
 					throw new MigrationException($this, __d('migrations', 'SQL Error: %s', $exception->getMessage()));
 				}
@@ -389,14 +396,14 @@ class CakeMigration extends Object {
 			if ($this->_invokePrecheck('beforeAction', 'drop_table', array('table' => $table))) {
 				$this->_invokeCallbacks('beforeAction', 'drop_table', array('table' => $table));
 
-				$sql = $this->db->dropSchema($this->Schema);
+				$sql = $this->dataSource->dropSchema($this->Schema);
 				if ($this->dry) {
 					$this->logQuery($sql);
 					continue;
 				}
 
-				if (@$this->db->execute($sql) === false) {
-					throw new MigrationException($this, sprintf(__d('migrations', 'SQL Error: %s'), $this->db->error));
+				if (@$this->dataSource->execute($sql) === false) {
+					throw new MigrationException($this, sprintf(__d('migrations', 'SQL Error: %s'), $this->dataSource->error));
 				}
 				$this->_invokeCallbacks('afterAction', 'drop_table', array('table' => $table));
 			}
@@ -415,7 +422,7 @@ class CakeMigration extends Object {
 	protected function _renameTable($type, $tables) {
 		foreach ($tables as $oldName => $newName) {
 			if ($this->_invokePrecheck('beforeAction', 'rename_table', array('old_name' => $oldName, 'new_name' => $newName))) {
-				$sql = 'ALTER TABLE ' . $this->db->fullTableName($oldName) . ' RENAME TO ' . $this->db->fullTableName($newName, true, false) . ';';
+				$sql = 'ALTER TABLE ' . $this->dataSource->fullTableName($oldName) . ' RENAME TO ' . $this->dataSource->fullTableName($newName, true, false) . ';';
 
 				if ($this->dry) {
 					$this->logQuery($sql);
@@ -423,8 +430,8 @@ class CakeMigration extends Object {
 				}
 
 				$this->_invokeCallbacks('beforeAction', 'rename_table', array('old_name' => $oldName, 'new_name' => $newName));
-				if (@$this->db->execute($sql) === false) {
-					throw new MigrationException($this, __d('migrations', 'SQL Error: %s', $this->db->error));
+				if (@$this->dataSource->execute($sql) === false) {
+					throw new MigrationException($this, __d('migrations', 'SQL Error: %s', $this->dataSource->error));
 				}
 				$this->_invokeCallbacks('afterAction', 'rename_table', array('old_name' => $oldName, 'new_name' => $newName));
 			}
@@ -454,9 +461,9 @@ class CakeMigration extends Object {
 
 			foreach ($fields as $field => $col) {
 				$model = new Model(array('table' => $table, 'ds' => $this->connection));
-				$tableFields = $this->db->describe($model);
-				$tableFields['indexes'] = $this->db->index($model);
-				$tableFields['tableParameters'] = $this->db->readTableParameters($this->db->fullTableName($model, false, false));
+				$tableFields = $this->dataSource->describe($model);
+				$tableFields['indexes'] = $this->dataSource->index($model);
+				$tableFields['tableParameters'] = $this->dataSource->readTableParameters($this->dataSource->fullTableName($model, false, false));
 				
 				if ($type === 'drop') {
 					$field = $col;
@@ -471,12 +478,12 @@ class CakeMigration extends Object {
 				if ($this->_invokePrecheck('beforeAction', $type . '_field', $data)) {
 					switch ($type) {
 						case 'add':
-							$sql = $this->db->alterSchema(array(
+							$sql = $this->dataSource->alterSchema(array(
 								$table => array('add' => array($field => $col))
 							));
 							break;
 						case 'drop':
-							$sql = $this->db->alterSchema(array(
+							$sql = $this->dataSource->alterSchema(array(
 								$table => array('drop' => array($field => array()))
 							));
 							break;
@@ -489,7 +496,7 @@ class CakeMigration extends Object {
 							if (!empty($def['length']) && !empty($col['type']) && (substr($col['type'], 0, 4) == 'date' || substr($col['type'], 0, 4) == 'time')) {
 								$def['length'] = null;
 							}
-							$sql = $this->db->alterSchema(array(
+							$sql = $this->dataSource->alterSchema(array(
 								$table => array('change' => array($field => $def))
 							));
 							break;
@@ -498,7 +505,7 @@ class CakeMigration extends Object {
 							if (array_key_exists($field, $tableFields)) {
 								$data = $tableFields[$field];
 							}
-							$sql = $this->db->alterSchema(array(
+							$sql = $this->dataSource->alterSchema(array(
 								$table => array('change' => array($field => array_merge($data, array('name' => $col))))
 							));
 							break;
@@ -510,8 +517,8 @@ class CakeMigration extends Object {
 					}
 
 					$this->_invokeCallbacks('beforeAction', $type . '_field', $callbackData);
-					if (@$this->db->execute($sql) === false) {
-						throw new MigrationException($this, sprintf(__d('migrations', 'SQL Error: %s'), $this->db->error));
+					if (@$this->dataSource->execute($sql) === false) {
+						throw new MigrationException($this, sprintf(__d('migrations', 'SQL Error: %s'), $this->dataSource->error));
 					}
 					$this->_invokeCallbacks('afterAction', $type . '_field', $callbackData);
 				}
@@ -539,7 +546,7 @@ class CakeMigration extends Object {
 				$key = $index;
 				$index = array();
 			}
-			$sql = $this->db->alterSchema(array(
+			$sql = $this->dataSource->alterSchema(array(
 				$table => array($type => array('indexes' => array($key => $index)))
 			));
 
@@ -550,8 +557,8 @@ class CakeMigration extends Object {
 
 			if ($this->_invokePrecheck('beforeAction', $type . '_index', array('table' => $table, 'index' => $key))) {
 				$this->_invokeCallbacks('beforeAction', $type . '_index', array('table' => $table, 'index' => $key));
-				if (@$this->db->execute($sql) === false) {
-					throw new MigrationException($this, sprintf(__d('migrations', 'SQL Error: %s'), $this->db->error));
+				if (@$this->dataSource->execute($sql) === false) {
+					throw new MigrationException($this, sprintf(__d('migrations', 'SQL Error: %s'), $this->dataSource->error));
 				}
 			}
 			$this->_invokeCallbacks('afterAction', $type . '_index', array('table' => $table, 'index' => $key));

@@ -1,4 +1,7 @@
 <?php
+namespace Migrations\Config\Schema;
+
+use Migrations\Model\CakeSchema;
 
 class TestMigrationPluginSchema extends CakeSchema {
 

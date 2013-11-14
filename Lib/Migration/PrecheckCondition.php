@@ -14,8 +14,9 @@
  * @package   plugns.migrations
  * @license   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Migrations\Lib\Migration;
 
-App::uses('PrecheckBase', 'Migrations.Lib/Migration');
+use Migrations\Lib\Migration\PrecheckBase;
 
 class PrecheckCondition extends PrecheckBase {
 

@@ -27,6 +27,7 @@ use Cake\Model\Model;
 use Cake\Model\Datasource\DataSource;
 use Cake\Database\ConnectionManager;
 use Cake\View\View;
+use Cake\Utility\Hash;
 use Cake\Utility\String;
 use Cake\Database\Connection;
 use Migrations\Model\CakeSchema;

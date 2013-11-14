@@ -15,19 +15,26 @@
  * @package   plugns.migrations
  * @license   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Migrations\Test\TestCase\Lib;
 
-App::uses('CakeMigration', 'Migrations.Lib');
-App::uses('CakeSchema', 'Model');
-App::uses('MigrationVersion', 'Migrations.Lib');
+use Cake\Core\App;
+use Cake\Core\Plugin;
+use Cake\TestSuite\TestCase;
+use Cake\Utility\ClassRegistry;
+use Cake\Database\ConnectionManager;
+use Migrations\Lib\CakeMigration;
+use Migrations\Lib\MigrationVersion;
+use Migrations\Lib\MigrationVersionException;
+use Migrations\Model\CakeSchema;
 
-class MigrationVersionTest extends CakeTestCase {
+class MigrationVersionTest extends TestCase {
 
 /**
  * Fixtures property
  *
  * @var array
  */
-	public $fixtures = array('plugin.migrations.schema_migrations');
+	public $fixtures = array('plugin.Migrations.schema_migrations');
 
 /**
  * MigrationVersion instance
@@ -47,7 +54,7 @@ class MigrationVersionTest extends CakeTestCase {
 			'autoinit' => false
 		));
 
-		App::build(array('plugins' => CakePlugin::path('Migrations') . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS));
+		/* App::build(array('plugins' => Plugin::path('Migrations') . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)); */
 	}
 
 /**
@@ -67,15 +74,16 @@ class MigrationVersionTest extends CakeTestCase {
  */
 	public function testInitialTableCreation() {
 		$db = ConnectionManager::get('test');
-		$db->cacheSources = false;
+		$driver = ConnectionManager::getDatasource('test');
+		$driver->cacheSources = false;
 		$Schema = new CakeSchema(array('connection' => 'test'));
 		$Schema->tables = array('schema_migrations' => array());
 
-		$db->execute($db->dropSchema($Schema));
-		$this->assertFalse(in_array($db->fullTableName('schema_migrations', false, false), $db->listSources()));
+		$driver->execute($driver->dropSchema($Schema));
+		$this->assertFalse(in_array($driver->fullTableName('schema_migrations', false, false), $db->schemaCollection()->listTables()));
 
 		$this->Version = new MigrationVersion(array('connection' => 'test', 'migrationConnection' => 'test'));
-		$this->assertTrue(in_array($db->fullTableName('schema_migrations', false, false), $db->listSources()));
+		$this->assertTrue(in_array($driver->fullTableName('schema_migrations', false, false), $db->schemaCollection()->listTables()));
 	}
 
 /**
@@ -84,7 +92,7 @@ class MigrationVersionTest extends CakeTestCase {
  * @return void
  */
 	public function testGetMapping() {
-		CakePlugin::load('TestMigrationPlugin');
+		Plugin::load('TestMigrationPlugin', array('autoload' => true, 'namespace' => 'Migrations\\Test\\test_app\\Plugin\\TestMigrationPlugin'));
 		$result = $this->Version->getMapping('test_migration_plugin');
 		$expected = array(
 			1 => array(
@@ -102,7 +110,7 @@ class MigrationVersionTest extends CakeTestCase {
 				'migrated' => null
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 
 		$result = $this->Version->getMapping('migrations');
 		$expected = array(
@@ -128,7 +136,7 @@ class MigrationVersionTest extends CakeTestCase {
 					'migrated' => null
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 	}
 
 /**
@@ -141,24 +149,24 @@ class MigrationVersionTest extends CakeTestCase {
 			$this->Version->getMigration('inexistent_migration', 'InexistentMigration', 'test_migration_plugin');
 			$this->fail('No exception triggered');
 		} catch (MigrationVersionException $e) {
-			$this->assertEqual('File `inexistent_migration.php` not found in the TestMigrationPlugin Plugin.', $e->getMessage());
+			$this->assertEquals('File `inexistent_migration.php` not found in the TestMigrationPlugin Plugin.', $e->getMessage());
 		}
 
 		try {
 			$this->Version->getMigration('blank_file', 'BlankFile', 'test_migration_plugin');
 			$this->fail('No exception triggered');
 		} catch (MigrationVersionException $e) {
-			$this->assertEqual('Class `BlankFile` not found on file `blank_file.php` for TestMigrationPlugin Plugin.', $e->getMessage());
+			$this->assertEquals('Class `Migrations\Config\Migration\BlankFile` not found on file `blank_file.php` for TestMigrationPlugin Plugin.', $e->getMessage());
 		}
 
 		$result = $this->Version->getMigration('001_schema_dump', 'M4af6d40056b04408808500cb58157726', 'test_migration_plugin');
-		$this->assertInstanceOf('M4af6d40056b04408808500cb58157726', $result);
-		$this->assertEqual($result->description, 'Version 001 (schema dump) of TestMigrationPlugin');
+		$this->assertInstanceOf('Migrations\Config\Migration\M4af6d40056b04408808500cb58157726', $result);
+		$this->assertEquals($result->description, 'Version 001 (schema dump) of TestMigrationPlugin');
 
 		// Calling twice to check if it will not try to redeclare the class
 		$result = $this->Version->getMigration('001_schema_dump', 'M4af6d40056b04408808500cb58157726', 'test_migration_plugin');
-		$this->assertInstanceOf('M4af6d40056b04408808500cb58157726', $result);
-		$this->assertEqual($result->description, 'Version 001 (schema dump) of TestMigrationPlugin');
+		$this->assertInstanceOf('Migrations\Config\Migration\M4af6d40056b04408808500cb58157726', $result);
+		$this->assertEquals($result->description, 'Version 001 (schema dump) of TestMigrationPlugin');
 	}
 
 /**
@@ -167,13 +175,13 @@ class MigrationVersionTest extends CakeTestCase {
  * @return void
  */
 	public function testSetGetVersion() {
-		$this->Version = $this->getMock('MigrationVersion', array('getMapping'), array(array('connection' => 'test')));
+		$this->Version = $this->getMock('Migrations\\Lib\\MigrationVersion', array('getMapping'), array(array('connection' => 'test')));
 
 		// Checking current
 		$this->Version->expects($this->at(0))->method('getMapping')->will($this->returnValue($this->__mapping()));
 		$result = $this->Version->getVersion('inexistent_plugin');
 		$expected = 0;
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 
 		// Setting as 1
 		$this->Version->expects($this->at(0))->method('getMapping')->will($this->returnValue($this->__mapping()));
@@ -182,7 +190,7 @@ class MigrationVersionTest extends CakeTestCase {
 		$this->assertTrue(!empty($setResult));
 		$result = $this->Version->getVersion('inexistent_plugin');
 		$expected = 1;
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 
 		// Setting as 2
 		$this->Version->expects($this->at(0))->method('getMapping')->will($this->returnValue($this->__mapping(1, 1)));
@@ -191,7 +199,7 @@ class MigrationVersionTest extends CakeTestCase {
 		$this->assertTrue(!empty($setResult));
 		$result = $this->Version->getVersion('inexistent_plugin');
 		$expected = 2;
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 
 		// Setting as 1
 		$this->Version->expects($this->at(0))->method('getMapping')->will($this->returnValue($this->__mapping(1, 2)));
@@ -200,7 +208,7 @@ class MigrationVersionTest extends CakeTestCase {
 		$this->assertTrue(!empty($setResult));
 		$result = $this->Version->getVersion('inexistent_plugin');
 		$expected = 1;
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 	}
 
 /**
@@ -211,7 +219,7 @@ class MigrationVersionTest extends CakeTestCase {
 	public function testRun() {
 		$back = $this->Version;
 		$options = array('connection' => 'test');
-		$Version = $this->getMock('MigrationVersion', array('getMapping', 'getMigration', 'getVersion', 'setVersion'), array($options), 'TestMigrationVersionMockMigrationVersion', false);
+		$Version = $this->getMock('Migrations\\Lib\\MigrationVersion', array('getMapping', 'getMigration', 'getVersion', 'setVersion'), array($options));
 
 		$Version->expects($this->any())
 			->method('getMigration')

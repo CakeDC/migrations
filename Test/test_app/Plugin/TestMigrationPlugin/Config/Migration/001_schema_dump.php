@@ -1,4 +1,8 @@
 <?php
+namespace Migrations\Config\Migration;
+
+use Migrations\Lib\CakeMigration;
+
 class M4af6d40056b04408808500cb58157726 extends CakeMigration {
 
 /**

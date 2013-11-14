@@ -14,10 +14,12 @@
  * @package   plugns.migrations
  * @license   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Migrations\Test\TestCase\Lib\Migration;
 
-App::uses('MigrationVersion', 'Migrations.Lib');
-App::uses('CakeMigration', 'Migrations.Lib');
-
+use Cake\Model\Model;
+use Cake\Database\ConnectionManager;
+use Migrations\Lib\CakeMigration;
+use Migrations\Lib\MigrationException;
 
 /**
  * TestPrecheckCakeMigration
@@ -44,7 +46,7 @@ class TestPrecheckCakeMigration extends CakeMigration {
 
 }
 
-class PrecheckConditionTest extends CakeTestCase {
+class PrecheckConditionTest extends CakeMigration {
 
 /**
  * fixtures property
@@ -285,11 +287,11 @@ class PrecheckConditionTest extends CakeTestCase {
 		$Migration->initDb();
 
 		$fields = $this->db->describe($Model);
-		$this->assertEqual($fields['published']['default'], 'N');
+		$this->assertEquals($fields['published']['default'], 'N');
 
 		$this->assertTrue($Migration->run('up'));
 		$fields = $this->db->describe($Model);
-		$this->assertEqual($fields['published']['default'], 'Y');
+		$this->assertEquals($fields['published']['default'], 'Y');
 
 		try {
 			$Migration->migration['up']['alter_field']['posts']['inexistent'] = array('default' => 'N');
@@ -297,12 +299,12 @@ class PrecheckConditionTest extends CakeTestCase {
 			$this->fail('No expectation triggered');
 			$this->setExpectedException('MigrationException');
 		} catch (MigrationException $e) {
-			$this->assertEqual('Undefined index: inexistent', $e->getMessage());
+			$this->assertEquals('Undefined index: inexistent', $e->getMessage());
 		}
 
 		$this->assertTrue($Migration->run('down'));
 		$fields = $this->db->describe($Model);
-		$this->assertEqual($fields['published']['default'], 'N');
+		$this->assertEquals($fields['published']['default'], 'N');
 	}
 
 /**

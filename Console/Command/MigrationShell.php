@@ -18,6 +18,7 @@ namespace Migrations\Console\Command;
 
 use App\Console\Command\AppShell;
 use Cake\Core\App;
+use Cake\Core\Plugin;
 use Cake\Utility\File;
 use Cake\Utility\String;
 use Cake\Utility\Inflector;

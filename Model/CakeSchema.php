@@ -24,6 +24,7 @@ use Object;
 use App\View\Helper;
 use App\Model\AppModel;
 use Cake\Core\App;
+use Cake\Core\Plugin;
 use Cake\Core\Configure;
 use Cake\Error\Exception;
 use Cake\Utility\File;
@@ -213,7 +214,7 @@ class CakeSchema extends Object {
 		$driver = DboSource::get($db);
 
 		if (isset($this->plugin)) {
-			App::uses($this->plugin . 'AppModel', $this->plugin . '.Model');
+			/* App::uses($this->plugin . 'AppModel', $this->plugin . '.Model'); */
 		}
 
 		$tables = array();
@@ -248,7 +249,7 @@ class CakeSchema extends Object {
 					$plugin = $this->plugin . '.';
 				}
 
-				App::uses($importModel, $plugin . 'Model');
+				/* App::uses($importModel, $plugin . 'Model'); */
 				if (!class_exists($importModel)) {
 					continue;
 				}
@@ -616,7 +617,6 @@ class CakeSchema extends Object {
  */
 	protected function _columns(&$Obj) {
 		$db = $Obj->getDataSource();
-		$driver = DboSource::get($db);
 		$fields = $Obj->schema(true);
 
 		$columns = array();
@@ -624,11 +624,11 @@ class CakeSchema extends Object {
 			if ($Obj->primaryKey == $name) {
 				$value['key'] = 'primary';
 			}
-			if (!isset($driver->columns[$value['type']])) {
+			if (!isset($db->columns[$value['type']])) {
 				trigger_error(__d('cake_dev', 'Schema generation error: invalid column type %s for %s.%s does not exist in DBO', $value['type'], $Obj->name, $name), E_USER_NOTICE);
 				continue;
 			} else {
-				$defaultCol = $driver->columns[$value['type']];
+				$defaultCol = $db->columns[$value['type']];
 				if (isset($defaultCol['limit']) && $defaultCol['limit'] == $value['length']) {
 					unset($value['length']);
 				} elseif (isset($defaultCol['length']) && $defaultCol['length'] == $value['length']) {

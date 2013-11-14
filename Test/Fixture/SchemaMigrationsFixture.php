@@ -1,5 +1,9 @@
 <?php
-class SchemaMigrationsFixture extends CakeTestFixture {
+namespace Migrations\Test\Fixture;
+
+use Cake\TestSuite\Fixture\TestFixture;
+
+class SchemaMigrationsFixture extends TestFixture {
 
 /**
  *
@@ -10,13 +14,11 @@ class SchemaMigrationsFixture extends CakeTestFixture {
  *
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'primary'),
-		'class' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 33),
-		'type' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 50),
-		'created' => array('type' => 'datetime', 'null' => false, 'default' => null),
-		'indexes' => array(
-			'PRIMARY' => array('column' => 'id', 'unique' => 1)
-		)
+		'id' => ['type' => 'integer', 'null' => false, 'default' => null],
+		'class' => ['type' => 'string', 'null' => false, 'default' => null, 'length' => 33],
+		'type' => ['type' => 'string', 'null' => false, 'default' => null, 'length' => 50],
+		'created' => ['type' => 'datetime', 'null' => false, 'default' => null],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

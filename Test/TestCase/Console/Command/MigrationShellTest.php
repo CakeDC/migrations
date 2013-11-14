@@ -1,6 +1,14 @@
 <?php
-App::uses('ShellDispatcher', 'Console');
-App::uses('MigrationShell', 'Migrations.Console/Command');
+namespace Migrations\Test\TestCase\Console\Command;
+
+use Cake\Core\App;
+use Cake\Core\Plugin;
+use Cake\TestSuite\TestCase;
+use Cake\Database\ConnectionManager;
+use Migrations\Lib\CakeMigration;
+use Migrations\Lib\MigrationVersion;
+use Migrations\Lib\MigrationException;
+use Migrations\Console\Command\MigrationShell;
 
 /**
  * TestMigrationShell
@@ -60,14 +68,14 @@ class TestMigrationShell extends MigrationShell {
  * @package       migrations
  * @subpackage    migrations.tests.cases.shells
  */
-class MigrationShellTest extends CakeTestCase {
+class MigrationShellTest extends TestCase {
 
 /**
  * fixtures property
  *
  * @var array
  */
-	public $fixtures = array('plugin.migrations.schema_migrations', 'core.article', 'core.post', 'core.user');
+	public $fixtures = array('plugin.Migrations.schema_migrations', 'core.article', 'core.post', 'core.user');
 
 /**
  * setUp method
@@ -76,15 +84,15 @@ class MigrationShellTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
+		$out = $this->getMock('Cake\\Console\\ConsoleOutput', array(), array(), '', false);
+		$in = $this->getMock('Cake\\Console\\ConsoleInput', array(), array(), '', false);
 		$this->Shell = $this->getMock(
-			'TestMigrationShell',
+			'Migrations\\Test\\Testcase\\Console\\Command\\TestMigrationShell',
 			array('in', 'hr', 'createFile', 'error', 'err', '_stop', '_showInfo', 'dispatchShell'),
 			array($out, $out, $in));
 
 		$this->Shell->Version = $this->getMock(
-			'MigrationVersion',
+			'Migrations\\Lib\\MigrationVersion',
 			array('getMapping', 'getVersion', 'run'),
 			array(array('connection' => 'test')));
 
@@ -95,11 +103,19 @@ class MigrationShellTest extends CakeTestCase {
 		$plugins = $this->plugins = App::path('plugins');
 		$plugins[] = dirname(dirname(dirname(dirname(__FILE__)))) . DS . 'test_app' . DS . 'Plugin' . DS;
 
-		App::build(array('Plugin' => $plugins), true);
+		/* App::build(array('Plugin' => $plugins), true); */
 		App::objects('plugins', null, false);
-		CakePlugin::load('TestMigrationPlugin');
-		CakePlugin::load('TestMigrationPlugin2');
-		CakePlugin::load('TestMigrationPlugin3');
+		Plugin::load(
+			'TestMigrationPlugin',
+			array('autoload' => true, 'namespace' => 'Migrations\\Test\\test_app\\Plugin\\TestMigrationPlugin'));
+		Plugin::load(
+			'TestMigrationPlugin2',
+			array('autoload' => true, 'namespace' => 'Migrations\\Test\\test_app\\Plugin\\TestMigrationPlugin2'));
+		Plugin::load(
+			'TestMigrationPlugin3',
+			array('autoload' => true, 'namespace' => 'Migrations\\Test\\test_app\\Plugin\\TestMigrationPlugin3'));
+
+		ConnectionManager::alias('test', 'default');
 	}
 
 /**
@@ -109,10 +125,10 @@ class MigrationShellTest extends CakeTestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
-		CakePlugin::unload('TestMigrationPlugin');
-		CakePlugin::unload('TestMigrationPlugin2');
-		CakePlugin::unload('TestMigrationPlugin3');
-		App::build(array('Plugin' => $this->plugins), true);
+		Plugin::unload('TestMigrationPlugin');
+		Plugin::unload('TestMigrationPlugin2');
+		Plugin::unload('TestMigrationPlugin3');
+		/* App::build(array('Plugin' => $this->plugins), true); */
 		App::objects('plugins', null, false);
 		unset($this->Dispatcher, $this->Shell, $this->plugins);
 		foreach (glob(TMP . 'tests' . DS . '*.php') as $f) {
@@ -151,7 +167,7 @@ class MigrationShellTest extends CakeTestCase {
  */
 	public function testStartup() {
 		$this->Shell->connection = 'default';
-		$this->assertEqual($this->Shell->type, 'TestMigrationPlugin');
+		$this->assertEquals($this->Shell->type, 'TestMigrationPlugin');
 		$this->Shell->params = array(
 			'connection' => 'test',
 			'plugin' => 'Migrations',
@@ -160,8 +176,8 @@ class MigrationShellTest extends CakeTestCase {
 			'precheck' => 'Migrations.PrecheckException'
 		);
 		$this->Shell->startup();
-		$this->assertEqual($this->Shell->connection, 'test');
-		$this->assertEqual($this->Shell->type, 'Migrations');
+		$this->assertEquals($this->Shell->connection, 'test');
+		$this->assertEquals($this->Shell->type, 'Migrations');
 	}
 
 /**
@@ -304,7 +320,8 @@ class MigrationShellTest extends CakeTestCase {
 			'type' => $this->Shell->type, 'migrated' => null
 		));
 
-		$migration = new CakeMigration();
+		/* $migration = new CakeMigration(); */
+		$migration = new CakeMigration(array('connection' => 'test'));
 		$migration->info = $mapping[1];
 		$exception = new MigrationException($migration, 'Exception message');
 
@@ -323,7 +340,7 @@ An error occurred when processing the migration:
   Error: Exception message
 All migrations have completed./
 TEXT;
-		$this->assertPattern(str_replace("\r\n", "\n", $pattern), str_replace("\r\n", "\n", $result));
+		$this->assertRegExp(str_replace("\r\n", "\n", $pattern), str_replace("\r\n", "\n", $result));
 	}
 
 /**
@@ -342,7 +359,8 @@ TEXT;
 			),
 		);
 
-		$migration = new CakeMigration();
+		/* $migration = new CakeMigration(); */
+		$migration = new CakeMigration(array('connection' => 'test'));
 		$migration->info = $mapping[1];
 		$exception = new MigrationException($migration, 'Exception message');
 
@@ -358,7 +376,7 @@ TEXT;
 /Running migrations:
 All migrations have completed./
 TEXT;
-		$this->assertPattern(str_replace("\r\n", "\n", $pattern), str_replace("\n\n", "\n", $result));
+		$this->assertRegExp(str_replace("\r\n", "\n", $pattern), str_replace("\n\n", "\n", $result));
 	}
 
 /**
@@ -377,7 +395,7 @@ TEXT;
 			'up' => array('create_table' => $this->tables),
 			'down' => array('drop_table' => array('users', 'posts'))
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 
 		$comparison = array('posts' => array('add' => $this->tables['posts']));
 		$oldTables = array('users' => $this->tables['users']);
@@ -390,7 +408,7 @@ TEXT;
 				'drop_table' => array('posts')
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 
 		$comparison = array();
 		$oldTables = array('posts' => $this->tables['posts'], 'users' => $this->tables['users']);
@@ -404,7 +422,7 @@ TEXT;
 				'create_table' => array('posts' => $this->tables['posts'])
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 	}
 
 /**
@@ -435,7 +453,7 @@ TEXT;
 				)
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 
 		$comparison = array(
 			'posts' => array('add' => array(
@@ -457,7 +475,7 @@ TEXT;
 				)
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 
 		$comparison = array(
 			'posts' => array('add' => array(
@@ -481,7 +499,7 @@ TEXT;
 				)
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 
 		// Drop field/index
 		$oldTables['posts']['views'] = array('type' => 'integer', 'null' => false);
@@ -505,7 +523,7 @@ TEXT;
 				)
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 
 		$comparison = array(
 			'posts' => array('drop' => array(
@@ -525,7 +543,7 @@ TEXT;
 				)
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 
 		$comparison = array(
 			'posts' => array('drop' => array(
@@ -549,7 +567,7 @@ TEXT;
 				)
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 
 		// Change field
 		$comparison = array(
@@ -574,7 +592,7 @@ TEXT;
 				)
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 
 		// Change field with/out length
 		$oldTables = array('users' => $this->tables['users']);
@@ -603,7 +621,7 @@ TEXT;
 				)
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 	}
 
 /**
@@ -674,7 +692,7 @@ TEXT;
 		),
 	);
 TEXT;
-		$this->assertEqual($result, str_replace("\r\n", "\n", $expected));
+		$this->assertEquals($result, str_replace("\r\n", "\n", $expected));
 		$this->__unlink('12345_migration_test_file.php');
 	}
 
@@ -741,14 +759,14 @@ TEXT;
 		foreach ($files as $f) {
 			unlink($f);
 		}
-		$this->assertNoPattern('/\'schema_migrations\'/', $result);
+		$this->assertNotRegExp('/\'schema_migrations\'/', $result);
 
 		$pattern = <<<TEXT
 /			'drop_field' => array\(
 				'articles' => array\('slug',\),
 			\),/
 TEXT;
-		$this->assertPattern(str_replace("\r\n", "\n", $pattern), $result);
+		$this->assertRegExp(str_replace("\r\n", "\n", $pattern), $result);
 
 		$pattern = <<<TEXT
 /			'create_field' => array\(
@@ -757,7 +775,7 @@ TEXT;
 				\),
 			\),/
 TEXT;
-		$this->assertPattern(str_replace("\r\n", "\n", $pattern), $result);
+		$this->assertRegExp(str_replace("\r\n", "\n", $pattern), $result);
 	}
 
 	public function returnMapping() {
@@ -794,7 +812,7 @@ TEXT;
 		foreach ($files as $f) {
 			unlink($f);
 		}
-		$expected = file_get_contents(CakePlugin::path('Migrations') . '/Test/Fixture/test_migration.txt');
+		$expected = file_get_contents(Plugin::path('Migrations') . '/Test/Fixture/test_migration.txt');
 		$this->assertEquals($expected, $result);
 	}
 
@@ -815,13 +833,13 @@ Current version:
 Latest version:
   #003 003_increase_class_name_length/
 TEXT;
-		$this->assertPattern(str_replace("\r\n", "\n", $pattern), $result);
+		$this->assertRegExp(str_replace("\r\n", "\n", $pattern), $result);
 
 		$this->Shell->output = '';
 		$this->Shell->args = array('outdated');
 		$this->Shell->status();
 		$result = $this->Shell->output;
-		$this->assertNoPattern(str_replace("\r\n", "\n", $pattern), $result);
+		$this->assertNotRegExp(str_replace("\r\n", "\n", $pattern), $result);
 
 		$this->Shell->Version->setVersion(3, 'migrations', false);
 		$this->Shell->output = '';
@@ -836,7 +854,7 @@ Current version:
 Latest version:
   #003 003_increase_class_name_length/
 TEXT;
-		$this->assertPattern(str_replace("\r\n", "\n", $pattern), $result);
+		$this->assertRegExp(str_replace("\r\n", "\n", $pattern), $result);
 		$this->Shell->Version->setVersion(1, 'migrations');
 	}
 

@@ -1,4 +1,6 @@
 <?php
+use Cake\Core\Plugin;
+
 class AllMigrationsPluginTest extends PHPUnit_Framework_TestSuite {
 
 /**
@@ -9,7 +11,7 @@ class AllMigrationsPluginTest extends PHPUnit_Framework_TestSuite {
 	public static function suite() {
 		$suite = new PHPUnit_Framework_TestSuite('All Migrations Plugin Tests');
 
-		$basePath = CakePlugin::path('Migrations') . DS . 'Test' . DS . 'Case' . DS;
+		$basePath = Plugin::path('Migrations') . DS . 'Test' . DS . 'TestCase' . DS;
 
 		// Libs
 		$suite->addTestFile($basePath . 'Lib' . DS . 'MigrationVersionTest.php');
