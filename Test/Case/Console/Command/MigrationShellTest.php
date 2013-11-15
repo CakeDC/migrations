@@ -96,6 +96,8 @@ class MigrationShellTest extends CakeTestCase {
 		CakePlugin::load('TestMigrationPlugin');
 		CakePlugin::load('TestMigrationPlugin2');
 		CakePlugin::load('TestMigrationPlugin3');
+
+		Configure::write('Config.language', 'en');
 	}
 
 /**

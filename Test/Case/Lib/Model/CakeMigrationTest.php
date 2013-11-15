@@ -143,6 +143,17 @@ class CakeMigrationTest extends CakeTestCase {
 	public $db;
 
 /**
+ * Start test
+ *
+ * @return void
+ */
+	public function setUp() {
+		parent::setUp();
+
+		Configure::write('Config.language', 'en');
+	}
+
+/**
  * TestCreateTable method
  *
  * @return void

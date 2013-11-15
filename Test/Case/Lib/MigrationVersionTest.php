@@ -41,12 +41,15 @@ class MigrationVersionTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
+		parent::setUp();
+
 		$this->Version = new MigrationVersion(array(
 			'connection' => 'test',
 			'autoinit' => false
 		));
 
 		App::build(array('plugins' => CakePlugin::path('Migrations') . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS));
+		Configure::write('Config.language', 'en');
 	}
 
 /**
@@ -55,8 +58,9 @@ class MigrationVersionTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
-		//App::build(array('plugins' => $this->plugins), true);
 		unset($this->Version, $this->plugins);
+
+		parent::tearDown();
 	}
 
 /**
