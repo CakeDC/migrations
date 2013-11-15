@@ -12,7 +12,6 @@
  *
  * @copyright 2009 - 2013, Cake Development Corporation
  * @link	  http://codaset.com/cakedc/migrations/
- * @package   plugns.migrations
  * @license   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
@@ -37,7 +36,7 @@ class MigrationVersionTest extends CakeTestCase {
 	public $Version;
 
 /**
- * start test
+ * Start test
  *
  * @return void
  **/
@@ -51,7 +50,7 @@ class MigrationVersionTest extends CakeTestCase {
 	}
 
 /**
- * tearDown method
+ * TearDown method
  *
  * @return void
  **/
@@ -79,7 +78,7 @@ class MigrationVersionTest extends CakeTestCase {
 	}
 
 /**
- * testGetMapping method
+ * TestGetMapping method
  *
  * @return void
  */
@@ -132,7 +131,7 @@ class MigrationVersionTest extends CakeTestCase {
 	}
 
 /**
- * testGetMigration method
+ * TestGetMigration method
  *
  * @return void
  */
@@ -162,7 +161,7 @@ class MigrationVersionTest extends CakeTestCase {
 	}
 
 /**
- * testSetGetVersion method
+ * TestSetGetVersion method
  *
  * @return void
  */
@@ -170,14 +169,14 @@ class MigrationVersionTest extends CakeTestCase {
 		$this->Version = $this->getMock('MigrationVersion', array('getMapping'), array(array('connection' => 'test')));
 
 		// Checking current
-		$this->Version->expects($this->at(0))->method('getMapping')->will($this->returnValue($this->__mapping()));
+		$this->Version->expects($this->at(0))->method('getMapping')->will($this->returnValue($this->_mapping()));
 		$result = $this->Version->getVersion('inexistent_plugin');
 		$expected = 0;
 		$this->assertEqual($result, $expected);
 
 		// Setting as 1
-		$this->Version->expects($this->at(0))->method('getMapping')->will($this->returnValue($this->__mapping()));
-		$this->Version->expects($this->at(1))->method('getMapping')->will($this->returnValue($this->__mapping(1, 1)));
+		$this->Version->expects($this->at(0))->method('getMapping')->will($this->returnValue($this->_mapping()));
+		$this->Version->expects($this->at(1))->method('getMapping')->will($this->returnValue($this->_mapping(1, 1)));
 		$setResult = $this->Version->setVersion(1, 'inexistent_plugin');
 		$this->assertTrue(!empty($setResult));
 		$result = $this->Version->getVersion('inexistent_plugin');
@@ -185,8 +184,8 @@ class MigrationVersionTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		// Setting as 2
-		$this->Version->expects($this->at(0))->method('getMapping')->will($this->returnValue($this->__mapping(1, 1)));
-		$this->Version->expects($this->at(1))->method('getMapping')->will($this->returnValue($this->__mapping(1, 2)));
+		$this->Version->expects($this->at(0))->method('getMapping')->will($this->returnValue($this->_mapping(1, 1)));
+		$this->Version->expects($this->at(1))->method('getMapping')->will($this->returnValue($this->_mapping(1, 2)));
 		$setResult = $this->Version->setVersion(2, 'inexistent_plugin');
 		$this->assertTrue(!empty($setResult));
 		$result = $this->Version->getVersion('inexistent_plugin');
@@ -194,8 +193,8 @@ class MigrationVersionTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		// Setting as 1
-		$this->Version->expects($this->at(0))->method('getMapping')->will($this->returnValue($this->__mapping(1, 2)));
-		$this->Version->expects($this->at(1))->method('getMapping')->will($this->returnValue($this->__mapping(1, 1)));
+		$this->Version->expects($this->at(0))->method('getMapping')->will($this->returnValue($this->_mapping(1, 2)));
+		$this->Version->expects($this->at(1))->method('getMapping')->will($this->returnValue($this->_mapping(1, 1)));
 		$setResult = $this->Version->setVersion(2, 'inexistent_plugin', false);
 		$this->assertTrue(!empty($setResult));
 		$result = $this->Version->getVersion('inexistent_plugin');
@@ -204,7 +203,7 @@ class MigrationVersionTest extends CakeTestCase {
 	}
 
 /**
- * testRun method
+ * TestRun method
  *
  * @return void
  */
@@ -222,35 +221,35 @@ class MigrationVersionTest extends CakeTestCase {
 
 		// direction => up
 		$Version->expects($this->at(0))->method('getVersion')->will($this->returnValue(0));
-		$Version->expects($this->at(1))->method('getMapping')->will($this->returnValue($this->__mapping()));
+		$Version->expects($this->at(1))->method('getMapping')->will($this->returnValue($this->_mapping()));
 		$Version->expects($this->at(3))->method('setVersion')->with(1, 'mocks', true);
 
 		$this->assertTrue($Version->run(array('direction' => 'up', 'type' => 'mocks')));
 
 		// direction => down
 		$Version->expects($this->at(0))->method('getVersion')->will($this->returnValue(1));
-		$Version->expects($this->at(1))->method('getMapping')->will($this->returnValue($this->__mapping(1, 1)));
+		$Version->expects($this->at(1))->method('getMapping')->will($this->returnValue($this->_mapping(1, 1)));
 		$Version->expects($this->at(3))->method('setVersion')->with(1, 'mocks', false);
 
 		$this->assertTrue($Version->run(array('direction' => 'down', 'type' => 'mocks')));
 
 		// direction => up
 		$Version->expects($this->at(0))->method('getVersion')->will($this->returnValue(3));
-		$Version->expects($this->at(1))->method('getMapping')->will($this->returnValue($this->__mapping(1, 3)));
+		$Version->expects($this->at(1))->method('getMapping')->will($this->returnValue($this->_mapping(1, 3)));
 		$Version->expects($this->at(3))->method('setVersion')->with(4, 'mocks', true);
 
 		$this->assertTrue($Version->run(array('direction' => 'up', 'type' => 'mocks')));
 		return;
 		// direction => down
 		$Version->expects($this->at(0))->method('getVersion')->will($this->returnValue(4));
-		$Version->expects($this->at(1))->method('getMapping')->will($this->returnValue($this->__mapping(1, 4)));
+		$Version->expects($this->at(1))->method('getMapping')->will($this->returnValue($this->_mapping(1, 4)));
 		$Version->expects($this->at(3))->method('setVersion')->with(4, 'mocks', false);
 
 		$this->assertTrue($Version->run(array('direction' => 'down', 'type' => 'mocks')));
 
 		// version => 7
 		$Version->expects($this->at(0))->method('getVersion')->will($this->returnValue(3));
-		$Version->expects($this->at(1))->method('getMapping')->will($this->returnValue($this->__mapping(1, 3)));
+		$Version->expects($this->at(1))->method('getMapping')->will($this->returnValue($this->_mapping(1, 3)));
 		$Version->expects($this->at(3))->method('setVersion')->with(4, 'mocks', true);
 		$Version->expects($this->at(5))->method('setVersion')->with(5, 'mocks', true);
 		$Version->expects($this->at(7))->method('setVersion')->with(6, 'mocks', true);
@@ -260,7 +259,7 @@ class MigrationVersionTest extends CakeTestCase {
 
 		// version => 3
 		$Version->expects($this->at(0))->method('getVersion')->will($this->returnValue(7));
-		$Version->expects($this->at(1))->method('getMapping')->will($this->returnValue($this->__mapping(1, 7)));
+		$Version->expects($this->at(1))->method('getMapping')->will($this->returnValue($this->_mapping(1, 7)));
 		$Version->expects($this->at(3))->method('setVersion')->with(7, 'mocks', false);
 		$Version->expects($this->at(5))->method('setVersion')->with(6, 'mocks', false);
 		$Version->expects($this->at(7))->method('setVersion')->with(5, 'mocks', false);
@@ -270,7 +269,7 @@ class MigrationVersionTest extends CakeTestCase {
 
 		// version => 10 (top version)
 		$Version->expects($this->at(0))->method('getVersion')->will($this->returnValue(3));
-		$Version->expects($this->at(1))->method('getMapping')->will($this->returnValue($this->__mapping(1, 3)));
+		$Version->expects($this->at(1))->method('getMapping')->will($this->returnValue($this->_mapping(1, 3)));
 		$Version->expects($this->at(3))->method('setVersion')->with(4, 'mocks', true);
 		$Version->expects($this->at(5))->method('setVersion')->with(5, 'mocks', true);
 		$Version->expects($this->at(7))->method('setVersion')->with(6, 'mocks', true);
@@ -283,7 +282,7 @@ class MigrationVersionTest extends CakeTestCase {
 
 		// version => 0 (run down all migrations)
 		$Version->expects($this->at(0))->method('getVersion')->will($this->returnValue(10));
-		$Version->expects($this->at(1))->method('getMapping')->will($this->returnValue($this->__mapping(1, 10)));
+		$Version->expects($this->at(1))->method('getMapping')->will($this->returnValue($this->_mapping(1, 10)));
 		$Version->expects($this->at(3))->method('setVersion')->with(10, 'mocks', false);
 		$Version->expects($this->at(5))->method('setVersion')->with(9, 'mocks', false);
 		$Version->expects($this->at(7))->method('setVersion')->with(8, 'mocks', false);
@@ -299,13 +298,13 @@ class MigrationVersionTest extends CakeTestCase {
 	}
 
 /**
- * __mapping method
+ * _mapping method
  *
- * @param int $start
- * @param int $end
+ * @param integer $start
+ * @param integer $end
  * @return array
  */
-	private function __mapping($start = 0, $end = 0) {
+	protected function _mapping($start = 0, $end = 0) {
 		$mapping = array();
 		for ($i = 1; $i <= 10; $i++) {
 			$mapping[$i] = array(

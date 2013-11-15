@@ -11,7 +11,6 @@
  *
  * @copyright 2009 - 2013, Cake Development Corporation
  * @link	  http://codaset.com/cakedc/migrations/
- * @package   plugns.migrations
  * @license   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('PrecheckBase', 'Migrations.Lib/Migration');
@@ -23,7 +22,7 @@ class PrecheckException extends PrecheckBase {
  *
  * @param string $table
  * @throws MigrationException
- * @return bool
+ * @return boolean
  */
 	public function checkDropTable($table) {
 		if (!$this->tableExists($table)) {
@@ -39,7 +38,7 @@ class PrecheckException extends PrecheckBase {
  *
  * @param string $table
  * @throws MigrationException
- * @return bool
+ * @return boolean
  */
 	public function checkCreateTable($table) {
 		if ($this->tableExists($table)) {
@@ -56,7 +55,7 @@ class PrecheckException extends PrecheckBase {
  * @param string $table
  * @param string $field
  * @throws MigrationException
- * @return bool
+ * @return boolean
  */
 	public function checkDropField($table, $field) {
 		if ($this->tableExists($table) && !$this->fieldExists($table, $field)) {
@@ -73,7 +72,7 @@ class PrecheckException extends PrecheckBase {
  * @param string $table
  * @param string $field
  * @throws MigrationException
- * @return bool
+ * @return boolean
  */
 	public function checkAddField($table, $field) {
 		if ($this->tableExists($table) && $this->fieldExists($table, $field)) {
