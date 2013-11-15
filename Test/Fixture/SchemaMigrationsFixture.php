@@ -4,11 +4,6 @@ class SchemaMigrationsFixture extends CakeTestFixture {
 /**
  *
  */
-	public $name = 'SchemaMigrations';
-
-/**
- *
- */
 	public $fields = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'primary'),
 		'class' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 33),
