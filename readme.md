@@ -2,9 +2,10 @@
 
 Version 2.1 for cake 2.x
 
-This migrations plugin enables developers to quickly and easily manage and migrate between database schema versions.
+This Migrations plugin enables developers to quickly and easily manage and migrate between database schema versions.
 
-As an application is developed, changes to the database may be required, and managing that in teams can get extremely difficult. Migrations enables you to share and co-ordinate database changes in an iterative manner, removing the complexity of handling these changes. 
+As an application is developed, changes to the database may be required, and managing that in teams can get extremely
+difficult. Migrations enables you to share and co-ordinate database changes in an iterative manner, removing the complexity of handling these changes.
 
 ## This is NOT a backup tool
 
@@ -14,28 +15,30 @@ However you can make use of the before() and after() callbacks in migrations to 
 
 ## Installing ##
 
+- Unzip or clone this plugin into your app/Plugin/Migrations folder or the shared plugins folder for your CakePHP installation.
+- Add the plugin to your app/Config/bootstrap.php using `CakePlugin::load('Migrations')`.
+
 ## Usage ##
 
-- Unzip or clone this plugin into your app/Plugin/Migrations folder or the shared plugins folder for your CakePHP installation.
-- Add the plugin to your app/Config/bootstrap.php using `CakePlugin::load('Migrations')`
-- Run `Console/cake Migrations.migration run all -p Migrations` to initialize the `schema_migrations` table
+- Run `Console/cake Migrations.migration run all -p Migrations` to initialize the `schema_migrations` table.
 
 ### Generating your first migration ###
 
-The first step to adding migrations to an existing database is to import the database's structure into a format the migrations can work with. Namely a migration file. To create the _first_ migration file run the following command:
+The first step to adding migrations to an existing database is to import the database's structure into a format
+Migrations can work with. Namely a migration file. To create the _first_ migration file run the following command:
 
 	cake Migrations.migration generate
 
 Answer the questions asked, and it will generate a new file containing a database structure snapshot using the internal migration's plugin syntax.
-If you want import all tables regardless if it has a model or not you can use -f (force) parameter while running the command:
+If you want import all tables regardless if it has a model or not you can use `-f` (force) parameter while running the command:
 
-	cake Migrations.migration generate -f 
+	cake Migrations.migration generate -f
 
 ### Running migrations ###
 
 After generating or being supplied a set of migrations, you can process them to change the state of your database.
 
-This is the crux of the migrations plugin, allowing migration of schemas up and down the migration chain,
+This is the crux of the Migrations plugin, allowing migration of schemas up and down the migration chain,
 offering flexibility and easy management of your schema and data states.
 
 #### Runing all pending migrations ####
@@ -44,7 +47,7 @@ To get all pending changes into your database run:
 
 	cake Migrations.migration run all
 
-#### Reseting your database ####
+#### Resetting your database ####
 
 	cake Migrations.migration run reset
 
@@ -60,7 +63,7 @@ To get all pending changes into your database run:
 
 	cake Migrations.migration run all --plugin Users
 
-#### Getting the status of available/applied Migrations ####
+#### Getting the status of available/applied migrations ####
 
 	cake Migrations.migration status
 
@@ -68,21 +71,28 @@ To get all pending changes into your database run:
 
 The migration system supports two checking modes: exception-based and condition-based.
 
-The main difference is that exceptions will make the migration shell fail hard while the condition based check is a more gracefully way to check for possible problems with a migration before exceptions even can happen.
+The main difference is that exceptions will make the migration shell fail hard while the condition based check is a
+more gracefully way to check for possible problems with a migration before exceptions even can happen.
 
-If the database already has some db modification applied and you will try to execute same migration again, then the migration system will throw an exception. This is exception mode for migrations system. Exception-based checking  is the default mode.
+If the database already has some db modification applied and you will try to execute same migration again, then
+the migration system will throw an exception. This is exception mode for migrations system. Exception-based checking  is the default mode.
 
-Condition based works different. When the system is running a migration it checks that it is possible to apply the migration on the current database structure. For example if it is possible to create a table, if it already exists it will stop before applying the migration.
+Condition based works different. When the system is running a migration it checks that it is possible to apply
+the migration on the current database structure. For example if it is possible to create a table, if it already
+exists it will stop before applying the migration.
 
-Another example is dropping a field, the pre migration check will check if the table and field exists and if not it wont apply the migration.
+Another example is dropping a field, the pre migration check will check if the table and field exists
+and if not it wont apply the migration.
 
 To enable condtion-based mode use '--precheck Migrations.PrecheckCondition' with the migration shell.
 
 #### Customized pre-migration checks
 
-It is possible to implemented customized pre-checks. Your custom pre-check class has to extend the PrecheckBase class from this plugin. You'll have to put your class into APP/Lib/Migration/<YourClass>.php or inside a plugin.
+It is possible to implemented customized pre-checks. Your custom pre-check class has to extend the
+PrecheckBase class from this plugin. You'll have to put your class into `APP/Lib/Migration/<YourClass>.php` or inside a plugin.
 
-To run your class use '--precheck YourPrecheckClass' or to load it from another plugin simply follow the dot syntax and use '--precheck YourPlugin.YourPrecheckClass'
+To run your class use `--precheck YourPrecheckClass` or to load it from another plugin simply follow the dot
+syntax and use `--precheck YourPlugin.YourPrecheckClass`.
 
 ### Migration shell return codes ###
 
@@ -92,10 +102,10 @@ To run your class use '--precheck YourPrecheckClass' or to load it from another 
 
 ### Auto migration files ###
 
-Once you have Generated your first Migration you will probably do more changes to your database.
-To simplify the generation of new migration you can do Schema Diffs. To this, you need to follow the steps:
+Once you have generated your first migration you will probably do more changes to your database.
+To simplify the generation of new migrations you can do schema diffs. To this, you need to follow the steps:
 
-1. Generate your first Migration (if haven't generated yet)
+1. Generate your first migration (if haven't generated yet)
 2. Generate a schema file with `cake schema generate`
 3. Do changes to your database using your favorite tool
 4. Generate a new migration file doing `cake Migrations.migration generate`
@@ -107,13 +117,13 @@ manually create your migration files. First create a blank migration doing:
 
 	cake Migrations.migration generate
 
-And skip the databse to schema comparison if asked. Then open the newly created file under `app/Config/Migrations`.
+Skip the database to schema comparison if asked. Then open the newly created file under `app/Config/Migrations`.
 The file must be filled using the migration directives as follows:
 
 #### Create Table ####
 
 Create table is used for the creation of new tables in your database.
-Note that migrations will generate errors if the specified table already exists in the database.
+Note that Migrations will generate errors if the specified table already exists in the database.
 Directives exist (Drop, Rename) to deal with existing tables before proceeding with table creation.
 
 Example:
@@ -168,7 +178,7 @@ Example:
 #### Drop Table ####
 
 Drop table is used for removing tables from the schema.
-Directives exist Create, Rename to handle other table based migration operations.
+Directives exist (Create, Rename) to handle other table based migration operations.
 
 	'drop_table' => array(
 		'categories',
@@ -188,7 +198,7 @@ Directives exist (Create, Drop) to handle creation and deletion of tables.
 #### Create Field ####
 
 Create Field is used to add fields to an existing table in the schema.
-Note that migrations will generate errors if the specified field already exists in the table.
+Note that Migrations will generate errors if the specified field already exists in the table.
 Directives exist (Drop, Rename, Alter) to deal with existing fields before proceeding with field addition.
 
 	'create_field' => array(
@@ -216,7 +226,7 @@ Directives exist (Create, Rename, Alter) to handle other field based migration o
 #### Alter Field ####
 
 Changes the field properties in an existing table.
-Note that partial table specifications are passed, which is a subset of a full array of Table data.
+Note that partial table specifications are passed, which is a subset of a full array of table data.
 These are the fields that are to be modified as part of the operation.
 If you wish to leave some fields untouched, simply exclude them from the Table spec for the alter operation.
 Directives exist (Create, Drop, Rename) to handle other field operations.
@@ -244,7 +254,8 @@ Directives exist (Create, Drop, Alter) to handle creation and deletion of fields
 
 #### Alter Index ####
 
-In order to add a new index to an existing field, you need to drop the field and create it again passing the index definition in an array.
+In order to add a new index to an existing field, you need to drop the field and create it again
+passing the index definition in an array.
 
 	'drop_field' => array(
 		'posts' => array('title')
@@ -256,8 +267,9 @@ In order to add a new index to an existing field, you need to drop the field and
 		)
 	)
 
-Likewise, if you want to drop an index then you need to drop the field including the indexes you want to drop, then you create the field again.
-	
+Likewise, if you want to drop an index then you need to drop the field including the indexes you
+want to drop, then you create the field again.
+
 	'drop_field' => array(
 		'posts' => array('title', 'indexes' => array('UNIQUE_TITLE'))
 	),
@@ -269,7 +281,8 @@ Likewise, if you want to drop an index then you need to drop the field including
 
 ## Callbacks ##
 
-You can make use of callbacks in order to execute extra operations, for example, to fill tables with predefined data, you can even use the shell to ask the user for data that is going to be inserted.
+You can make use of callbacks in order to execute extra operations, for example, to fill tables with predefined data,
+you can even use the shell to ask the user for data that is going to be inserted.
 
 Example 1: Create table statuses and fill it with some default data
 
@@ -296,16 +309,16 @@ Example 1: Create table statuses and fill it with some default data
 
 	public function after($direction) {
 		$Status = ClassRegistry::init('Status');
-		if ($direction == 'up') { //add 2 records to statues table
+		if ($direction === 'up') { //add 2 records to statues table
 			$data['Status'][0]['id'] = '59a6a2c0-2368-11e2-81c1-0800200c9a66';
 			$data['Status'][0]['name'] = 'Published';
 			$data['Status'][1]['id'] = '59a6a2c1-2368-11e2-81c1-0800200c9a67';
 			$data['Status'][1]['name'] = 'Unpublished';
 			$Status->create();
 			if ($Status->saveAll($data)){
-				echo "Statues table has been initialized";
+				echo "statuses table has been initialized";
 			}
-		} else if ($direction == 'down') {
+		} elseif ($direction === 'down') {
 			//do more work here
 		}
 	}
@@ -335,14 +348,14 @@ Example 2: Prompt the user to insert data
 
 	public function after($direction) {
 		$Status = ClassRegistry::init('Status');
-		if ($direction == 'up') {
+		if ($direction === 'up') {
 			$this->callback->out('Please enter a default status below:');
 			$data['Status']['name'] = $this->callback->in('What is the name of the default status?');
-			$Status->create(); 
+			$Status->create();
 			if ($Status->save($data)){
-				echo "Statues table has been initialized";
+				echo "statuses table has been initialized";
 			}
-		} else if ($direction == 'down') {
+		} elseif ($direction === 'down') {
 			//do more work here
 		}
 	}
@@ -360,15 +373,15 @@ For more information about our Professional CakePHP Services please visit the [C
 
 ## Branch strategy ##
 
-The master branch holds the STABLE latest version of the plugin. 
-Develop branch is UNSTABLE and used to test new features before releasing them. 
+The master branch holds the STABLE latest version of the plugin.
+Develop branch is UNSTABLE and used to test new features before releasing them.
 
 Previous maintenance versions are named after the CakePHP compatible version, for example, branch 1.3 is the maintenance version compatible with CakePHP 1.3.
 All versions are updated with security patches.
 
 ## Contributing to this Plugin ##
 
-Please feel free to contribute to the plugin with new issues, requests, unit tests and code fixes or new features. If you want to contribute some code, create a feature branch from develop, and send us your pull request. Unit tests for new features and issues detected are mandatory to keep quality high. 
+Please feel free to contribute to the plugin with new issues, requests, unit tests and code fixes or new features. If you want to contribute some code, create a feature branch from develop, and send us your pull request. Unit tests for new features and issues detected are mandatory to keep quality high.
 
 ## License ##
 
