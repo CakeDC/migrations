@@ -39,7 +39,7 @@ class MigrationVersionTest extends CakeTestCase {
  * Start test
  *
  * @return void
- **/
+ */
 	public function setUp() {
 		$this->Version = new MigrationVersion(array(
 			'connection' => 'test',
@@ -53,7 +53,7 @@ class MigrationVersionTest extends CakeTestCase {
  * TearDown method
  *
  * @return void
- **/
+ */
 	public function tearDown() {
 		//App::build(array('plugins' => $this->plugins), true);
 		unset($this->Version, $this->plugins);

@@ -657,7 +657,7 @@ class MigrationShell extends AppShell {
 							if ($field === 'indexes') {
 								$content .= "\t\t\t\t\t'indexes' => array(\n";
 								foreach ($col as $index => $key) {
-									$content .= "\t\t\t\t\t\t'" . $index . "' => array(" . implode(', ',  $this->_values($key)) . "),\n";
+									$content .= "\t\t\t\t\t\t'" . $index . "' => array(" . implode(', ', $this->_values($key)) . "),\n";
 								}
 								$content .= "\t\t\t\t\t),\n";
 							} else {
@@ -665,7 +665,7 @@ class MigrationShell extends AppShell {
 								if (is_string($col)) {
 									$content .= "'" . $col . "',\n";
 								} else {
-									$content .= 'array(' . implode(', ',  $this->_values($col)) . "),\n";
+									$content .= 'array(' . implode(', ', $this->_values($col)) . "),\n";
 								}
 							}
 						}
@@ -722,7 +722,7 @@ class MigrationShell extends AppShell {
 		if (is_array($values)) {
 			foreach ($values as $key => $value) {
 				if (is_array($value)) {
-					$_values[] = "'" . $key . "' => array('" . implode("', '",  $value) . "')";
+					$_values[] = "'" . $key . "' => array('" . implode("', '", $value) . "')";
 				} elseif (!is_numeric($key)) {
 					$value = var_export($value, true);
 					$_values[] = "'" . $key . "' => " . $value;
@@ -743,7 +743,7 @@ class MigrationShell extends AppShell {
 		extract($vars);
 		ob_start();
 		ob_implicit_flush(0);
-		include (dirname(__FILE__) . DS . 'Templates' . DS . $template . '.ctp');
+		include dirname(__FILE__) . DS . 'Templates' . DS . $template . '.ctp';
 		$content = ob_get_clean();
 
 		return $content;
