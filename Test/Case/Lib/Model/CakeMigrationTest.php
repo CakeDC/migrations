@@ -709,7 +709,7 @@ class CakeMigrationTest extends CakeTestCase {
 						'description' => array(
 							'type' => 'string',
 							'null' => false,
-							'length' => 256,
+							'length' => 768,
 							'default' => null
 						),
 						'info' => array(
