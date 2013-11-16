@@ -5,7 +5,6 @@ class InitMigrations extends CakeMigration {
  * Migration description
  *
  * @var string
- * @access public
  */
 	public $description = 'Init migrations tables';
 
@@ -13,7 +12,6 @@ class InitMigrations extends CakeMigration {
  * Actions to be performed
  *
  * @var array $migration
- * @access public
  */
 	public $migration = array(
 		'up' => array(
@@ -41,7 +39,6 @@ class InitMigrations extends CakeMigration {
  *
  * @param string $direction, up or down direction of migration process
  * @return boolean Should process continue
- * @access public
  */
 	public function before($direction) {
 		return true;
@@ -52,7 +49,6 @@ class InitMigrations extends CakeMigration {
  *
  * @param string $direction, up or down direction of migration process
  * @return boolean Should process continue
- * @access public
  */
 	public function after($direction) {
 		return true;

@@ -11,7 +11,6 @@
  *
  * @copyright 2009 - 2013, Cake Development Corporation
  * @link      http://codaset.com/cakedc/migrations/
- * @package   plugns.migrations
  * @license   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 echo "<?php\n";
@@ -22,7 +21,6 @@ class <?php echo $class; ?> extends CakeMigration {
  * Migration description
  *
  * @var string
- * @access public
  */
 	public $description = '';
 
@@ -30,7 +28,6 @@ class <?php echo $class; ?> extends CakeMigration {
  * Actions to be performed
  *
  * @var array $migration
- * @access public
  */
 	public $migration = array(
 <?php echo $migration; ?>
@@ -41,7 +38,6 @@ class <?php echo $class; ?> extends CakeMigration {
  *
  * @param string $direction, up or down direction of migration process
  * @return boolean Should process continue
- * @access public
  */
 	public function before($direction) {
 		return true;
@@ -52,7 +48,6 @@ class <?php echo $class; ?> extends CakeMigration {
  *
  * @param string $direction, up or down direction of migration process
  * @return boolean Should process continue
- * @access public
  */
 	public function after($direction) {
 		return true;

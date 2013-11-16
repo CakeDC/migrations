@@ -11,7 +11,6 @@
  *
  * @copyright 2009 - 2013, Cake Development Corporation
  * @link	  http://codaset.com/cakedc/migrations/
- * @package   plugns.migrations
  * @license   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('CakeSchema', 'Model');
@@ -19,8 +18,6 @@ App::uses('CakeSchema', 'Model');
 /**
  * Base Class for Migration management
  *
- * @package	   migrations
- * @subpackage	migrations.libs.model
  */
 class CakeMigration extends Object {
 
@@ -35,7 +32,6 @@ class CakeMigration extends Object {
  * Migration dependencies
  *
  * @var array
- * @access public
  */
 	public $dependencies = array();
 
@@ -316,7 +312,7 @@ class CakeMigration extends Object {
  *
  * @param string $a Type
  * @param string $b Type
- * @return int Comparison value
+ * @return integer Comparison value
  */
 	protected function migration_order($a, $b) {
 		$order = array('drop_table', 'rename_table', 'create_table', 'drop_field', 'rename_field', 'alter_field', 'create_field');
@@ -429,7 +425,7 @@ class CakeMigration extends Object {
 				unset($fields['indexes']);
 			}
 
-			if ($type == 'drop') {
+			if ($type === 'drop') {
 				$this->_alterIndexes($indexes, $type, $table);
 			}
 
@@ -443,7 +439,7 @@ class CakeMigration extends Object {
 					$field = $col;
 				}
 
-				if ($type == 'rename') {
+				if ($type === 'rename') {
 					$data = array('table' => $table, 'old_name' => $field, 'new_name' => $col);
 				} else {
 					$data = array('table' => $table, 'field' => $field);
@@ -467,7 +463,7 @@ class CakeMigration extends Object {
 							} else {
 								$def = $col;
 							}
-							if (!empty($def['length']) && !empty($col['type']) && (substr($col['type'], 0, 4) == 'date' || substr($col['type'], 0, 4) == 'time')) {
+							if (!empty($def['length']) && !empty($col['type']) && (substr($col['type'], 0, 4) === 'date' || substr($col['type'], 0, 4) === 'time')) {
 								$def['length'] = null;
 							}
 							$sql = $this->db->alterSchema(array(
@@ -498,7 +494,7 @@ class CakeMigration extends Object {
 				}
 			}
 
-			if ($type != 'drop') {
+			if ($type !== 'drop') {
 				$this->_alterIndexes($indexes, $type, $table);
 			}
 		}
@@ -557,13 +553,13 @@ class CakeMigration extends Object {
 		}
 
 		if ($this->callback !== null && method_exists($this->callback, $callback)) {
-			if ($callback == 'beforeMigration' || $callback == 'afterMigration') {
+			if ($callback === 'beforeMigration' || $callback === 'afterMigration') {
 				$this->callback->{$callback}($this, $type);
 			} else {
 				$this->callback->{$callback}($this, $type, $data);
 			}
 		}
-		if ($callback == 'beforeMigration' || $callback == 'afterMigration') {
+		if ($callback === 'beforeMigration' || $callback === 'afterMigration') {
 			$callback = str_replace('Migration', '', $callback);
 			if ($this->{$callback}($type)) {
 				return;
@@ -591,7 +587,7 @@ class CakeMigration extends Object {
 			return true;
 		}
 
-		if ($callback == 'beforeAction') {
+		if ($callback === 'beforeAction') {
 			return $this->Precheck->{$callback}($this, $type, $data);
 		}
 		return false;
@@ -646,8 +642,6 @@ class CakeMigration extends Object {
 /**
  * Exception used when something goes wrong on migrations
  *
- * @package	   migrations
- * @subpackage	migrations.libs.model
  */
 class MigrationException extends Exception {
 
@@ -662,7 +656,7 @@ class MigrationException extends Exception {
  *
  * @param CakeMigration $Migration Reference to the Migration
  * @param string $message Message explaining the error
- * @param int $code Error code
+ * @param integer $code Error code
  * @return \MigrationException
  */
 	public function __construct($Migration, $message = '', $code = 0) {

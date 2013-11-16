@@ -5,30 +5,28 @@ App::uses('MigrationShell', 'Migrations.Console/Command');
 /**
  * TestMigrationShell
  *
- * @package       migrations
- * @subpackage    migrations.tests.cases.shells
  */
 class TestMigrationShell extends MigrationShell {
 
 /**
- * output property
+ * Output property
  *
  * @var string
  */
 	public $output = '';
 
 /**
- * out method
+ * Out method
  *
  * @param $string
  * @return void
  */
-	function out($message = null, $newlines = 1, $level = 1) {
+	public function out($message = null, $newlines = 1, $level = 1) {
 		$this->output .= $message . "\n";
 	}
 
 /**
- * fromComparison method
+ * FromComparison method
  *
  * @param $migration
  * @param $comparison
@@ -41,7 +39,7 @@ class TestMigrationShell extends MigrationShell {
 	}
 
 /**
- * writeMigration method
+ * WriteMigration method
  *
  * @param $name
  * @param $class
@@ -57,20 +55,18 @@ class TestMigrationShell extends MigrationShell {
 /**
  * MigrationShellTest
  *
- * @package       migrations
- * @subpackage    migrations.tests.cases.shells
  */
 class MigrationShellTest extends CakeTestCase {
 
 /**
- * fixtures property
+ * Fixtures property
  *
  * @var array
  */
 	public $fixtures = array('plugin.migrations.schema_migrations', 'core.article', 'core.post', 'core.user');
 
 /**
- * setUp method
+ * SetUp method
  *
  * @return void
  */
@@ -100,10 +96,12 @@ class MigrationShellTest extends CakeTestCase {
 		CakePlugin::load('TestMigrationPlugin');
 		CakePlugin::load('TestMigrationPlugin2');
 		CakePlugin::load('TestMigrationPlugin3');
+
+		Configure::write('Config.language', 'en');
 	}
 
 /**
- * tearDown method
+ * TearDown method
  *
  * @return void
  */
@@ -121,7 +119,7 @@ class MigrationShellTest extends CakeTestCase {
 	}
 
 /**
- * tables property
+ * Tables property
  *
  * @var array
  */
@@ -145,7 +143,7 @@ class MigrationShellTest extends CakeTestCase {
 	);
 
 /**
- * testStartup method
+ * TestStartup method
  *
  * @return void
  */
@@ -165,7 +163,7 @@ class MigrationShellTest extends CakeTestCase {
 	}
 
 /**
- * testRun method
+ * TestRun method
  *
  * @return void
  */
@@ -291,7 +289,7 @@ class MigrationShellTest extends CakeTestCase {
 	}
 
 /**
- * testRunWithFailuresOnce method
+ * TestRunWithFailuresOnce method
  *
  * @return void
  */
@@ -327,7 +325,7 @@ TEXT;
 	}
 
 /**
- * testRunWithFailuresNotOnce method
+ * TestRunWithFailuresNotOnce method
  *
  * @return void
  */
@@ -362,7 +360,7 @@ TEXT;
 	}
 
 /**
- * testFromComparisonTableActions method
+ * TestFromComparisonTableActions method
  *
  * @return void
  */
@@ -408,7 +406,7 @@ TEXT;
 	}
 
 /**
- * testFromComparisonFieldActions method
+ * TestFromComparisonFieldActions method
  *
  * @return void
  */
@@ -607,13 +605,13 @@ TEXT;
 	}
 
 /**
- * testWriteMigration method
+ * TestWriteMigration method
  *
  * @return void
  */
 	public function testWriteMigration() {
 		// Remove if exists
-		$this->__unlink('12345_migration_test_file.php');
+		$this->_unlink('12345_migration_test_file.php');
 
 		$users = $this->tables['users'];
 		$users['indexes'] = array('UNIQUE_USER' => array('column' => 'user', 'unique' => true));
@@ -639,7 +637,7 @@ TEXT;
 		$this->assertTrue($this->Shell->writeMigration('migration_test_file', 12345, $migration));
 		$this->assertTrue(file_exists(TMP . 'tests' . DS . '12345_migration_test_file.php'));
 
-		$result = $this->__getMigrationVariable(TMP . 'tests' . DS . '12345_migration_test_file.php');
+		$result = $this->_getMigrationVariable(TMP . 'tests' . DS . '12345_migration_test_file.php');
 		$expected = <<<TEXT
 	public \$migration = array(
 		'up' => array(
@@ -675,11 +673,11 @@ TEXT;
 	);
 TEXT;
 		$this->assertEqual($result, str_replace("\r\n", "\n", $expected));
-		$this->__unlink('12345_migration_test_file.php');
+		$this->_unlink('12345_migration_test_file.php');
 	}
 
 /**
- * testGenerate method
+ * TestGenerate method
  *
  * @return void
  */
@@ -697,7 +695,7 @@ TEXT;
 	}
 
 /**
- * testGenerate2 method
+ * TestGenerate2 method
  *
  * @return void
  */
@@ -718,7 +716,7 @@ TEXT;
 	}
 
 /**
- * testGenerateComparison method
+ * TestGenerateComparison method
  *
  * @return void
  */
@@ -737,7 +735,7 @@ TEXT;
 		$files = glob(TMP . 'tests' . DS . '*drop_slug_field.php');
 		$this->assertNotEmpty($files);
 
-		$result = $this->__getMigrationVariable(current($files));
+		$result = $this->_getMigrationVariable(current($files));
 		foreach ($files as $f) {
 			unlink($f);
 		}
@@ -767,7 +765,7 @@ TEXT;
 	}
 
 /**
- * testGenerateDump method
+ * TestGenerateDump method
  *
  * @return void
  */
@@ -790,7 +788,7 @@ TEXT;
 		$files = glob(TMP . 'tests' . DS . '*schema_dump.php');
 		$this->assertNotEmpty($files);
 
-		$result = $this->__getMigrationVariable(current($files));
+		$result = $this->_getMigrationVariable(current($files));
 		foreach ($files as $f) {
 			unlink($f);
 		}
@@ -799,7 +797,7 @@ TEXT;
 	}
 
 /**
- * testStatus method
+ * TestStatus method
  *
  * @return void
  */
@@ -846,16 +844,16 @@ TEXT;
  * @param string $file
  * @return string
  */
-	private function __getMigrationVariable($file) {
+	protected function _getMigrationVariable($file) {
 		$result = array();
 		$array = explode("\n", str_replace("\r\n", "\n", file_get_contents($file)));
 		foreach ($array as $line) {
-			if ($line == "\tpublic \$migration = array(") {
+			if ($line === "\tpublic \$migration = array(") {
 				$result[] = $line;
-			} else if (!empty($result) && $line == "\t);") {
+			} elseif (!empty($result) && $line === "\t);") {
 				$result[] = $line;
 				break;
-			} else if (!empty($result)) {
+			} elseif (!empty($result)) {
 				$result[] = $line;
 			}
 		}
@@ -868,10 +866,11 @@ TEXT;
  * @param mixed files
  * @return void
  */
-	private function __unlink() {
+	protected function _unlink() {
 		$files = func_get_args();
 		foreach ($files as $file) {
 			@unlink(TMP . 'tests' . DS . $file);
 		}
 	}
+
 }
