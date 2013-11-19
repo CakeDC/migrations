@@ -17,13 +17,12 @@
  * @since         CakePHP(tm) v 1.2.0.5550
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-
 namespace Migrations\Model;
 
-use Object;
 use App\View\Helper;
 use App\Model\AppModel;
 use Cake\Core\App;
+use Cake\Core\Object;
 use Cake\Core\Plugin;
 use Cake\Core\Configure;
 use Cake\Error\Exception;
@@ -118,7 +117,7 @@ class CakeSchema extends Object {
 		$file = null;
 		foreach ($data as $key => $val) {
 			if (!empty($val)) {
-				if (!in_array($key, array('plugin', 'name', 'path', 'file', 'connection', 'tables', '_log'))) {
+				if (!in_array($key, array('plugin', 'name', 'path', 'file', 'connection', 'tables', '_log', 'class'))) {
 					if ($key[0] === '_') {
 						continue;
 					}
@@ -127,6 +126,7 @@ class CakeSchema extends Object {
 				} elseif ($key !== 'tables') {
 					if ($key === 'name' && $val !== $this->name && !isset($data['file'])) {
 						$file = Inflector::underscore($val) . '.php';
+						$file = strtr($file, array('\\' => DS));
 					}
 					$this->{$key} = $val;
 				}
@@ -172,7 +172,11 @@ class CakeSchema extends Object {
 		$this->build($options);
 		extract(get_object_vars($this));
 
-		$class = $name . 'Schema';
+		if (isset($options['class'])) {
+			$class = $options['class'];
+		} else {
+			$class = $name . 'Schema';
+		}
 
 		if (!class_exists($class)) {
 			if (file_exists($path . DS . $file) && is_file($path . DS . $file)) {
