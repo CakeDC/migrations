@@ -16,7 +16,7 @@
  */
 namespace Migrations\Lib;
 
-use Exception;
+use Cake\Error\Exception;
 
 /**
  * Usually used when migrations file/class or map files are not found

@@ -16,14 +16,14 @@
  */
 namespace Migrations\Lib;
 
-use Object;
-use Exception;
 use Cake\Core\App;
+use Cake\Core\Object;
 use Cake\Cache\Cache;
+use Cake\Database\ConnectionManager;
+use Cake\Error\Exception;
 use Cake\Model\Model;
 use Cake\Utility\Inflector;
 use Cake\Utility\ClassRegistry;
-use Cake\Database\ConnectionManager;
 use Migrations\Model\CakeSchema;
 use Migrations\Model\Datasource\DboSource;
 use Migrations\Lib\MigrationException;

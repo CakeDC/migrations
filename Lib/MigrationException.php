@@ -16,7 +16,7 @@
  */
 namespace Migrations\Lib;
 
-use Exception;
+use Cake\Error\Exception;
 
 /**
  * Exception used when something goes wrong on migrations
