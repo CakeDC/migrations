@@ -1,6 +1,6 @@
 # Migrations Plugin for CakePHP #
 
-Version 2.1 for cake 2.x
+Version 3.0 for cake 3.x
 
 This migrations plugin enables developers to quickly and easily manage and migrate between database schema versions.
 
@@ -349,8 +349,8 @@ Example 2: Prompt the user to insert data
 
 ## Requirements ##
 
-* PHP version: PHP 5.2+
-* CakePHP version: 2.1
+* PHP version: PHP 5.4+
+* CakePHP version: 3.0+
 
 ## Support ##
 
