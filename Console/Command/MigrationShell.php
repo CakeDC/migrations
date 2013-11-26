@@ -605,7 +605,7 @@ class MigrationShell extends AppShell {
 		}
 		require_once $file;
 
-		$name = Inflector::camelize($type) . 'Schema';
+		$name = 'App\\Config\\Schema\\' . Inflector::camelize($type) . 'Schema';
 
 		if ($type == 'app' && !class_exists($name)) {
 			$appDir = str_replace('-', '', APP_DIR);
