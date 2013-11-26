@@ -217,10 +217,6 @@ class CakeSchema extends Object {
 		$db = ConnectionManager::get($connection);
 		$driver = DboSource::get($db);
 
-		if (isset($this->plugin)) {
-			/* App::uses($this->plugin . 'AppModel', $this->plugin . '.Model'); */
-		}
-
 		$tables = array();
 		$currentTables = (array)$db->schemaCollection()->listTables();
 
