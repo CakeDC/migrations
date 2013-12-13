@@ -18,7 +18,7 @@ Customized Pre-Migration Checks
 -------------------------------
 
 It's also possible to implement custom pre-checks. Your custom pre-check class must extend the
-```PrecheckBase``` class from the plugin. You must also put your class in ```app/Lib/Migration/<YourClass>.php``` or inside a plugin.
+[PrecheckBase](../../Lib/Migration/PrecheckBase.php) class from the plugin. You must also put your class in ```app/Lib/Migration/<YourClass>.php``` or inside a plugin.
 
 To run your class use ```--precheck YourPrecheckClass```, or to load it from another plugin simply following the dot notation, for example ```--precheck YourPlugin.YourPrecheckClass```.
 
@@ -27,6 +27,6 @@ Migration Shell Return Codes
 
 If you're scripting against the migration shell, it's useful to keep in mind the possible return codes:
 
-0 = Success
-1 = No migrations available
-2 = Not a valid migration version
+* 0 = Success
+* 1 = No migrations available
+* 2 = Not a valid migration version

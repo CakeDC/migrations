@@ -6,7 +6,7 @@ To install the plugin, place the files in a directory labelled "Migrations/" in 
 Git Submodule
 -------------
 
-If you're using git for version control, you may want to add the Migrations plugin as a submodule on your repository. To do so, run the following command from the base of your repository:
+If you're using git for version control, you may want to add the **Migrations** plugin as a submodule on your repository. To do so, run the following command from the base of your repository:
 
 ```
 git submodule add git@github.com:CakeDC/migrations.git app/Plugin/Migrations

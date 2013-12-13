@@ -16,7 +16,7 @@ If you want import all tables regardless if it has a model or not you can use ``
 cake Migrations.migration generate -f
 ```
 
-Runing All Pending Migrations
+Running All Pending Migrations
 -----------------------------
 
 Get all pending changes into your database run.
