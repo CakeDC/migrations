@@ -14,6 +14,13 @@ As an application is developed, changes to the database may be required, and man
 * **Installation:** Migrations can also be run programmatically via an installer script.
 * **ORM:** The **Migrations** plugin makes use of the *CakePHP* ORM and supports all databases provided by the framework.
 
+This is NOT a Backup Tool
+-------------------------
+
+We highly recommend to not run the **Migrations** plugin in a production environment directly *without* doing a backup first.
+
+However, you can make use of the ```before()``` and ```after()``` callbacks in the migration files to add logic which triggers a backup script.
+
 Requirements
 ------------
 
