@@ -1,6 +1,11 @@
 CakeDC Migrations Plugin
 ========================
 
+[![Bake Status](https://secure.travis-ci.org/CakeDC/migrations.png?branch=master)](http://travis-ci.org/CakeDC/migrations)
+[![Test Coverage](https://coveralls.io/repos/CakeDC/migrations/badge.png?branch=master)](https://coveralls.io/r/CakeDC/migrations?branch=master)
+[![Downloads](https://poser.pugx.org/CakeDC/migrations/d/total.png)](https://packagist.org/packages/CakeDC/migrations)
+[![Latest Version](https://poser.pugx.org/CakeDC/migrations/v/stable.png)](https://packagist.org/packages/CakeDC/migrations)
+
 The **Migrations** plugin enables developers to quickly and easily manage and migrate between database schema versions.
 
 As an application is developed, changes to the database may be required, and managing that in teams can get extremely difficult. The **Migrations** plugin enables you to share and coordinate database changes in an iterative manner, removing the complexity of handling these changes.
@@ -8,11 +13,6 @@ As an application is developed, changes to the database may be required, and man
 * **Console:** The console script allows you to run migrations up and down.
 * **Installation:** Migrations can also be run programmatically via an installer script.
 * **ORM:** The **Migrations** plugin makes use of the *CakePHP* ORM and supports all databases provided by the framework.
-
-[![Bake Status](https://secure.travis-ci.org/CakeDC/migrations.png?branch=master)](http://travis-ci.org/CakeDC/migrations)
-[![Test Coverage](https://coveralls.io/repos/CakeDC/migrations/badge.png?branch=master)](https://coveralls.io/r/CakeDC/migrations?branch=master)
-[![Downloads](https://poser.pugx.org/CakeDC/migrations/d/total.png)](https://packagist.org/packages/CakeDC/migrations)
-[![Latest Version](https://poser.pugx.org/CakeDC/migrations/v/stable.png)](https://packagist.org/packages/CakeDC/migrations)
 
 Requirements
 ------------
