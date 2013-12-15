@@ -660,7 +660,7 @@ class MigrationShell extends AppShell {
 							if ($field == 'indexes') {
 								$content .= "\t\t\t\t\t'indexes' => array(\n";
 								foreach ($col as $index => $key) {
-									$content .= "\t\t\t\t\t\t'" . $index . "' => array(" . implode(', ',  $this->__values($key)) . "),\n";
+									$content .= "\t\t\t\t\t\t'" . $index . "' => array(" . implode(', ', $this->__values($key)) . "),\n";
 								}
 								$content .= "\t\t\t\t\t),\n";
 							} else {
@@ -668,7 +668,7 @@ class MigrationShell extends AppShell {
 								if (is_string($col)) {
 									$content .= "'" . $col . "',\n";
 								} else {
-									$content .= 'array(' . implode(', ',  $this->__values($col)) . "),\n";
+									$content .= 'array(' . implode(', ', $this->__values($col)) . "),\n";
 								}
 							}
 						}
@@ -696,6 +696,7 @@ class MigrationShell extends AppShell {
 			$content .= "\t\t),\n";
 		}
 		$content = $this->__generateTemplate('migration', array('name' => $name, 'class' => $class, 'migration' => $content));
+		$content = str_replace ('=> NULL', '=> null', $content);
 		return $content;
 	}
 
