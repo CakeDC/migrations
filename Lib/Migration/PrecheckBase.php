@@ -11,7 +11,6 @@
  *
  * @copyright 2009 - 2013, Cake Development Corporation
  * @link	  http://codaset.com/cakedc/migrations/
- * @package   plugns.migrations
  * @license   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 abstract class PrecheckBase {
@@ -26,7 +25,7 @@ abstract class PrecheckBase {
  *
  * @param string $table
  * @param string $field
- * @return bool
+ * @return boolean
  */
 	abstract public function checkAddField($table, $field);
 
@@ -34,7 +33,7 @@ abstract class PrecheckBase {
  * Perform check before table create.
  *
  * @param string $table
- * @return bool
+ * @return boolean
  */
 	abstract public function checkCreateTable($table);
 
@@ -42,7 +41,7 @@ abstract class PrecheckBase {
  * Perform check before table drop.
  *
  * @param string $table
- * @return bool
+ * @return boolean
  */
 	abstract public function checkDropTable($table);
 
@@ -51,7 +50,7 @@ abstract class PrecheckBase {
  *
  * @param string $table
  * @param string $field
- * @return bool
+ * @return boolean
  */
 	abstract public function checkDropField($table, $field);
 
@@ -59,7 +58,7 @@ abstract class PrecheckBase {
  * Check that table exists.
  *
  * @param string $table
- * @return bool
+ * @return boolean
  */
 	public function tableExists($table) {
 		$this->_migration->db->cacheSources = false;
@@ -72,7 +71,7 @@ abstract class PrecheckBase {
  *
  * @param string $table
  * @param string $field
- * @return bool
+ * @return boolean
  */
 	public function fieldExists($table, $field) {
 		if (!$this->tableExists($table)) {
@@ -89,7 +88,7 @@ abstract class PrecheckBase {
  * @param string $type
  * @param array $data
  * @throws MigrationException
- * @return bool
+ * @return boolean
  */
 	public function beforeAction($migration, $type, $data) {
 		$this->_migration = $migration;

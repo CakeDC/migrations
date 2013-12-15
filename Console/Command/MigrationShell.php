@@ -24,8 +24,6 @@ App::uses('ClassRegistry', 'Utility');
 /**
  * Migration shell.
  *
- * @package       migrations
- * @subpackage    migrations.vendors.shells
  */
 class MigrationShell extends AppShell {
 
@@ -71,7 +69,7 @@ class MigrationShell extends AppShell {
  *
  * @var array
  */
-	private $__messages = array();
+	protected $_messages = array();
 
 /**
  * Override startup
@@ -111,7 +109,7 @@ class MigrationShell extends AppShell {
 
 		$this->Version = new MigrationVersion($options);
 
-		$this->__messages = array(
+		$this->_messages = array(
 			'create_table' => __d('migrations', 'Creating table :table.'),
 			'drop_table' => __d('migrations', 'Dropping table :table.'),
 			'rename_table' => __d('migrations', 'Renaming table :old_name to :new_name.'),
@@ -125,7 +123,7 @@ class MigrationShell extends AppShell {
 	}
 
 /**
- * get the option parser.
+ * Get the option parser.
  *
  * @return void
  */
@@ -213,13 +211,12 @@ class MigrationShell extends AppShell {
 		if (isset($this->args[0]) && in_array($this->args[0], array('up', 'down'))) {
 			$once = true;
 			$options = $this->_singleStepOptions($mapping, $latestVersion, $options);
-		} else if (isset($this->args[0]) && $this->args[0] == 'all') {
+		} elseif (isset($this->args[0]) && $this->args[0] === 'all') {
 			end($mapping);
 			$options['version'] = key($mapping);
 			$options['direction'] = 'up';
-		} else if (isset($this->args[0]) && $this->args[0] == 'reset') {
+		} elseif (isset($this->args[0]) && $this->args[0] === 'reset') {
 			$options['version'] = 0;
-			$options['reset'] = true;
 			$options['direction'] = 'down';
 		} else {
 			$options = $this->_promptVersionOptions($mapping, $latestVersion);
@@ -270,7 +267,7 @@ class MigrationShell extends AppShell {
 				if (!$once) {
 					return $this->run();
 				}
-			} else if (strtolower($response) === 'a') {
+			} elseif (strtolower($response) === 'a') {
 				return $this->_stop();
 			}
 			$this->hr();
@@ -307,7 +304,7 @@ class MigrationShell extends AppShell {
 		$versionNumber = isset($flipped[$latestVersion]) ? $flipped[$latestVersion] : -1;
 		$options['direction'] = $this->args[0];
 
-		if ($options['direction'] == 'up') {
+		if ($options['direction'] === 'up') {
 			$latestVersion = isset($versions[$versionNumber + 1]) ? $versions[$versionNumber + 1] : -1;
 		}
 		if (!isset($mapping[$latestVersion])) {
@@ -335,7 +332,7 @@ class MigrationShell extends AppShell {
 				$response = $this->in(__d('migrations', 'Please, choose what version you want to migrate to. [q]uit or [c]lean.'));
 				if (strtolower($response) === 'q') {
 					return $this->_stop();
-				} else if (strtolower($response) === 'c') {
+				} elseif (strtolower($response) === 'c') {
 					$this->clear();
 					continue;
 				}
@@ -346,7 +343,7 @@ class MigrationShell extends AppShell {
 					$direction = 'up';
 					if (empty($mapping[(int)$response]['migrated'])) {
 						$direction = 'up';
-					} else if ((int)$response <= $latestVersion) {
+					} elseif ((int)$response <= $latestVersion) {
 						$direction = 'down';
 					}
 					break;
@@ -451,7 +448,7 @@ class MigrationShell extends AppShell {
 		ksort($types);
 		array_unshift($types, 'App');
 
-		$outdated = (isset($this->args[0]) && $this->args[0] == 'outdated');
+		$outdated = (isset($this->args[0]) && $this->args[0] === 'outdated');
 		foreach ($types as $name) {
 			try {
 				$type = Inflector::underscore($name);
@@ -466,7 +463,7 @@ class MigrationShell extends AppShell {
 					continue;
 				}
 
-				$this->out(($type == 'app') ? 'Application' : $name . ' Plugin');
+				$this->out(($type === 'app') ? 'Application' : $name . ' Plugin');
 				$this->out('');
 				$this->out(__d('migrations', 'Current version:'));
 				if ($version != 0) {
@@ -546,16 +543,16 @@ class MigrationShell extends AppShell {
 					unset($fields['indexes']);
 				}
 
-				if ($type == 'add') {
+				if ($type === 'add') {
 					$migration['up']['create_field'][$table] = array_merge($fields, $indexes);
 
 					$migration['down']['drop_field'][$table] = array_keys($fields);
 					if (!empty($indexes['indexes'])) {
 						$migration['down']['drop_field'][$table]['indexes'] = array_keys($indexes['indexes']);
 					}
-				} else if ($type == 'change') {
+				} elseif ($type === 'change') {
 					foreach ($fields as $name => $col) {
-						if (!empty($oldTables[$table][$name]['length']) && substr($col['type'], 0, 4) == 'date') {
+						if (!empty($oldTables[$table][$name]['length']) && substr($col['type'], 0, 4) === 'date') {
 							$fields[$name]['length'] = null;
 						}
 					}
@@ -600,7 +597,7 @@ class MigrationShell extends AppShell {
 
 		$name = Inflector::camelize($type) . 'Schema';
 
-		if ($type == 'app' && !class_exists($name)) {
+		if ($type === 'app' && !class_exists($name)) {
 			$appDir = str_replace('-', '', APP_DIR);
 			$name = Inflector::camelize($appDir) . 'Schema';
 		}
@@ -653,14 +650,14 @@ class MigrationShell extends AppShell {
 			$content .= "\t\t'" . $direction . "' => array(\n";
 			foreach ($actions as $type => $tables) {
 				$content .= "\t\t\t'" . $type . "' => array(\n";
-				if ($type == 'create_table' || $type == 'create_field' || $type == 'alter_field') {
+				if ($type === 'create_table' || $type === 'create_field' || $type === 'alter_field') {
 					foreach ($tables as $table => $fields) {
 						$content .= "\t\t\t\t'" . $table . "' => array(\n";
 						foreach ($fields as $field => $col) {
-							if ($field == 'indexes') {
+							if ($field === 'indexes') {
 								$content .= "\t\t\t\t\t'indexes' => array(\n";
 								foreach ($col as $index => $key) {
-									$content .= "\t\t\t\t\t\t'" . $index . "' => array(" . implode(', ', $this->__values($key)) . "),\n";
+									$content .= "\t\t\t\t\t\t'" . $index . "' => array(" . implode(', ', $this->_values($key)) . "),\n";
 								}
 								$content .= "\t\t\t\t\t),\n";
 							} else {
@@ -668,15 +665,15 @@ class MigrationShell extends AppShell {
 								if (is_string($col)) {
 									$content .= "'" . $col . "',\n";
 								} else {
-									$content .= 'array(' . implode(', ', $this->__values($col)) . "),\n";
+									$content .= 'array(' . implode(', ', $this->_values($col)) . "),\n";
 								}
 							}
 						}
 						$content .= "\t\t\t\t),\n";
 					}
-				} else if ($type == 'drop_table') {
+				} elseif ($type === 'drop_table') {
 					$content .= "\t\t\t\t'" . implode("', '", $tables) . "'\n";
-				} else if ($type == 'drop_field') {
+				} elseif ($type === 'drop_field') {
 					foreach ($tables as $table => $fields) {
 						$indexes = array();
 						if (!empty($fields['indexes'])) {
@@ -695,7 +692,7 @@ class MigrationShell extends AppShell {
 			}
 			$content .= "\t\t),\n";
 		}
-		$content = $this->__generateTemplate('migration', array('name' => $name, 'class' => $class, 'migration' => $content));
+		$content = $this->_generateTemplate('migration', array('name' => $name, 'class' => $class, 'migration' => $content));
 		$content = str_replace ('=> NULL', '=> null', $content);
 		return $content;
 	}
@@ -704,7 +701,7 @@ class MigrationShell extends AppShell {
  * Write a migration with given name
  *
  * @param string $name Name of migration
- * @param int the version number (timestamp)
+ * @param integer the version number (timestamp)
  * @param array $migration Migration instructions array
  * @return boolean
  */
@@ -721,13 +718,13 @@ class MigrationShell extends AppShell {
  * @param array $values Array to be converted
  * @return string
  */
-	private function __values($values) {
+	protected function _values($values) {
 		$_values = array();
 		if (is_array($values)) {
 			foreach ($values as $key => $value) {
 				if (is_array($value)) {
 					$_values[] = "'" . $key . "' => array('" . implode("', '",  $value) . "')";
-				} else if (!is_numeric($key)) {
+				} elseif (!is_numeric($key)) {
 					$value = var_export($value, true);
 					$_values[] = "'" . $key . "' => " . $value;
 				}
@@ -743,11 +740,11 @@ class MigrationShell extends AppShell {
  * @param array $vars List of variables to be used on tempalte
  * @return string
  */
-	private function __generateTemplate($template, $vars) {
+	protected function _generateTemplate($template, $vars) {
 		extract($vars);
 		ob_start();
 		ob_implicit_flush(0);
-		include (dirname(__FILE__) . DS . 'Templates' . DS . $template . '.ctp');
+		include dirname(__FILE__) . DS . 'Templates' . DS . $template . '.ctp';
 		$content = ob_get_clean();
 
 		return $content;
@@ -763,7 +760,7 @@ class MigrationShell extends AppShell {
 		if ($type === null) {
 			$type = $this->type;
 		}
-		if ($type != 'app') {
+		if ($type !== 'app') {
 			return App::pluginPath($type);
 		}
 		return APP;
@@ -800,8 +797,8 @@ class MigrationShell extends AppShell {
  * @return void
  */
 	public function beforeAction(&$Migration, $type, $data) {
-		if (isset($this->__messages[$type])) {
-			$message = String::insert($this->__messages[$type], $data);
+		if (isset($this->_messages[$type])) {
+			$message = String::insert($this->_messages[$type], $data);
 			$this->out('      > ' . $message);
 		}
 	}

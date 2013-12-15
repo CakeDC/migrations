@@ -5,7 +5,6 @@ class ConvertVersionToClassNames extends CakeMigration {
  * Migration description
  *
  * @var string
- * @access public
  */
 	public $description = 'Convert version to classNames';
 
@@ -13,7 +12,6 @@ class ConvertVersionToClassNames extends CakeMigration {
  * Actions to be performed
  *
  * @var array $migration
- * @access public
  */
 	public $migration = array(
 		'up' => array(
@@ -36,7 +34,6 @@ class ConvertVersionToClassNames extends CakeMigration {
  * Records to be migrated
  *
  * @var array
- * @access public
  */
 	public $records = array();
 
@@ -44,7 +41,6 @@ class ConvertVersionToClassNames extends CakeMigration {
  * Mappings to the records
  *
  * @var array
- * @access public
  */
 	public $mappings = array();
 
@@ -53,11 +49,10 @@ class ConvertVersionToClassNames extends CakeMigration {
  *
  * @param string $direction, up or down direction of migration process
  * @return boolean Should process continue
- * @access public
  * @throws InternalErrorException
  */
 	public function before($direction) {
-		if ($direction == 'down') {
+		if ($direction === 'down') {
 			throw new InternalErrorException(__d('migrations', 'Sorry, I can\'t downgrade. Why would you want that anyways?'));
 		}
 
@@ -75,7 +70,6 @@ class ConvertVersionToClassNames extends CakeMigration {
  *
  * @param string $direction, up or down direction of migration process
  * @return boolean Should process continue
- * @access public
  */
 	public function after($direction) {
 		$this->upgradeRecords();
