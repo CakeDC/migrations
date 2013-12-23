@@ -368,15 +368,26 @@ class MigrationShell extends AppShell {
 
 		$oldSchema = $this->_getSchema($this->type);
 		if ($oldSchema !== false) {
-			$response = $this->in(__d('migrations', 'Do you want compare the schema.php file to the database?'), array('y', 'n'), 'y');
-			if (strtolower($response) === 'y') {
-				$this->hr();
-				$this->out(__d('migrations', 'Comparing schema.php to the database...'));
+			if (empty($this->args)) {
+				$response = $this->in(__d('migrations', 'Do you want compare the schema.php file to the database?'), array('y', 'n'), 'y');
+				if (strtolower($response) === 'y') {
+					$this->hr();
+					$this->out(__d('migrations', 'Comparing schema.php to the database...'));
 
-				if ($this->type !== 'migrations') {
-					unset($oldSchema->tables['schema_migrations']);
+					if ($this->type !== 'migrations') {
+						unset($oldSchema->tables['schema_migrations']);
+					}
+					$newSchema = $this->_readSchema();
+					$comparison = $this->Schema->compare($oldSchema, $newSchema);
+					$migration = $this->_fromComparison($migration, $comparison, $oldSchema->tables, $newSchema['tables']);
+
+					$fromSchema = true;
 				}
-				$newSchema = $this->_readSchema();
+			} else {
+				$this->hr();
+				$this->out(__d('migrations', 'Comparing schema.php to commandline arguments...'));
+
+				list($migrationName, $newSchema) = $this->_readCommandLineSchema();
 				$comparison = $this->Schema->compare($oldSchema, $newSchema);
 				$migration = $this->_fromComparison($migration, $comparison, $oldSchema->tables, $newSchema['tables']);
 
@@ -406,7 +417,11 @@ class MigrationShell extends AppShell {
 		}
 
 		while (true) {
-			$name = $this->in(__d('migrations', 'Please enter the descriptive name of the migration to generate:'));
+			if (empty($migrationName)) {
+				$name = $this->in(__d('migrations', 'Please enter the descriptive name of the migration to generate:'));
+			} else {
+				$name = $migrationName;
+			}
 			if (!preg_match('/^([A-Za-z0-9_]+|\s)+$/', $name) || is_numeric($name[0])) {
 				$this->out('');
 				$this->err(__d('migrations', 'Migration name (%s) is invalid. It must only contain alphanumeric characters and start with a letter.', $name));
@@ -634,6 +649,167 @@ class MigrationShell extends AppShell {
 			$command .= ' --force';
 		}
 		$this->dispatchShell($command);
+	}
+
+/**
+ * Reads the command line arguments to generate a schema
+ *
+ * @return void
+ */
+	protected function _readCommandLineSchema() {
+		$name = array_shift($this->args);
+		if (empty($name)) {
+			$this->error('Missing argument', "Missing required argument 'name' for migration");
+		}
+
+		$schema = $this->_readSchema();
+		$cli = $this->_parseCommandLine($name);
+
+		$action = $cli['action'];
+		$table = $cli['table'];
+		$tables = $cli['tables'];
+		$fields = $cli['fields'];
+
+		if (in_array($action, array('create_table', 'alter_table', 'create_field'))) {
+			if (!isset($schema['tables'][$table])) {
+				$schema['tables'][$table] = array();
+			}
+			$schema['tables'][$table] = Hash::merge(
+				$schema['tables'][$table],
+				$fields
+			);
+		} elseif ($action == 'drop_table') {
+			if (isset($schema['tables'][$table])) {
+				unset($schema['tables'][$table]);
+			}
+			if (isset($schema['tables']['missing'][$table])) {
+				unset($schema['tables']['missing'][$table]);
+			}
+		} elseif ($action == 'drop_field') {
+			if (isset($schema['tables'][$table])) {
+				foreach (array_keys($fields) as $field) {
+					unset($schema['tables'][$table][$field]);
+				}
+			}
+			if (isset($schema['tables']['missing'][$table])) {
+				foreach (array_keys($fields) as $field) {
+					unset($schema['tables']['missing'][$table][$field]);
+				}
+			}
+		} else {
+			$this->error(__d('migrations', 'Invalid argument'), __d('migrations', "Migration name (%s) is invalid. It cannot be used to generate a migration from the CLI."));
+		}
+
+		return array($name, $schema);
+	}
+
+
+/**
+ * Parse fields from the commandline for use with generating new migration files
+ *
+ * @param string $name Name of migration
+ * @return array
+ */
+	protected function _parseCommandLine($name) {
+		$connection = $this->connection;
+		if (empty($connection)) {
+			$connection = 'default';
+		}
+		$db = ConnectionManager::getDataSource($connection);
+		$validTypes = array_keys($db->columns);
+
+		$fields = array();
+		foreach ($this->args as $field) {
+			if (preg_match('/^(\w*)(?::(\w*))?(?::(\w*))?(?::(\w*))?/', $field, $matches)) {
+				$field = $matches[1];
+				$type = empty($matches[2]) ? 'string' : $matches[2];
+				$length = null;
+				$indexType = empty($matches[3]) ? null : $matches[3];
+				$indexName = empty($matches[4]) ? null : $matches[4];
+				$indexUnique = false;
+
+				if (!in_array($type, $validTypes)) {
+					if ($field == 'id') {
+						$type = 'integer';
+					} elseif (in_array($field, array('created', 'modified', 'updated'))) {
+						$type = 'datetime';
+					} else {
+						$type = 'string';
+					}
+				}
+
+				if ($type == 'primary_key') {
+					$type = 'integer';
+					$indexType = 'primary';
+				} elseif ($type == 'string') {
+					$length = 255;
+				} elseif ($type == 'integer') {
+					$length = 11;
+				} elseif ($type == 'biginteger') {
+					$length = 20;
+				}
+
+				if ($indexType !== null) {
+					if ($indexType == 'primary') {
+						$indexName = 'PRIMARY';
+						$indexUnique = true;
+						$indexType = null;
+					} elseif ($indexType == 'unique') {
+						$indexUnique = true;
+						$indexType = null;
+					}
+
+					if (empty($indexName)) {
+						if ($indexUnique) {
+							$indexName = strtoupper('UNIQUE_' . $field);
+						} else {
+							$indexName = strtoupper('BY_' . $field);
+						}
+					}
+
+					$fields['indexes'][$indexName] = array(
+						'column' => $field,
+						'unique' => $indexUnique,
+					);
+
+					if ($indexType !== null) {
+						$fields['indexes'][$indexName]['type'] = $indexType;
+					}
+				}
+
+				$fields[$field] = array(
+					'type' => $type,
+					'null' => false,
+					'default' => null,
+					'key' => $indexType,
+				);
+
+				if ($length !== null) {
+					$fields[$field]['length'] = $length;
+				}
+			}
+		}
+
+		$action = null;
+		$table = null;
+		$tables = array();
+		if (preg_match('/^(create|drop)_(.*)/', $name, $matches)) {
+			$action = $matches[1] . '_table';
+			$table = Inflector::tableize(Inflector::pluralize($matches[2]));
+		} elseif (preg_match('/^(add)_.*_(?:to)_(.*)/', $name, $matches)) {
+			$action = 'create_field';
+			$table = Inflector::tableize(Inflector::pluralize($matches[2]));
+		} elseif (preg_match('/^(remove)_.*_(?:from)_(.*)/', $name, $matches)) {
+			$action = 'drop_field';
+			$table = Inflector::tableize(Inflector::pluralize($matches[2]));
+		} elseif (preg_match('/^(alter)_(.*)/', $name, $matches)) {
+			$action = 'alter_table';
+			$table = Inflector::tableize(Inflector::pluralize($matches[2]));
+		} else {
+			$this->error(__d('migrations', 'Invalid argument'), __d('migrations', "Missing required argument 'name' for migration"));
+		}
+
+		return compact('action', 'table', 'tables', 'fields');
 	}
 
 /**
