@@ -365,73 +365,129 @@ class MigrationShell extends AppShell {
 		$fromSchema = false;
 		$this->Schema = $this->_getSchema();
 		$migration = array('up' => array(), 'down' => array());
+		$migrationName = '';
+		$comparison = array();
 
-		$oldSchema = $this->_getSchema($this->type);
-		if ($oldSchema !== false) {
-			if (empty($this->args)) {
+		if (!empty($this->args)) {
+			// If args are passed in from the command line, we just want to
+			// generate a migration based on them - don't offer to compare to database
+			$this->_generateFromCliArgs($migration, $migrationName, $comparison);
+		} else {
+			$oldSchema = $this->_getSchema($this->type);
+			if ($oldSchema !== false) {
 				$response = $this->in(__d('migrations', 'Do you want compare the schema.php file to the database?'), array('y', 'n'), 'y');
 				if (strtolower($response) === 'y') {
-					$this->hr();
-					$this->out(__d('migrations', 'Comparing schema.php to the database...'));
-
-					if ($this->type !== 'migrations') {
-						unset($oldSchema->tables['schema_migrations']);
-					}
-					$newSchema = $this->_readSchema();
-					$comparison = $this->Schema->compare($oldSchema, $newSchema);
-					$migration = $this->_fromComparison($migration, $comparison, $oldSchema->tables, $newSchema['tables']);
-
+					$this->_generateFromComparison($migration, $oldSchema, $comparison);
 					$fromSchema = true;
 				}
 			} else {
-				$this->hr();
-				$this->out(__d('migrations', 'Comparing schema.php to commandline arguments...'));
-
-				list($migrationName, $newSchema) = $this->_readCommandLineSchema();
-				$comparison = $this->Schema->compare($oldSchema, $newSchema);
-				$migration = $this->_fromComparison($migration, $comparison, $oldSchema->tables, $newSchema['tables']);
-
-				$fromSchema = true;
-			}
-		} else {
-			$response = $this->in(__d('migrations', 'Do you want generate a dump from current database?'), array('y', 'n'), 'y');
-			if (strtolower($response) === 'y') {
-				$this->hr();
-				$this->out(__d('migrations', 'Generating dump from current database...'));
-
-				$dump = $this->_readSchema();
-				$dump = $dump['tables'];
-				unset($dump['missing']);
-
-				if (!empty($dump)) {
-					$migration['up']['create_table'] = $dump;
-					$migration['down']['drop_table'] = array_keys($dump);
+				$response = $this->in(__d('migrations', 'Do you want generate a dump from current database?'), array('y', 'n'), 'y');
+				if (strtolower($response) === 'y') {
+					$this->_generateDump($migration);
+					$fromSchema = true;
 				}
-				$fromSchema = true;
 			}
 		}
 
+		$this->_finalizeGeneratedMigration($migration, $migrationName, $fromSchema);
+
+		if ($fromSchema && isset($comparison)) {
+			$response = $this->in(__d('migrations', 'Do you want update the schema.php file?'), array('y', 'n'), 'y');
+			if (strtolower($response) === 'y') {
+				$this->_updateSchema();
+			}
+		}
+	}
+
+/**
+ * generate a migration by comparing schema.php with the database.
+ * @param  array $migration reference to variable of the same name in generate() method
+ * @param  array $oldSchema reference to variable of the same name in generate() method
+ * @param  array $comparison reference to variable of the same name in generate() method
+ * @return void (The variables passed by reference are changed; nothing is returned)
+ */
+	protected function _generateFromComparison(&$migration, &$oldSchema, &$comparison) {
+		$this->hr();
+		$this->out(__d('migrations', 'Comparing schema.php to the database...'));
+
+		if ($this->type !== 'migrations') {
+			unset($oldSchema->tables['schema_migrations']);
+		}
+		$newSchema = $this->_readSchema();
+		$comparison = $this->Schema->compare($oldSchema, $newSchema);
+		$migration = $this->_fromComparison($migration, $comparison, $oldSchema->tables, $newSchema['tables']);
+	}
+
+/**
+ * generate a migration from arguments passed in at the command line
+ * @param  array $migration reference to variable of the same name in generate() method
+ * @param  array $migrationName reference to variable of the same name in generate() method
+ * @param  array $comparison reference to variable of the same name in generate() method
+ * @return void (The variables passed by reference are changed; nothing is returned)
+ */
+	protected function _generateFromCliArgs(&$migration, &$migrationName, &$comparison) {
+		$this->hr();
+		$this->out(__d('migrations', 'Generating migration from commandline arguments...'));
+
+		// $newSchema is normally read from the database, but in this case, we read it from the cli arguments
+		list($migrationName, $newSchema) = $this->_readCommandLineSchema();
+
+		// $oldSchema normally comes from schema.php, but is intentionally blank when generating
+		// a migration fro cli arguments
+		$oldSchema = array();
+
+		// Effectively we're not comparing anything, we're just getting a variable - $comparison - in the right
+		// format to generate a migration from.
+		$comparison = $this->Schema->compare($oldSchema, $newSchema);
+		echo '$newSchema - from _readCommandLineSchema();';
+		debug($newSchema);
+
+		echo '$comparsion - from $comparison = $this->Schema->compare($oldSchema, $newSchema);';
+		debug($comparison);
+		// $migration = $this->_fromComparison($migration, $comparison, $oldSchema->tables, $newSchema['tables']);
+
+		// Both intentionally empty - we don't care about old & new schemas when generating from Cli arguments.
+		$newSchema = array();
+		$migration = $this->_fromComparison($migration, $comparison, $oldSchema, $newSchema);
+	}
+
+/**
+ * Generate a dump of the current database.
+ * @param  array $migration reference to variable of the same name in generate() method
+ * @return void (The variables passed by reference are changed; nothing is returned)
+ */
+	protected function _generateDump(&$migration) {
+		$this->hr();
+		$this->out(__d('migrations', 'Generating dump from current database...'));
+
+		$dump = $this->_readSchema();
+		$dump = $dump['tables'];
+		unset($dump['missing']);
+
+		if (!empty($dump)) {
+			$migration['up']['create_table'] = $dump;
+			$migration['down']['drop_table'] = array_keys($dump);
+		}
+	}
+
+/**
+ * Finalizes the generated migration - offers to preview it,
+ * prompts for a name, writes the file, and updates db version if needed.
+ * @param  array $migration  reference to variable of the same name in generate() method
+ * @param  array $migrationName  reference to variable of the same name in generate() method
+ * @param  boolean $fromSchema reference to variable of the same name in generate() method
+ * @return void
+ */
+	protected function _finalizeGeneratedMigration(&$migration, &$migrationName, &$fromSchema) {
 		$response = $this->in(__d('migrations', 'Do you want to preview the file before generation?'), array('y', 'n'), 'y');
 		if (strtolower($response) === 'y') {
 			$this->out($this->_generateMigration('', 'PreviewMigration', $migration));
 		}
 
-		while (true) {
-			if (empty($migrationName)) {
-				$name = $this->in(__d('migrations', 'Please enter the descriptive name of the migration to generate:'));
-			} else {
-				$name = $migrationName;
-			}
-			if (!preg_match('/^([A-Za-z0-9_]+|\s)+$/', $name) || is_numeric($name[0])) {
-				$this->out('');
-				$this->err(__d('migrations', 'Migration name (%s) is invalid. It must only contain alphanumeric characters and start with a letter.', $name));
-			} elseif (strlen($name) > 255) {
-				$this->out('');
-				$this->err(__d('migrations', 'Migration name (%s) is invalid. It cannot be longer than 255 characters.', $name));
-			} else {
-				$name = str_replace(' ', '_', trim($name));
-				break;
-			}
+		if (empty($migrationName)) {
+			$name = $this->_promptForMigrationName();
+		} else {
+			$name = $migrationName;
 		}
 
 		$this->out(__d('migrations', 'Generating Migration...'));
@@ -444,13 +500,27 @@ class MigrationShell extends AppShell {
 
 		$this->out('');
 		$this->out(__d('migrations', 'Done.'));
+	}
 
-		if ($fromSchema && isset($comparison)) {
-			$response = $this->in(__d('migrations', 'Do you want update the schema.php file?'), array('y', 'n'), 'y');
-			if (strtolower($response) === 'y') {
-				$this->_updateSchema();
+/**
+ * Prompt the user for a name for their new migration.
+ * @return string
+ */
+	protected function _promptForMigrationName() {
+		while (true) {
+				$name = $this->in(__d('migrations', 'Please enter the descriptive name of the migration to generate:'));
+			if (!preg_match('/^([A-Za-z0-9_]+|\s)+$/', $name) || is_numeric($name[0])) {
+				$this->out('');
+				$this->err(__d('migrations', 'Migration name (%s) is invalid. It must only contain alphanumeric characters and start with a letter.', $name));
+			} elseif (strlen($name) > 255) {
+				$this->out('');
+				$this->err(__d('migrations', 'Migration name (%s) is invalid. It cannot be longer than 255 characters.', $name));
+			} else {
+				$name = str_replace(' ', '_', trim($name));
+				break;
 			}
 		}
+		return $name;
 	}
 
 /**
@@ -662,7 +732,10 @@ class MigrationShell extends AppShell {
 			$this->error('Missing argument', "Missing required argument 'name' for migration");
 		}
 
-		$schema = $this->_readSchema();
+		// JossToDo - here we need to make it so it has nothing to do with the existing schema.
+		// So, just set it to empty for now. But we should probably remove the logic around it.
+		$schema = array();
+		// $schema = $this->_readSchema();
 		$cli = $this->_parseCommandLine($name);
 
 		$action = $cli['action'];
@@ -702,7 +775,6 @@ class MigrationShell extends AppShell {
 
 		return array($name, $schema);
 	}
-
 
 /**
  * Parse fields from the commandline for use with generating new migration files

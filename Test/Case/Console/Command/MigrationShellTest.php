@@ -764,6 +764,40 @@ TEXT;
 	}
 
 /**
+ * testGenerateFromCliParams method
+ * test the case of using a command such as:
+ * app/Console/cake Migrations.migration generate create_widgets id:primary_key name:string created modified
+ *
+ * @return void
+ */
+	public function xtestGeneXXXrateFromCliParams() {
+		// First get rid of other tables that we don't want here.
+		$this->Shell->args = array('reset');
+		$this->assertTrue($this->Shell->run());
+
+		$this->Shell->expects($this->at(0))->method('in')->will($this->returnValue('n'));
+		$this->Shell->expects($this->at(1))->method('in')->will($this->returnValue('n'));
+
+		$this->assertEmpty(glob(TMP . 'tests' . DS . '*create_widgets.php'));
+
+		$this->Shell->args = array('create_widgets', 'id:primary_key', 'name:string', 'created', 'modified');
+		$this->Shell->params['force'] = true;
+		$this->Shell->generate();
+		$files = glob(TMP . 'tests' . DS . '*create_widgets.php');
+		$this->assertNotEmpty($files);
+		debug(file_get_contents($files[0]));
+		$result = $this->_getMigrationVariable(current($files));
+		foreach ($files as $f) {
+			unlink($f);
+		}
+		// $expected = file_get_contents(CakePlugin::path('Migrations') . '/Test/Fixture/test_migration.txt');
+		debug($result);
+		echo 'we are going to die here on purpose, so we can see all our debug output.';
+		die;
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * TestGenerateDump method
  *
  * @return void
