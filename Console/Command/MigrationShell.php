@@ -401,9 +401,9 @@ class MigrationShell extends AppShell {
 
 /**
  * generate a migration by comparing schema.php with the database.
- * @param  array $migration reference to variable of the same name in generate() method
- * @param  array $oldSchema reference to variable of the same name in generate() method
- * @param  array $comparison reference to variable of the same name in generate() method
+ * @param array $migration reference to variable of the same name in generate() method
+ * @param array $oldSchema reference to variable of the same name in generate() method
+ * @param array $comparison reference to variable of the same name in generate() method
  * @return void (The variables passed by reference are changed; nothing is returned)
  */
 	protected function _generateFromComparison(&$migration, &$oldSchema, &$comparison) {
@@ -420,9 +420,9 @@ class MigrationShell extends AppShell {
 
 /**
  * generate a migration from arguments passed in at the command line
- * @param  array $migration reference to variable of the same name in generate() method
- * @param  array $migrationName reference to variable of the same name in generate() method
- * @param  array $comparison reference to variable of the same name in generate() method
+ * @param array $migration reference to variable of the same name in generate() method
+ * @param array $migrationName reference to variable of the same name in generate() method
+ * @param array $comparison reference to variable of the same name in generate() method
  * @return void (The variables passed by reference are changed; nothing is returned)
  */
 	protected function _generateFromCliArgs(&$migration, &$migrationName, &$comparison) {
@@ -453,7 +453,7 @@ class MigrationShell extends AppShell {
 
 /**
  * Generate a dump of the current database.
- * @param  array $migration reference to variable of the same name in generate() method
+ * @param array $migration reference to variable of the same name in generate() method
  * @return void (The variables passed by reference are changed; nothing is returned)
  */
 	protected function _generateDump(&$migration) {
@@ -473,8 +473,8 @@ class MigrationShell extends AppShell {
 /**
  * Finalizes the generated migration - offers to preview it,
  * prompts for a name, writes the file, and updates db version if needed.
- * @param  array $migration  reference to variable of the same name in generate() method
- * @param  array $migrationName  reference to variable of the same name in generate() method
+ * @param array $migration reference to variable of the same name in generate() method
+ * @param array $migrationName reference to variable of the same name in generate() method
  * @param  boolean $fromSchema reference to variable of the same name in generate() method
  * @return void
  */
@@ -941,7 +941,7 @@ class MigrationShell extends AppShell {
 			$content .= "\t\t),\n";
 		}
 		$content = $this->_generateTemplate('migration', array('name' => $name, 'class' => $class, 'migration' => $content));
-		$content = str_replace ('=> NULL', '=> null', $content);
+		$content = str_replace('=> NULL', '=> null', $content);
 		return $content;
 	}
 
@@ -971,7 +971,7 @@ class MigrationShell extends AppShell {
 		if (is_array($values)) {
 			foreach ($values as $key => $value) {
 				if (is_array($value)) {
-					$_values[] = "'" . $key . "' => array('" . implode("', '",  $value) . "')";
+					$_values[] = "'" . $key . "' => array('" . implode("', '", $value) . "')";
 				} elseif (!is_numeric($key)) {
 					$value = var_export($value, true);
 					$_values[] = "'" . $key . "' => " . $value;
