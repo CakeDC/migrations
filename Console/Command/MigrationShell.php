@@ -434,6 +434,7 @@ class MigrationShell extends AppShell {
 		}
 
 		$cli = $this->_parseCommandLine($migrationName);
+		// debug($cli); die;
 
 		$action = $cli['action'];
 		$table = $cli['table'];
@@ -445,6 +446,12 @@ class MigrationShell extends AppShell {
 			$migration['down']['drop_table'] = array($table);
 		} elseif ($action == 'drop_table') {
 			$migration['up']['drop_table'] = array($table);
+		} elseif ($action == 'drop_field') {
+			$fieldsToDrop = array();
+			foreach ($fields as $name => $value) {
+				$fieldsToDrop[] = $name;
+			}
+			$migration['up']['drop_field'][$table] = $fieldsToDrop;
 		}
 
 /*		if (in_array($action, array('create_table', 'alter_table', 'create_field'))) {

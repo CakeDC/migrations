@@ -814,6 +814,31 @@ TEXT;
 	}
 
 /**
+ * testGenerateFromCliParamsRemoveFields method
+ * test the case of using a command such as:
+ * app/Console/cake Migrations.migration generate remove_name_and_desc_from_products name description
+ *
+ * @return void
+ */
+	public function testGenerateFromCliParamsRemoveFields() {
+		$this->Shell->expects($this->at(0))->method('in')->will($this->returnValue('n'));
+		$this->assertEmpty(glob(TMP . 'tests' . DS . '*remove_name_and_desc_from_products.php'));
+
+		$this->Shell->args = array('remove_name_and_desc_from_products', 'name', 'description');
+		$this->Shell->params['force'] = true;
+		$this->Shell->generate();
+		$files = glob(TMP . 'tests' . DS . '*remove_name_and_desc_from_products.php');
+		$this->assertNotEmpty($files);
+		$result = $this->_getMigrationVariable(current($files));
+		foreach ($files as $f) {
+			unlink($f);
+		}
+
+		$expected = file_get_contents(CakePlugin::path('Migrations') . '/Test/Fixture/test_migration_remove_fields_from_cli.txt');
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * TestGenerateDump method
  *
  * @return void
