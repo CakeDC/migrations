@@ -428,13 +428,13 @@ class MigrationShell extends AppShell {
 	protected function _generateFromCliArgs(&$migration, &$migrationName, &$comparison) {
 		$this->hr();
 		$this->out(__d('migrations', 'Generating migration from commandline arguments...'));
-				$migrationName = array_shift($this->args);
+
+		$migrationName = array_shift($this->args);
 		if (empty($migrationName)) {
 			$this->error('Missing argument', "Missing required argument 'name' for migration");
 		}
 
-		$cli = $this->_parseCommandLine($migrationName);
-		// debug($cli); die;
+		$cli = $this->_parseCommandLineFields($migrationName);
 
 		$action = $cli['action'];
 		$table = $cli['table'];
@@ -446,44 +446,27 @@ class MigrationShell extends AppShell {
 			$migration['down']['drop_table'] = array($table);
 		} elseif ($action == 'drop_table') {
 			$migration['up']['drop_table'] = array($table);
+			// We don't have a down case as the migration is irreversible
+		} elseif ($action == 'create_field') {
+			$migration['up']['create_field'][$table] = $fields;
+			$migration['down']['drop_field'][$table] = $this->_fieldNamesArray($fields);
 		} elseif ($action == 'drop_field') {
 			$fieldsToDrop = array();
-			foreach ($fields as $name => $value) {
-				$fieldsToDrop[] = $name;
-			}
-			$migration['up']['drop_field'][$table] = $fieldsToDrop;
-		}
-
-/*		if (in_array($action, array('create_table', 'alter_table', 'create_field'))) {
-			if (!isset($schema['tables'][$table])) {
-				$schema['tables'][$table] = array();
-			}
-			$schema['tables'][$table] = Hash::merge(
-				$schema['tables'][$table],
-				$fields
-			);
-		} elseif ($action == 'drop_table') {
-			if (isset($schema['tables'][$table])) {
-				unset($schema['tables'][$table]);
-			}
-			if (isset($schema['tables']['missing'][$table])) {
-				unset($schema['tables']['missing'][$table]);
-			}
-			$schema['tables']['missing'][] = $table;
-		} elseif ($action == 'drop_field') {
-			if (isset($schema['tables'][$table])) {
-				foreach (array_keys($fields) as $field) {
-					unset($schema['tables'][$table][$field]);
-				}
-			}
-			if (isset($schema['tables']['missing'][$table])) {
-				foreach (array_keys($fields) as $field) {
-					unset($schema['tables']['missing'][$table][$field]);
-				}
-			}
+			$migration['up']['drop_field'][$table] = $this->_fieldNamesArray($fields);
+			// We don't have a down case as the migration is irreversible
 		} else {
 			$this->error(__d('migrations', 'Invalid argument'), __d('migrations', "Migration name (%s) is invalid. It cannot be used to generate a migration from the CLI."));
-		}*/
+		}
+	}
+
+	protected function _fieldNamesArray($fields) {
+		$fieldNames = array();
+		foreach ($fields as $name => $value) {
+			if ($name !== 'indexes') {
+				$fieldNames[] = $name;
+			}
+		}
+		return $fieldNames;
 	}
 
 /**
@@ -757,12 +740,12 @@ class MigrationShell extends AppShell {
 	}
 
 /**
- * Parse fields from the commandline for use with generating new migration files
+ * Parse fields from the command line for use with generating new migration files
  *
  * @param string $name Name of migration
  * @return array
  */
-	protected function _parseCommandLine($name) {
+	protected function _parseCommandLineFields($name) {
 		$connection = $this->connection;
 		if (empty($connection)) {
 			$connection = 'default';
@@ -773,7 +756,7 @@ class MigrationShell extends AppShell {
 		$fields = array();
 		$indexes = array();
 		foreach ($this->args as $field) {
-			$this->_parseCommandLineArgument($fields, $indexes, $field, $validTypes);
+			$this->_parseSingleCommandLineField($fields, $indexes, $field, $validTypes);
 		}
 
 		// indexes should be the last key in the $fields array - hence why we only add it now.
@@ -793,9 +776,6 @@ class MigrationShell extends AppShell {
 		} elseif (preg_match('/^(remove)_.*_(?:from)_(.*)/', $name, $matches)) {
 			$action = 'drop_field';
 			$table = Inflector::tableize(Inflector::pluralize($matches[2]));
-		} elseif (preg_match('/^(alter)_(.*)/', $name, $matches)) {
-			$action = 'alter_table';
-			$table = Inflector::tableize(Inflector::pluralize($matches[2]));
 		} else {
 			$this->error(__d('migrations', 'Invalid argument'), __d('migrations', "Missing required argument 'name' for migration"));
 		}
@@ -805,12 +785,12 @@ class MigrationShell extends AppShell {
 
 /**
  * Parse a single argument from the command line into the fields array
- * @param  array $fields reference to variable of same name in _parseCommandLine()
+ * @param  array $fields reference to variable of same name in _parseCommandLineFields()
  * @param  string $field a single command line argument - eg. 'id:primary_key' or 'name:string'
  * @param  array $validTypes valid data types for the relevant database - eg. string, integer, biginteger, etc.
  * @return [type]         [description]
  */
-	protected function _parseCommandLineArgument(&$fields, &$indexes, $field, $validTypes) {
+	protected function _parseSingleCommandLineField(&$fields, &$indexes, $field, $validTypes) {
 		if (preg_match('/^(\w*)(?::(\w*))?(?::(\w*))?(?::(\w*))?/', $field, $matches)) {
 			$field = $matches[1];
 			$type = empty($matches[2]) ? null : $matches[2];
