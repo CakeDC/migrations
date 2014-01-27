@@ -428,27 +428,55 @@ class MigrationShell extends AppShell {
 	protected function _generateFromCliArgs(&$migration, &$migrationName, &$comparison) {
 		$this->hr();
 		$this->out(__d('migrations', 'Generating migration from commandline arguments...'));
+				$migrationName = array_shift($this->args);
+		if (empty($migrationName)) {
+			$this->error('Missing argument', "Missing required argument 'name' for migration");
+		}
 
-		// $newSchema is normally read from the database, but in this case, we read it from the cli arguments
-		list($migrationName, $newSchema) = $this->_readCommandLineSchema();
+		$cli = $this->_parseCommandLine($migrationName);
 
-		// $oldSchema normally comes from schema.php, but is intentionally blank when generating
-		// a migration fro cli arguments
-		$oldSchema = array();
+		$action = $cli['action'];
+		$table = $cli['table'];
+		$tables = $cli['tables'];
+		$fields = $cli['fields'];
 
-		// Effectively we're not comparing anything, we're just getting a variable - $comparison - in the right
-		// format to generate a migration from.
-		$comparison = $this->Schema->compare($oldSchema, $newSchema);
-		echo '$newSchema - from _readCommandLineSchema();';
-		debug($newSchema);
+		if ($action == 'create_table') {
+			$migration['up']['create_table'][$table] = $fields;
+			$migration['down']['drop_table'] = array($table);
+		} elseif ($action == 'drop_table') {
+			$migration['up']['drop_table'] = array($table);
+		}
 
-		echo '$comparsion - from $comparison = $this->Schema->compare($oldSchema, $newSchema);';
-		debug($comparison);
-		// $migration = $this->_fromComparison($migration, $comparison, $oldSchema->tables, $newSchema['tables']);
-
-		// Both intentionally empty - we don't care about old & new schemas when generating from Cli arguments.
-		$newSchema = array();
-		$migration = $this->_fromComparison($migration, $comparison, $oldSchema, $newSchema);
+/*		if (in_array($action, array('create_table', 'alter_table', 'create_field'))) {
+			if (!isset($schema['tables'][$table])) {
+				$schema['tables'][$table] = array();
+			}
+			$schema['tables'][$table] = Hash::merge(
+				$schema['tables'][$table],
+				$fields
+			);
+		} elseif ($action == 'drop_table') {
+			if (isset($schema['tables'][$table])) {
+				unset($schema['tables'][$table]);
+			}
+			if (isset($schema['tables']['missing'][$table])) {
+				unset($schema['tables']['missing'][$table]);
+			}
+			$schema['tables']['missing'][] = $table;
+		} elseif ($action == 'drop_field') {
+			if (isset($schema['tables'][$table])) {
+				foreach (array_keys($fields) as $field) {
+					unset($schema['tables'][$table][$field]);
+				}
+			}
+			if (isset($schema['tables']['missing'][$table])) {
+				foreach (array_keys($fields) as $field) {
+					unset($schema['tables']['missing'][$table][$field]);
+				}
+			}
+		} else {
+			$this->error(__d('migrations', 'Invalid argument'), __d('migrations', "Migration name (%s) is invalid. It cannot be used to generate a migration from the CLI."));
+		}*/
 	}
 
 /**
@@ -722,61 +750,6 @@ class MigrationShell extends AppShell {
 	}
 
 /**
- * Reads the command line arguments to generate a schema
- *
- * @return void
- */
-	protected function _readCommandLineSchema() {
-		$name = array_shift($this->args);
-		if (empty($name)) {
-			$this->error('Missing argument', "Missing required argument 'name' for migration");
-		}
-
-		// JossToDo - here we need to make it so it has nothing to do with the existing schema.
-		// So, just set it to empty for now. But we should probably remove the logic around it.
-		$schema = array();
-		// $schema = $this->_readSchema();
-		$cli = $this->_parseCommandLine($name);
-
-		$action = $cli['action'];
-		$table = $cli['table'];
-		$tables = $cli['tables'];
-		$fields = $cli['fields'];
-
-		if (in_array($action, array('create_table', 'alter_table', 'create_field'))) {
-			if (!isset($schema['tables'][$table])) {
-				$schema['tables'][$table] = array();
-			}
-			$schema['tables'][$table] = Hash::merge(
-				$schema['tables'][$table],
-				$fields
-			);
-		} elseif ($action == 'drop_table') {
-			if (isset($schema['tables'][$table])) {
-				unset($schema['tables'][$table]);
-			}
-			if (isset($schema['tables']['missing'][$table])) {
-				unset($schema['tables']['missing'][$table]);
-			}
-		} elseif ($action == 'drop_field') {
-			if (isset($schema['tables'][$table])) {
-				foreach (array_keys($fields) as $field) {
-					unset($schema['tables'][$table][$field]);
-				}
-			}
-			if (isset($schema['tables']['missing'][$table])) {
-				foreach (array_keys($fields) as $field) {
-					unset($schema['tables']['missing'][$table][$field]);
-				}
-			}
-		} else {
-			$this->error(__d('migrations', 'Invalid argument'), __d('migrations', "Migration name (%s) is invalid. It cannot be used to generate a migration from the CLI."));
-		}
-
-		return array($name, $schema);
-	}
-
-/**
  * Parse fields from the commandline for use with generating new migration files
  *
  * @param string $name Name of migration
@@ -791,75 +764,14 @@ class MigrationShell extends AppShell {
 		$validTypes = array_keys($db->columns);
 
 		$fields = array();
+		$indexes = array();
 		foreach ($this->args as $field) {
-			if (preg_match('/^(\w*)(?::(\w*))?(?::(\w*))?(?::(\w*))?/', $field, $matches)) {
-				$field = $matches[1];
-				$type = empty($matches[2]) ? 'string' : $matches[2];
-				$length = null;
-				$indexType = empty($matches[3]) ? null : $matches[3];
-				$indexName = empty($matches[4]) ? null : $matches[4];
-				$indexUnique = false;
+			$this->_parseCommandLineArgument($fields, $indexes, $field, $validTypes);
+		}
 
-				if (!in_array($type, $validTypes)) {
-					if ($field == 'id') {
-						$type = 'integer';
-					} elseif (in_array($field, array('created', 'modified', 'updated'))) {
-						$type = 'datetime';
-					} else {
-						$type = 'string';
-					}
-				}
-
-				if ($type == 'primary_key') {
-					$type = 'integer';
-					$indexType = 'primary';
-				} elseif ($type == 'string') {
-					$length = 255;
-				} elseif ($type == 'integer') {
-					$length = 11;
-				} elseif ($type == 'biginteger') {
-					$length = 20;
-				}
-
-				if ($indexType !== null) {
-					if ($indexType == 'primary') {
-						$indexName = 'PRIMARY';
-						$indexUnique = true;
-						$indexType = null;
-					} elseif ($indexType == 'unique') {
-						$indexUnique = true;
-						$indexType = null;
-					}
-
-					if (empty($indexName)) {
-						if ($indexUnique) {
-							$indexName = strtoupper('UNIQUE_' . $field);
-						} else {
-							$indexName = strtoupper('BY_' . $field);
-						}
-					}
-
-					$fields['indexes'][$indexName] = array(
-						'column' => $field,
-						'unique' => $indexUnique,
-					);
-
-					if ($indexType !== null) {
-						$fields['indexes'][$indexName]['type'] = $indexType;
-					}
-				}
-
-				$fields[$field] = array(
-					'type' => $type,
-					'null' => false,
-					'default' => null,
-					'key' => $indexType,
-				);
-
-				if ($length !== null) {
-					$fields[$field]['length'] = $length;
-				}
-			}
+		// indexes should be the last key in the $fields array - hence why we only add it now.
+		if (!empty($indexes)) {
+			$fields['indexes'] = $indexes;
 		}
 
 		$action = null;
@@ -882,6 +794,84 @@ class MigrationShell extends AppShell {
 		}
 
 		return compact('action', 'table', 'tables', 'fields');
+	}
+
+/**
+ * Parse a single argument from the command line into the fields array
+ * @param  array $fields reference to variable of same name in _parseCommandLine()
+ * @param  string $field a single command line argument - eg. 'id:primary_key' or 'name:string'
+ * @param  array $validTypes valid data types for the relevant database - eg. string, integer, biginteger, etc.
+ * @return [type]         [description]
+ */
+	protected function _parseCommandLineArgument(&$fields, &$indexes, $field, $validTypes) {
+		if (preg_match('/^(\w*)(?::(\w*))?(?::(\w*))?(?::(\w*))?/', $field, $matches)) {
+			$field = $matches[1];
+			$type = empty($matches[2]) ? null : $matches[2];
+			$indexType = empty($matches[3]) ? null : $matches[3];
+			$indexName = empty($matches[4]) ? null : $matches[4];
+			$indexUnique = false;
+
+			$type = $this->_getFieldType($field, $type, $validTypes);
+
+			if ($type == 'primary_key') {
+				$type = 'integer';
+				$indexType = 'primary';
+			}
+
+			$fields[$field] = array(
+				'type' => $type,
+				'null' => false,
+				'default' => null,
+			);
+
+			if ($indexType == null && $field == 'id') {
+				$indexType = 'primary';
+			}
+
+			if ($indexType !== null) {
+				$fields[$field]['key'] = $indexType;
+
+				if ($indexType == 'primary') {
+					$indexName = 'PRIMARY';
+					$indexUnique = true;
+					$indexType = null;
+				} elseif ($indexType == 'unique') {
+					$indexUnique = true;
+					$indexType = null;
+				}
+
+				if (empty($indexName)) {
+					if ($indexUnique) {
+						$indexName = strtoupper('UNIQUE_' . $field);
+					} else {
+						$indexName = strtoupper('BY_' . $field);
+					}
+				}
+
+				$indexes[$indexName] = array(
+					'column' => $field,
+					'unique' => $indexUnique,
+				);
+
+				if ($indexType !== null) {
+					$fields['indexes'][$indexName]['type'] = $indexType;
+				}
+			}
+		}
+	}
+
+	protected function _getFieldType($field, $type, $validTypes) {
+		if (!in_array($type, $validTypes)) {
+			if ($field == 'id') {
+				$type = 'integer';
+			} elseif (in_array($field, array('created', 'modified', 'updated'))) {
+				$type = 'datetime';
+			} else {
+				$type = 'string';
+			}
+		}
+
+		return $type;
 	}
 
 /**
