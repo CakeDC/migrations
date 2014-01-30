@@ -11,6 +11,7 @@
  *
  * @copyright 2009 - 2013, Cake Development Corporation
  * @link      http://codaset.com/cakedc/migrations/
+ * @package   plugns.migrations
  * @license   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('Shell', 'Console');
@@ -692,6 +693,7 @@ class MigrationShell extends AppShell {
 			$content .= "\t\t),\n";
 		}
 		$content = $this->_generateTemplate('migration', array('name' => $name, 'class' => $class, 'migration' => $content));
+		$content = str_replace ('=> NULL', '=> null', $content);
 		return $content;
 	}
 
@@ -721,7 +723,7 @@ class MigrationShell extends AppShell {
 		if (is_array($values)) {
 			foreach ($values as $key => $value) {
 				if (is_array($value)) {
-					$_values[] = "'" . $key . "' => array('" . implode("', '", $value) . "')";
+					$_values[] = "'" . $key . "' => array('" . implode("', '",  $value) . "')";
 				} elseif (!is_numeric($key)) {
 					$value = var_export($value, true);
 					$_values[] = "'" . $key . "' => " . $value;
