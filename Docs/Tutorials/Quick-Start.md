@@ -30,3 +30,21 @@ After generating or being supplied with a set of migrations, you can process the
 
 This is the crux of the **Migrations** plugin, allowing the migration of schemas up and down the migration chain,
 offering flexibility and easy management of your schema and data states.
+
+This will run the next not yet applied migration:
+
+```
+cake Migrations.migration run up
+```
+
+This will revert the last applied migration:
+
+```
+cake Migrations.migration run down
+```
+
+This will run all migrations that are found:
+
+```
+cake Migrations.migration run all
+```

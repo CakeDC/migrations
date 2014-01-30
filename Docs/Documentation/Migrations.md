@@ -268,11 +268,12 @@ public function after($direction) {
 		$data['Status'][1]['name'] = 'Unpublished';
 		$Status->create();
 		if ($Status->saveAll($data)) {
-			echo 'statuses table has been initialized';
+			$this->callback->out('statuses table has been initialized');
 		}
 	} elseif ($direction === 'down') {
 		// do more work here
 	}
+	return true;
 }
 ```
 
@@ -311,10 +312,11 @@ public function after($direction) {
 		$data['Status']['name'] = $this->callback->in('What is the name of the default status?');
 		$Status->create();
 		if ($Status->save($data)){
-			echo 'statuses table has been initialized';
+			$this->callback->out('statuses table has been initialized');
 		}
 	} elseif ($direction === 'down') {
 		// do more work here
 	}
+	return true;
 }
 ```
