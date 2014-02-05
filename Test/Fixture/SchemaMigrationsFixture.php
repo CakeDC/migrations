@@ -2,12 +2,7 @@
 class SchemaMigrationsFixture extends CakeTestFixture {
 
 /**
- *
- */
-	public $name = 'SchemaMigrations';
-
-/**
- *
+ * @var array
  */
 	public $fields = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'primary'),
@@ -21,7 +16,7 @@ class SchemaMigrationsFixture extends CakeTestFixture {
 	);
 
 /**
- *
+ * @var array
  */
 	public $records = array(
 		array('id' => '1', 'class' => 'InitMigrations', 'type' => 'migrations', 'hash' => null, 'created' => '2009-11-10 00:55:34'),

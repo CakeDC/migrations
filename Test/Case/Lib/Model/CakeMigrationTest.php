@@ -11,7 +11,6 @@
  *
  * @copyright 2009 - 2013, Cake Development Corporation
  * @link	  http://codaset.com/cakedc/migrations/
- * @package   plugns.migrations
  * @license   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
@@ -21,8 +20,6 @@ App::uses('MigrationVersion', 'Migrations.Lib');
 /**
  * TestCakeMigration
  *
- * @package       migrations
- * @subpackage    migrations.tests.cases.libs
  */
 class TestCakeMigration extends CakeMigration {
 
@@ -37,20 +34,18 @@ class TestCakeMigration extends CakeMigration {
 /**
  * TestCallbackCakeMigration
  *
- * @package       migrations
- * @subpackage    migrations.tests.cases.libs
  */
 class TestCallbackCakeMigration {
 
 /**
- * calls property
+ * Calls property
  *
  * @var array
  */
 	public $calls = array();
 
 /**
- * beforeMigration method
+ * BeforeMigration method
  *
  * @param $Migration
  * @param $type
@@ -61,7 +56,7 @@ class TestCallbackCakeMigration {
 	}
 
 /**
- * afterMigration method
+ * AfterMigration method
  *
  * @param $Migration
  * @param $type
@@ -72,7 +67,7 @@ class TestCallbackCakeMigration {
 	}
 
 /**
- * beforeAction method
+ * BeforeAction method
  *
  * @param $Migration
  * @param $type
@@ -84,7 +79,7 @@ class TestCallbackCakeMigration {
 	}
 
 /**
- * afterAction method
+ * AfterAction method
  *
  * @param $Migration
  * @param $type
@@ -100,13 +95,11 @@ class TestCallbackCakeMigration {
 /**
  * CakeMigrationTest
  *
- * @package       migration
- * @subpackage    migration.tests.cases.libs
  */
 class CakeMigrationTest extends CakeTestCase {
 
 /**
- * fixtures property
+ * Fixtures property
  *
  * @var array
  */
@@ -114,14 +107,14 @@ class CakeMigrationTest extends CakeTestCase {
 		'core.user', 'core.post');
 
 /**
- * autoFixtures property
+ * AutoFixtures property
  *
  * @var array
  */
 	public $autoFixtures = false;
 
 /**
- * tables property
+ * Tables property
  *
  * @var array
  */
@@ -150,7 +143,18 @@ class CakeMigrationTest extends CakeTestCase {
 	public $db;
 
 /**
- * testCreateTable method
+ * Start test
+ *
+ * @return void
+ */
+	public function setUp() {
+		parent::setUp();
+
+		Configure::write('Config.language', 'en');
+	}
+
+/**
+ * TestCreateTable method
  *
  * @return void
  */
@@ -182,7 +186,7 @@ class CakeMigrationTest extends CakeTestCase {
 	}
 
 /**
- * test create and drop tables with a prefix
+ * Test create and drop tables with a prefix
  *
  * @return void
  */
@@ -213,7 +217,7 @@ class CakeMigrationTest extends CakeTestCase {
 	}
 
 /**
- * testRenameTable method
+ * TestRenameTable method
  *
  * @return void
  */
@@ -248,7 +252,7 @@ class CakeMigrationTest extends CakeTestCase {
 	}
 
 /**
- * testCreateDropField method
+ * TestCreateDropField method
  *
  * @return void
  */
@@ -294,7 +298,7 @@ class CakeMigrationTest extends CakeTestCase {
 	}
 
 /**
- * testCreateDropIndex method
+ * TestCreateDropIndex method
  *
  * @return void
  */
@@ -448,7 +452,7 @@ class CakeMigrationTest extends CakeTestCase {
 	}
 
 /**
- * testAlterField method
+ * TestAlterField method
  * @return void
  */
 	public function testAlterField() {
@@ -490,7 +494,7 @@ class CakeMigrationTest extends CakeTestCase {
 	}
 
 /**
- * test the change of fields type.
+ * Test the change of fields type.
  */
 	public function testAlterFieldType() {
 		$this->loadFixtures('User', 'Post');
@@ -518,9 +522,8 @@ class CakeMigrationTest extends CakeTestCase {
 	}
 
 /**
- * testAlterFieldLength method
+ * TestAlterFieldLength method
  *
- * @access public
  * @return void
  */
 	public function testAlterFieldLength() {
@@ -556,7 +559,7 @@ class CakeMigrationTest extends CakeTestCase {
 	}
 
 /**
- * testAlterAndRenameField method
+ * TestAlterAndRenameField method
  *
  * @return void
  */
@@ -596,7 +599,7 @@ class CakeMigrationTest extends CakeTestCase {
 	}
 
 /**
- * testRenameField method
+ * TestRenameField method
  *
  * @return void
  */
@@ -641,7 +644,7 @@ class CakeMigrationTest extends CakeTestCase {
 	}
 
 /**
- * testCallbacks method
+ * TestCallbacks method
  *
  * @return void
  */
@@ -709,7 +712,7 @@ class CakeMigrationTest extends CakeTestCase {
 						'description' => array(
 							'type' => 'string',
 							'null' => false,
-							'length' => 256,
+							'length' => 768,
 							'default' => null
 						),
 						'info' => array(
@@ -746,7 +749,7 @@ class CakeMigrationTest extends CakeTestCase {
 	}
 
 /**
- * testGenerateModel method
+ * TestGenerateModel method
  *
  * @return void
  */

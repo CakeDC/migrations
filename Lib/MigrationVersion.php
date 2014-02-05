@@ -11,7 +11,6 @@
  *
  * @copyright 2009 - 2013, Cake Development Corporation
  * @link      http://codaset.com/cakedc/migrations/
- * @package   plugns.migrations
  * @license   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
@@ -25,8 +24,6 @@ App::uses('MigrationVersionException', 'Migrations.Lib');
 /**
  * Migration version management.
  *
- * @package       migrations
- * @subpackage    migrations.libs
  */
 class MigrationVersion {
 
@@ -58,7 +55,7 @@ class MigrationVersion {
  *
  * @var array
  */
-	private $__mapping = array();
+	protected $_mapping = array();
 
 /**
  * Hash of a migration
@@ -119,12 +116,12 @@ class MigrationVersion {
 		$this->initVersion();
 
 		if (!isset($options['autoinit']) || $options['autoinit'] !== false) {
-			$this->__initMigrations();
+			$this->_initMigrations();
 		}
 	}
 
 /**
- * get a new SchemaMigration instance
+ * Get a new SchemaMigration instance
  *
  * @return void
  */
@@ -197,7 +194,7 @@ class MigrationVersion {
 		}
 
 		// Clear mapping cache
-		unset($this->__mapping[$type]);
+		unset($this->_mapping[$type]);
 
 		return $result;
 	}
@@ -214,8 +211,8 @@ class MigrationVersion {
 			$type = Inflector::camelize($type);
 		}
 
-		if ($cache && !empty($this->__mapping[$type])) {
-			return $this->__mapping[$type];
+		if ($cache && !empty($this->_mapping[$type])) {
+			return $this->_mapping[$type];
 		}
 		$mapping = $this->_enumerateMigrations($type);
 		if (empty($mapping)) {
@@ -238,7 +235,7 @@ class MigrationVersion {
 		}
 
 		$bcMapping = array();
-		if ($type == 'Migrations') {
+		if ($type === 'Migrations') {
 			$bcMapping = array(
 				'InitMigrations' => 'M4af6e0f0a1284147a0b100ca58157726',
 				'ConvertVersionToClassNames' => 'M4ec50d1f7a284842b1b770fdcbdd56cb',
@@ -267,7 +264,7 @@ class MigrationVersion {
 			}
 		}
 
-		$this->__mapping[$type] = $mapping;
+		$this->_mapping[$type] = $mapping;
 		return $mapping;
 	}
 
@@ -282,10 +279,10 @@ class MigrationVersion {
  * @throws MigrationVersionException
  */
 	public function getMigration($name, $class, $type, $options = array()) {
-		if (!class_exists($class) && (!$this->__loadFile($name, $type) || !class_exists($class))) {
+		if (!class_exists($class) && (!$this->_loadFile($name, $type) || !class_exists($class))) {
 			throw new MigrationVersionException(sprintf(
 				__d('migrations', 'Class `%1$s` not found on file `%2$s` for %3$s.'),
-				$class, $name . '.php', (($type == 'app') ? 'Application' : Inflector::camelize($type) . ' Plugin')
+				$class, $name . '.php', (($type === 'app') ? 'Application' : Inflector::camelize($type) . ' Plugin')
 			));
 		}
 
@@ -334,16 +331,16 @@ class MigrationVersion {
 			$targetVersion = $keys[$next];
 		}
 
-		if ($direction == 'down') {
+		if ($direction === 'down') {
 			krsort($mapping);
 		}
 
 		foreach ($mapping as $version => $info) {
-			if (($direction == 'up' && $version > $targetVersion)
-				|| ($direction == 'down' && $version < $targetVersion)) {
+			if (($direction === 'up' && $version > $targetVersion)
+				|| ($direction === 'down' && $version < $targetVersion)) {
 				break;
-			} else if (($direction == 'up' && $info['migrated'] === null)
-				|| ($direction == 'down' && $info['migrated'] !== null)) {
+			} elseif (($direction === 'up' && $info['migrated'] === null)
+				|| ($direction === 'down' && $info['migrated'] !== null)) {
 
 				$migration = $this->getMigration($info['name'], $info['class'], $info['type'], $options);
 				$migration->Version = $this;
@@ -352,14 +349,14 @@ class MigrationVersion {
 				try {
 					$result = $migration->run($direction, $options);
 					$this->log[$info['name']] = $migration->getQueryLog();
-				} catch (Exception $exception){
+				} catch (Exception $exception) {
 							$mapping = $this->getMapping($options['type']);
 							$latestVersionName = '#' . number_format($mapping[$latestVersion]['version'] / 100, 2, '', '') . ' ' . $mapping[$latestVersion]['name'];
 					$errorMessage = __d('migrations', sprintf("There was an error during a migration. \n The error was: '%s' \n You must resolve the issue manually and try again.", $exception->getMessage(), $latestVersionName));
 							return $errorMessage;
 						}
 
-				$this->setVersion($version, $info['type'], ($direction == 'up'));
+				$this->setVersion($version, $info['type'], ($direction === 'up'));
 			}
 		}
 
@@ -371,39 +368,11 @@ class MigrationVersion {
 	}
 
 /**
- * Resets the migration to 0.
- *
- * @param $type string type of migration being ran
- * @return void
- */
-	protected function _resetMigration($type) {
-		$options['type'] = $type;
-		$options['version'] = 0;
-		$options['reset'] = true;
-		$options['direction'] = 'down';
-		$this->run($options);
-	}
-
-/**
- * Runs migration to the last well known version defined by $toVersion.
- *
- * @param $toVersion string name of the version where the migration will run up to.
- * @param $type string type of migration being ran.
- * @return void
- */
-	protected function _restoreMigration($toVersion, $type) {
-		$options['type'] = $type;
-		$options['direction'] = 'up';
-		$options['version'] = $toVersion;
-		$this->run($options);
-	}
-
-/**
  * Initialize the migrations schema and keep it up-to-date
  *
  * @return void
  */
-	private function __initMigrations() {
+	protected function _initMigrations() {
 		/** @var DboSource $db */
 		$db = ConnectionManager::getDataSource($this->connection);
 		if (!in_array($db->fullTableName('schema_migrations', false, false), $db->listSources())) {
@@ -433,16 +402,16 @@ class MigrationVersion {
  * @return mixed Throw an exception in case of no file found, array with mapping
  * @throws MigrationVersionException
  */
-	private function __loadFile($name, $type) {
+	protected function _loadFile($name, $type) {
 		$path = APP . 'Config' . DS . 'Migration' . DS;
-		if ($type != 'app') {
+		if ($type !== 'app') {
 			$path = CakePlugin::path(Inflector::camelize($type)) . 'Config' . DS . 'Migration' . DS;
 		}
 
 		if (!file_exists($path . $name . '.php')) {
 			throw new MigrationVersionException(sprintf(
 				__d('migrations', 'File `%1$s` not found in the %2$s.'),
-				$name . '.php', (($type == 'app') ? 'Application' : Inflector::camelize($type) . ' Plugin')
+				$name . '.php', (($type === 'app') ? 'Application' : Inflector::camelize($type) . ' Plugin')
 			));
 		}
 
@@ -477,7 +446,7 @@ class MigrationVersion {
 	protected function _enumerateNewMigrations($type) {
 		$mapping = array();
 		$path = APP . 'Config' . DS . 'Migration' . DS;
-		if ($type != 'app') {
+		if ($type !== 'app') {
 			$path = CakePlugin::path(Inflector::camelize($type)) . 'Config' . DS . 'Migration' . DS;
 		}
 		if (!file_exists($path)) {
@@ -504,7 +473,7 @@ class MigrationVersion {
 	protected function _enumerateOldMigrations($type) {
 		$mapping = array();
 		$path = APP . 'Config' . DS . 'Migration' . DS;
-		if ($type != 'app') {
+		if ($type !== 'app') {
 			$path = CakePlugin::path(Inflector::camelize($type)) . 'Config' . DS . 'Migration' . DS;
 		}
 		if (!file_exists($path)) {
@@ -524,6 +493,14 @@ class MigrationVersion {
 		}
 		return $mapping;
 	}
+
+}
+
+/**
+ * Usually used when migrations file/class or map files are not found
+ *
+ */
+class MigrationVersionException extends Exception {
 
 }
 

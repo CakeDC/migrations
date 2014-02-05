@@ -11,19 +11,15 @@
  *
  * @copyright 2009 - 2013, Cake Development Corporation
  * @link	  http://codaset.com/cakedc/migrations/
- * @package   plugns.migrations
  * @license   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('MigrationVersion', 'Migrations.Lib');
 App::uses('CakeMigration', 'Migrations.Lib');
 
-
 /**
  * TestPrecheckCakeMigration
  *
- * @package       migrations
- * @subpackage    migrations.tests.cases.libs
  */
 class TestPrecheckCakeMigration extends CakeMigration {
 
@@ -47,7 +43,7 @@ class TestPrecheckCakeMigration extends CakeMigration {
 class PrecheckConditionTest extends CakeTestCase {
 
 /**
- * fixtures property
+ * Fixtures property
  *
  * @var array
  */
@@ -56,7 +52,7 @@ class PrecheckConditionTest extends CakeTestCase {
 		'core.post');
 
 /**
- * autoFixtures property
+ * AutoFixtures property
  *
  * @var array
  */
@@ -68,7 +64,7 @@ class PrecheckConditionTest extends CakeTestCase {
 	public $db;
 
 /**
- * tables property
+ * Tables property
  *
  * @var array
  */
@@ -92,7 +88,7 @@ class PrecheckConditionTest extends CakeTestCase {
 	);
 
 /**
- * testCreateTable method
+ * TestCreateTable method
  *
  * @return void
  */
@@ -137,7 +133,7 @@ class PrecheckConditionTest extends CakeTestCase {
 	}
 
 /**
- * testRenameTable method
+ * TestRenameTable method
  *
  * @return void
  */
@@ -199,7 +195,7 @@ class PrecheckConditionTest extends CakeTestCase {
 	}
 
 /**
- * testCreateDropField method
+ * TestCreateDropField method
  *
  * @return void
  */
@@ -263,7 +259,7 @@ class PrecheckConditionTest extends CakeTestCase {
 	}
 
 /**
- * testAlterField method
+ * TestAlterField method
  * @return void
  */
 	public function testAlterField() {
@@ -306,7 +302,7 @@ class PrecheckConditionTest extends CakeTestCase {
 	}
 
 /**
- * testRenameField method
+ * TestRenameField method
  *
  * @return void
  */
