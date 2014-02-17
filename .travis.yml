@@ -17,7 +17,8 @@ env:
 before_script:
   - git clone --depth 1 --branch $CAKE_VERSION git://github.com/cakephp/cakephp ../cakephp && cd ../cakephp
   - cp -R ../migrations plugins/Migrations
-  - sh -c "mysql -e 'CREATE DATABASE cakephp_test;'"
+  - sh -c "mysql -e 'CREATE DATABASE cakephp_test COLLATE utf8_general_ci;'"
+  - sh -c "mysql -e 'CREATE DATABASE cakephp_default COLLATE utf8_general_ci;'"
   - echo "<?php
     class DATABASE_CONFIG {
     public \$test = array(
@@ -26,6 +27,16 @@ before_script:
       'host' => '0.0.0.0',
       'login' => 'travis',
       'persistent' => false,
+      'encoding' => 'utf8',
+    );
+
+    public \$default = array(
+      'datasource' => 'Database/Mysql',
+      'database' => 'cakephp_default',
+      'host' => '0.0.0.0',
+      'login' => 'travis',
+      'persistent' => false,
+      'encoding' => 'utf8',
     );
     }" > app/Config/database.php
   - cd app
