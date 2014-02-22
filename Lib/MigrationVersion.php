@@ -345,7 +345,13 @@ class MigrationVersion {
 					$this->log[$info['name']] = $migration->getQueryLog();
 				} catch (Exception $exception) {
 					$mapping = $this->getMapping($options['type']);
-					$latestVersionName = '#' . number_format($mapping[$latestVersion]['version'] / 100, 2, '', '') . ' ' . $mapping[$latestVersion]['name'];
+					if (isset($mapping[$latestVersion]['version'])) {
+						$latestVersionName = '#' .
+							number_format($mapping[$latestVersion]['version'] / 100, 2, '', '') . ' ' .
+							$mapping[$latestVersion]['name'];
+					} else {
+						$latestVersionName = null;
+					}
 					$errorMessage = __d('migrations', sprintf("There was an error during a migration. \n The error was: '%s' \n You must resolve the issue manually and try again.", $exception->getMessage(), $latestVersionName));
 					return $errorMessage;
 				}
