@@ -3,15 +3,22 @@ language: php
 php:
   - 5.3
   - 5.4
+  - 5.5
 
 env:
   - CAKE_VERSION=master
-  - CAKE_VERSION=2.4
+  - CAKE_VERSION=2.0.0
+  - CAKE_VERSION=2.1.0
+  - CAKE_VERSION=2.2.0
+  - CAKE_VERSION=2.3.0
+  - CAKE_VERSION=2.4.0
+  - CAKE_VERSION=2.5
 
 before_script:
   - git clone --depth 1 --branch $CAKE_VERSION git://github.com/cakephp/cakephp ../cakephp && cd ../cakephp
   - cp -R ../migrations plugins/Migrations
-  - sh -c "mysql -e 'CREATE DATABASE cakephp_test;'"
+  - sh -c "mysql -e 'CREATE DATABASE cakephp_test COLLATE utf8_general_ci;'"
+  - sh -c "mysql -e 'CREATE DATABASE cakephp_default COLLATE utf8_general_ci;'"
   - echo "<?php
     class DATABASE_CONFIG {
     public \$test = array(
@@ -20,6 +27,16 @@ before_script:
       'host' => '0.0.0.0',
       'login' => 'travis',
       'persistent' => false,
+      'encoding' => 'utf8',
+    );
+
+    public \$default = array(
+      'datasource' => 'Database/Mysql',
+      'database' => 'cakephp_default',
+      'host' => '0.0.0.0',
+      'login' => 'travis',
+      'persistent' => false,
+      'encoding' => 'utf8',
     );
     }" > app/Config/database.php
   - cd app
