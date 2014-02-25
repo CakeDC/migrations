@@ -11,7 +11,7 @@
  *
  * @copyright 2009 - 2013, Cake Development Corporation
  * @link      http://codaset.com/cakedc/migrations/
- * @package   plugns.migrations
+ * @package   plugins.migrations
  * @license   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('Shell', 'Console');
@@ -693,7 +693,7 @@ class MigrationShell extends AppShell {
 			$content .= "\t\t),\n";
 		}
 		$content = $this->_generateTemplate('migration', array('name' => $name, 'class' => $class, 'migration' => $content));
-		$content = str_replace ('=> NULL', '=> null', $content);
+		$content = str_replace('=> NULL', '=> null', $content);
 		return $content;
 	}
 
