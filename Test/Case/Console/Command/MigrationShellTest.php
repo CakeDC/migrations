@@ -240,7 +240,6 @@ class MigrationShellTest extends CakeTestCase {
 			'callback' => $this->Shell,
 			'version' => 0,
 			'direction' => 'down',
-			'reset' => true,
 			'dry' => false,
 			'precheck' => null)));
 		$this->Shell->args = array('reset');

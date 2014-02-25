@@ -188,6 +188,7 @@ class CakeMigration extends Object {
 		}
 
 		$allowed = array('connection', 'callback');
+
 		foreach ($allowed as $variable) {
 			if (!empty($options[$variable])) {
 				$this->{$variable} = $options[$variable];
