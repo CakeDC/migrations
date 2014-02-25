@@ -212,16 +212,28 @@ class MigrationVersionTest extends CakeTestCase {
  * @return void
  */
 	public function testRun() {
-		$back = $this->Version;
-		$options = array('connection' => 'test');
-		$Version = $this->getMock('MigrationVersion', array('getMapping', 'getMigration', 'getVersion', 'setVersion'), array($options), 'TestMigrationVersionMockMigrationVersion', false);
+		$options = array(
+			'connection' => 'test',
+			'migrationConnection' => 'test',
+			'autoinit' => false
+		);
+
+		$Version = $this->getMock('MigrationVersion',
+			array('getMapping', 'getMigration', 'getVersion', 'setVersion'),
+			array($options),
+			'TestMigrationVersionMockMigrationVersion'
+		);
+
+		$CakeMigration = new CakeMigration($options);
 
 		$Version->expects($this->any())
 			->method('getMigration')
-			->will($this->returnValue(new CakeMigration($options)));
+			->will($this->returnValue($CakeMigration));
 
 		$Version->Version = ClassRegistry::init(array(
-			'class' => 'schema_migrations', 'ds' => 'test'));
+			'class' => 'schema_migrations',
+			'ds' => 'test'
+		));
 
 		// direction => up
 		$Version->expects($this->at(0))->method('getVersion')->will($this->returnValue(0));
