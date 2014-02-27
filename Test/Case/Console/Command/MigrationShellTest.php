@@ -320,7 +320,7 @@ An error occurred when processing the migration:
   Error: Exception message
 All migrations have completed./
 TEXT;
-		$this->assertPattern(str_replace("\r\n", "\n", $pattern), str_replace("\r\n", "\n", $result));
+		$this->assertRegExp(str_replace("\r\n", "\n", $pattern), str_replace("\r\n", "\n", $result));
 	}
 
 /**
@@ -355,7 +355,7 @@ TEXT;
 /Running migrations:
 All migrations have completed./
 TEXT;
-		$this->assertPattern(str_replace("\r\n", "\n", $pattern), str_replace("\n\n", "\n", $result));
+		$this->assertRegExp(str_replace("\r\n", "\n", $pattern), str_replace("\n\n", "\n", $result));
 	}
 
 /**
@@ -738,14 +738,14 @@ TEXT;
 		foreach ($files as $f) {
 			unlink($f);
 		}
-		$this->assertNoPattern('/\'schema_migrations\'/', $result);
+		$this->assertNotRegExp('/\'schema_migrations\'/', $result);
 
 		$pattern = <<<TEXT
 /			'drop_field' => array\(
 				'articles' => array\('slug',\),
 			\),/
 TEXT;
-		$this->assertPattern(str_replace("\r\n", "\n", $pattern), $result);
+		$this->assertRegExp(str_replace("\r\n", "\n", $pattern), $result);
 
 		$pattern = <<<TEXT
 /			'create_field' => array\(
@@ -754,7 +754,7 @@ TEXT;
 				\),
 			\),/
 TEXT;
-		$this->assertPattern(str_replace("\r\n", "\n", $pattern), $result);
+		$this->assertRegExp(str_replace("\r\n", "\n", $pattern), $result);
 	}
 
 	public function returnMapping() {
@@ -814,13 +814,13 @@ Current version:
 Latest version:
   #003 003_increase_class_name_length/
 TEXT;
-		$this->assertPattern(str_replace("\r\n", "\n", $pattern), $result);
+		$this->assertRegExp(str_replace("\r\n", "\n", $pattern), $result);
 
 		$this->Shell->output = '';
 		$this->Shell->args = array('outdated');
 		$this->Shell->status();
 		$result = $this->Shell->output;
-		$this->assertNoPattern(str_replace("\r\n", "\n", $pattern), $result);
+		$this->assertNotRegExp(str_replace("\r\n", "\n", $pattern), $result);
 
 		$this->Shell->Version->setVersion(3, 'migrations', false);
 		$this->Shell->output = '';
@@ -835,7 +835,7 @@ Current version:
 Latest version:
   #003 003_increase_class_name_length/
 TEXT;
-		$this->assertPattern(str_replace("\r\n", "\n", $pattern), $result);
+		$this->assertRegExp(str_replace("\r\n", "\n", $pattern), $result);
 		$this->Shell->Version->setVersion(1, 'migrations');
 	}
 

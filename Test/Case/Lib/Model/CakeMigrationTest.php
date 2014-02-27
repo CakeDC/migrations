@@ -743,7 +743,7 @@ class CakeMigrationTest extends CakeTestCase {
 			$migration->run('up');
 			$this->fail('No exception triggered');
 		} catch (MigrationException $e) {
-			$this->assertPattern('/SQL Error/', $e->getMessage());
+			$this->assertRegExp('/SQL Error/', $e->getMessage());
 		}
 		$this->assertFalse(in_array($this->db->fullTableName('migration_categories', false, false), $sources));
 	}
