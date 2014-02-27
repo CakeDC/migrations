@@ -281,11 +281,11 @@ class PrecheckConditionTest extends CakeTestCase {
 		$Migration->initDb();
 
 		$fields = $this->db->describe($Model);
-		$this->assertEqual($fields['published']['default'], 'N');
+		$this->assertEquals($fields['published']['default'], 'N');
 
 		$this->assertTrue($Migration->run('up'));
 		$fields = $this->db->describe($Model);
-		$this->assertEqual($fields['published']['default'], 'Y');
+		$this->assertEquals($fields['published']['default'], 'Y');
 
 		try {
 			$Migration->migration['up']['alter_field']['posts']['inexistent'] = array('default' => 'N');
@@ -293,12 +293,12 @@ class PrecheckConditionTest extends CakeTestCase {
 			$this->fail('No expectation triggered');
 			$this->setExpectedException('MigrationException');
 		} catch (MigrationException $e) {
-			$this->assertEqual('Undefined index: inexistent', $e->getMessage());
+			$this->assertEquals('Undefined index: inexistent', $e->getMessage());
 		}
 
 		$this->assertTrue($Migration->run('down'));
 		$fields = $this->db->describe($Model);
-		$this->assertEqual($fields['published']['default'], 'N');
+		$this->assertEquals($fields['published']['default'], 'N');
 	}
 
 /**

@@ -105,7 +105,7 @@ class MigrationVersionTest extends CakeTestCase {
 				'migrated' => null
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 
 		$result = $this->Version->getMapping('migrations');
 		$expected = array(
@@ -131,7 +131,7 @@ class MigrationVersionTest extends CakeTestCase {
 					'migrated' => null
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 	}
 
 /**
@@ -144,24 +144,24 @@ class MigrationVersionTest extends CakeTestCase {
 			$this->Version->getMigration('inexistent_migration', 'InexistentMigration', 'test_migration_plugin');
 			$this->fail('No exception triggered');
 		} catch (MigrationVersionException $e) {
-			$this->assertEqual('File `inexistent_migration.php` not found in the TestMigrationPlugin Plugin.', $e->getMessage());
+			$this->assertEquals('File `inexistent_migration.php` not found in the TestMigrationPlugin Plugin.', $e->getMessage());
 		}
 
 		try {
 			$this->Version->getMigration('blank_file', 'BlankFile', 'test_migration_plugin');
 			$this->fail('No exception triggered');
 		} catch (MigrationVersionException $e) {
-			$this->assertEqual('Class `BlankFile` not found on file `blank_file.php` for TestMigrationPlugin Plugin.', $e->getMessage());
+			$this->assertEquals('Class `BlankFile` not found on file `blank_file.php` for TestMigrationPlugin Plugin.', $e->getMessage());
 		}
 
 		$result = $this->Version->getMigration('001_schema_dump', 'M4af6d40056b04408808500cb58157726', 'test_migration_plugin');
 		$this->assertInstanceOf('M4af6d40056b04408808500cb58157726', $result);
-		$this->assertEqual($result->description, 'Version 001 (schema dump) of TestMigrationPlugin');
+		$this->assertEquals($result->description, 'Version 001 (schema dump) of TestMigrationPlugin');
 
 		// Calling twice to check if it will not try to redeclare the class
 		$result = $this->Version->getMigration('001_schema_dump', 'M4af6d40056b04408808500cb58157726', 'test_migration_plugin');
 		$this->assertInstanceOf('M4af6d40056b04408808500cb58157726', $result);
-		$this->assertEqual($result->description, 'Version 001 (schema dump) of TestMigrationPlugin');
+		$this->assertEquals($result->description, 'Version 001 (schema dump) of TestMigrationPlugin');
 	}
 
 /**
@@ -176,7 +176,7 @@ class MigrationVersionTest extends CakeTestCase {
 		$this->Version->expects($this->at(0))->method('getMapping')->will($this->returnValue($this->_mapping()));
 		$result = $this->Version->getVersion('inexistent_plugin');
 		$expected = 0;
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 
 		// Setting as 1
 		$this->Version->expects($this->at(0))->method('getMapping')->will($this->returnValue($this->_mapping()));
@@ -185,7 +185,7 @@ class MigrationVersionTest extends CakeTestCase {
 		$this->assertTrue(!empty($setResult));
 		$result = $this->Version->getVersion('inexistent_plugin');
 		$expected = 1;
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 
 		// Setting as 2
 		$this->Version->expects($this->at(0))->method('getMapping')->will($this->returnValue($this->_mapping(1, 1)));
@@ -194,7 +194,7 @@ class MigrationVersionTest extends CakeTestCase {
 		$this->assertTrue(!empty($setResult));
 		$result = $this->Version->getVersion('inexistent_plugin');
 		$expected = 2;
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 
 		// Setting as 1
 		$this->Version->expects($this->at(0))->method('getMapping')->will($this->returnValue($this->_mapping(1, 2)));
@@ -203,7 +203,7 @@ class MigrationVersionTest extends CakeTestCase {
 		$this->assertTrue(!empty($setResult));
 		$result = $this->Version->getVersion('inexistent_plugin');
 		$expected = 1;
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 	}
 
 /**

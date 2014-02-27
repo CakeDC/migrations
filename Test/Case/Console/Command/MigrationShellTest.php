@@ -149,7 +149,7 @@ class MigrationShellTest extends CakeTestCase {
  */
 	public function testStartup() {
 		$this->Shell->connection = 'default';
-		$this->assertEqual($this->Shell->type, 'TestMigrationPlugin');
+		$this->assertEquals($this->Shell->type, 'TestMigrationPlugin');
 		$this->Shell->params = array(
 			'connection' => 'test',
 			'plugin' => 'Migrations',
@@ -158,8 +158,8 @@ class MigrationShellTest extends CakeTestCase {
 			'precheck' => 'Migrations.PrecheckException'
 		);
 		$this->Shell->startup();
-		$this->assertEqual($this->Shell->connection, 'test');
-		$this->assertEqual($this->Shell->type, 'Migrations');
+		$this->assertEquals($this->Shell->connection, 'test');
+		$this->assertEquals($this->Shell->type, 'Migrations');
 	}
 
 /**
@@ -374,7 +374,7 @@ TEXT;
 			'up' => array('create_table' => $this->tables),
 			'down' => array('drop_table' => array('users', 'posts'))
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 
 		$comparison = array('posts' => array('add' => $this->tables['posts']));
 		$oldTables = array('users' => $this->tables['users']);
@@ -387,7 +387,7 @@ TEXT;
 				'drop_table' => array('posts')
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 
 		$comparison = array();
 		$oldTables = array('posts' => $this->tables['posts'], 'users' => $this->tables['users']);
@@ -401,7 +401,7 @@ TEXT;
 				'create_table' => array('posts' => $this->tables['posts'])
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 	}
 
 /**
@@ -432,7 +432,7 @@ TEXT;
 				)
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 
 		$comparison = array(
 			'posts' => array('add' => array(
@@ -454,7 +454,7 @@ TEXT;
 				)
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 
 		$comparison = array(
 			'posts' => array('add' => array(
@@ -478,7 +478,7 @@ TEXT;
 				)
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 
 		// Drop field/index
 		$oldTables['posts']['views'] = array('type' => 'integer', 'null' => false);
@@ -502,7 +502,7 @@ TEXT;
 				)
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 
 		$comparison = array(
 			'posts' => array('drop' => array(
@@ -522,7 +522,7 @@ TEXT;
 				)
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 
 		$comparison = array(
 			'posts' => array('drop' => array(
@@ -546,7 +546,7 @@ TEXT;
 				)
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 
 		// Change field
 		$comparison = array(
@@ -571,7 +571,7 @@ TEXT;
 				)
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 
 		// Change field with/out length
 		$oldTables = array('users' => $this->tables['users']);
@@ -600,7 +600,7 @@ TEXT;
 				)
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 	}
 
 /**
@@ -671,7 +671,7 @@ TEXT;
 		),
 	);
 TEXT;
-		$this->assertEqual($result, str_replace("\r\n", "\n", $expected));
+		$this->assertEquals($result, str_replace("\r\n", "\n", $expected));
 		$this->_unlink('12345_migration_test_file.php');
 	}
 
