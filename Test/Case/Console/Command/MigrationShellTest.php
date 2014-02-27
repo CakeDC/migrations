@@ -96,6 +96,7 @@ class MigrationShellTest extends CakeTestCase {
 		CakePlugin::load('TestMigrationPlugin');
 		CakePlugin::load('TestMigrationPlugin2');
 		CakePlugin::load('TestMigrationPlugin3');
+		CakePlugin::load('TestMigrationPlugin4');
 
 		Configure::write('Config.language', 'en');
 	}
@@ -177,9 +178,6 @@ class MigrationShellTest extends CakeTestCase {
 			);
 		}
 		$this->Shell->expects($this->any())->method('_stop')->will($this->returnValue(false));
-
-		// Variable used on expectArgumentsAt method
-		$runCount = $versionCount = $inCount = 0;
 
 		// cake migration run - no mapping
 		$this->Shell->Version->expects($this->at(0))->method('getMapping')->will($this->returnValue(false));
@@ -720,6 +718,7 @@ TEXT;
  * @return void
  */
 	public function testGenerateComparison() {
+		$this->Shell->type = 'TestMigrationPlugin4';
 		$this->Shell->expects($this->at(0))->method('in')->will($this->returnValue('y'));
 		$this->Shell->expects($this->at(2))->method('in')->will($this->returnValue('n'));
 		$this->Shell->expects($this->at(3))->method('in')->will($this->returnValue('drop slug field'));
@@ -773,9 +772,6 @@ TEXT;
 		$this->Shell->expects($this->at(2))->method('in')->will($this->returnValue('n'));
 		$this->Shell->expects($this->at(3))->method('in')->will($this->returnValue('schema dump'));
 
-		$mapping = array(
-			gmdate('U') => array('class' => 'M4af9d15154844819b7a0007058157726')
-		);
 		$this->Shell->Version->expects($this->any())->method('getMapping')->will($this->returnCallback(array($this, 'returnMapping')));
 
 		$this->assertEmpty(glob(TMP . 'tests' . DS . '*schema_dump.php'));
