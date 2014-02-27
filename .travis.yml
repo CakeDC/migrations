@@ -17,7 +17,7 @@ env:
 before_script:
   - git clone --depth 1 --branch $CAKE_VERSION git://github.com/cakephp/cakephp ../cakephp && cd ../cakephp
   - cp -R ../migrations plugins/Migrations
-  - sh -c "mysql -e 'CREATE DATABASE cakephp_test;'"
+  - sh -c "mysql -e 'create database cakephp_test CHARACTER SET utf8 COLLATE utf8_general_ci;'"
   - echo "<?php
     class DATABASE_CONFIG {
     public \$test = array(
