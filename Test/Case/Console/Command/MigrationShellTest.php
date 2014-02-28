@@ -798,7 +798,7 @@ TEXT;
  *
  * @return void
  */
-	public function testStatus() {
+	public function testMigrationStatus() {
 		$this->Shell->Version = new MigrationVersion(array('connection' => 'test'));
 		$this->Shell->status();
 		$result = $this->Shell->output;
