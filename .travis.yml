@@ -12,10 +12,11 @@ env:
   - CAKE_VERSION=2.3.0
   - CAKE_VERSION=2.4.0
 
+env:
   global:
     - COVERALLS=1
     - PLUGIN_NAME=Migrations
-    - DB=mysql CAKE_VERSION=2.4.0
+    - DB=mysql CAKE_VERSION=2.4
 
 
 before_script:
