@@ -7,9 +7,9 @@ php:
 
 env:
   global:
-    - COVERALLS=1
     - PLUGIN_NAME=Migrations
     - DB=mysql
+    - DB_MYSQL_CREATE=
 
   matrix:
     - DB=mysql CAKE_VERSION=2.0
@@ -19,8 +19,14 @@ env:
     - DB=mysql CAKE_VERSION=2.4
     - DB=mysql CAKE_VERSION=2.5
 
+matrix:
+  include:
+    - php: 5.4
+      env:
+        - COVERALLS=1
+
 before_script:
-  - git clone https://github.com/FriendsOfCake/travis.git --depth 1 ../travis
+  - git clone https://github.com/burzum/travis.git --depth 1 ../travis
   - ../travis/before_script.sh
 
 script:
