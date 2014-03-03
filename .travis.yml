@@ -6,6 +6,7 @@ php:
   - 5.5
 
 env:
+  - COVERALLS=1
   - CAKE_VERSION=master
   - CAKE_VERSION=2.0.0
   - CAKE_VERSION=2.1.0
