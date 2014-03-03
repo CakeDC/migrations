@@ -6,17 +6,15 @@ php:
   - 5.5
 
 env:
+  global:
+    - COVERALLS=1
+    - PLUGIN_NAME=Migrations
   - CAKE_VERSION=2.0.0
   - CAKE_VERSION=2.1.0
   - CAKE_VERSION=2.2.0
   - CAKE_VERSION=2.3.0
   - CAKE_VERSION=2.4.0
-  - CAKE_VERSION=2.5
 
-env:
-  global:
-    - COVERALLS=1
-    - PLUGIN_NAME=Migrations
 
 before_script:
   - git clone https://github.com/FriendsOfCake/travis.git --depth 1 ../travis
