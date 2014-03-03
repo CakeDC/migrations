@@ -13,7 +13,9 @@ env:
   - CAKE_VERSION=2.3.0
   - CAKE_VERSION=2.4.0
   - CAKE_VERSION=2.5
-    global:
+
+env:
+  global:
       - COVERALLS=1
       - PLUGIN_NAME=Migrations
 
