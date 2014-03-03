@@ -811,13 +811,6 @@ Latest version:
   #003 003_increase_class_name_length/
 TEXT;
 		$this->assertRegExp(str_replace("\r\n", "\n", $pattern), $result);
-
-		$this->Shell->output = '';
-		$this->Shell->args = array('outdated');
-		$this->Shell->status();
-		$result = $this->Shell->output;
-		$this->assertNotRegExp(str_replace("\r\n", "\n", $pattern), $result);
-
 		$this->Shell->Version->setVersion(3, 'migrations', false);
 		$this->Shell->output = '';
 		$this->Shell->args = array('outdated');
@@ -832,7 +825,6 @@ Latest version:
   #003 003_increase_class_name_length/
 TEXT;
 		$this->assertRegExp(str_replace("\r\n", "\n", $pattern), $result);
-		$this->Shell->Version->setVersion(1, 'migrations');
 	}
 
 /**
