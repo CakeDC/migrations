@@ -9,12 +9,13 @@ env:
   global:
     - COVERALLS=1
     - PLUGIN_NAME=Migrations
+
+env:
   - CAKE_VERSION=2.0.0
   - CAKE_VERSION=2.1.0
   - CAKE_VERSION=2.2.0
   - CAKE_VERSION=2.3.0
   - CAKE_VERSION=2.4.0
-
 
 before_script:
   - git clone https://github.com/FriendsOfCake/travis.git --depth 1 ../travis
