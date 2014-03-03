@@ -9,7 +9,7 @@ env:
   global:
     - PLUGIN_NAME=Migrations
     - DB=mysql
-    - DB_MYSQL_CREATE=
+    - MYSQL_CREATE_DB="mysql -e 'create database cakephp_test CHARACTER SET utf8 COLLATE utf8_general_ci;'"
 
   matrix:
     - DB=mysql CAKE_VERSION=2.0
