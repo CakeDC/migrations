@@ -6,7 +6,6 @@ php:
   - 5.5
 
 env:
-  - COVERALLS=1
   - CAKE_VERSION=master
   - CAKE_VERSION=2.0.0
   - CAKE_VERSION=2.1.0
@@ -14,24 +13,19 @@ env:
   - CAKE_VERSION=2.3.0
   - CAKE_VERSION=2.4.0
   - CAKE_VERSION=2.5
+  global:
+    - COVERALLS=1
+    - PLUGIN_NAME=Migrations
 
 before_script:
-  - git clone --depth 1 --branch $CAKE_VERSION git://github.com/cakephp/cakephp ../cakephp && cd ../cakephp
-  - cp -R ../migrations plugins/Migrations
-  - sh -c "mysql -e 'create database cakephp_test CHARACTER SET utf8 COLLATE utf8_general_ci;'"
-  - echo "<?php
-    class DATABASE_CONFIG {
-    public \$test = array(
-      'datasource' => 'Database/Mysql',
-      'database' => 'cakephp_test',
-      'host' => '0.0.0.0',
-      'login' => 'travis',
-      'persistent' => false,
-    );
-    }" > app/Config/database.php
-  - cd app
+  - git clone https://github.com/FriendsOfCake/travis.git --depth 1 ../travis
+  - ../travis/before_script.sh
+
 script:
-  - ../lib/Cake/Console/cake test Migrations AllMigrationsPlugin --stderr
+  - ../travis/script.sh
+
+after_success:
+  - ../travis/after_success.sh
 
 notifications:
   email: false
