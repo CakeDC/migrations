@@ -96,6 +96,7 @@ class MigrationShellTest extends CakeTestCase {
 		CakePlugin::load('TestMigrationPlugin');
 		CakePlugin::load('TestMigrationPlugin2');
 		CakePlugin::load('TestMigrationPlugin3');
+		CakePlugin::load('TestMigrationPlugin4');
 
 		Configure::write('Config.language', 'en');
 	}
@@ -149,7 +150,7 @@ class MigrationShellTest extends CakeTestCase {
  */
 	public function testStartup() {
 		$this->Shell->connection = 'default';
-		$this->assertEqual($this->Shell->type, 'TestMigrationPlugin');
+		$this->assertEquals($this->Shell->type, 'TestMigrationPlugin');
 		$this->Shell->params = array(
 			'connection' => 'test',
 			'plugin' => 'Migrations',
@@ -158,8 +159,8 @@ class MigrationShellTest extends CakeTestCase {
 			'precheck' => 'Migrations.PrecheckException'
 		);
 		$this->Shell->startup();
-		$this->assertEqual($this->Shell->connection, 'test');
-		$this->assertEqual($this->Shell->type, 'Migrations');
+		$this->assertEquals($this->Shell->connection, 'test');
+		$this->assertEquals($this->Shell->type, 'Migrations');
 	}
 
 /**
@@ -177,9 +178,6 @@ class MigrationShellTest extends CakeTestCase {
 			);
 		}
 		$this->Shell->expects($this->any())->method('_stop')->will($this->returnValue(false));
-
-		// Variable used on expectArgumentsAt method
-		$runCount = $versionCount = $inCount = 0;
 
 		// cake migration run - no mapping
 		$this->Shell->Version->expects($this->at(0))->method('getMapping')->will($this->returnValue(false));
@@ -320,7 +318,7 @@ An error occurred when processing the migration:
   Error: Exception message
 All migrations have completed./
 TEXT;
-		$this->assertPattern(str_replace("\r\n", "\n", $pattern), str_replace("\r\n", "\n", $result));
+		$this->assertRegExp(str_replace("\r\n", "\n", $pattern), str_replace("\r\n", "\n", $result));
 	}
 
 /**
@@ -355,7 +353,7 @@ TEXT;
 /Running migrations:
 All migrations have completed./
 TEXT;
-		$this->assertPattern(str_replace("\r\n", "\n", $pattern), str_replace("\n\n", "\n", $result));
+		$this->assertRegExp(str_replace("\r\n", "\n", $pattern), str_replace("\n\n", "\n", $result));
 	}
 
 /**
@@ -374,7 +372,7 @@ TEXT;
 			'up' => array('create_table' => $this->tables),
 			'down' => array('drop_table' => array('users', 'posts'))
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 
 		$comparison = array('posts' => array('add' => $this->tables['posts']));
 		$oldTables = array('users' => $this->tables['users']);
@@ -387,7 +385,7 @@ TEXT;
 				'drop_table' => array('posts')
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 
 		$comparison = array();
 		$oldTables = array('posts' => $this->tables['posts'], 'users' => $this->tables['users']);
@@ -401,7 +399,7 @@ TEXT;
 				'create_table' => array('posts' => $this->tables['posts'])
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 	}
 
 /**
@@ -432,7 +430,7 @@ TEXT;
 				)
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 
 		$comparison = array(
 			'posts' => array('add' => array(
@@ -454,7 +452,7 @@ TEXT;
 				)
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 
 		$comparison = array(
 			'posts' => array('add' => array(
@@ -478,7 +476,7 @@ TEXT;
 				)
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 
 		// Drop field/index
 		$oldTables['posts']['views'] = array('type' => 'integer', 'null' => false);
@@ -502,7 +500,7 @@ TEXT;
 				)
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 
 		$comparison = array(
 			'posts' => array('drop' => array(
@@ -522,7 +520,7 @@ TEXT;
 				)
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 
 		$comparison = array(
 			'posts' => array('drop' => array(
@@ -546,7 +544,7 @@ TEXT;
 				)
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 
 		// Change field
 		$comparison = array(
@@ -571,7 +569,7 @@ TEXT;
 				)
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 
 		// Change field with/out length
 		$oldTables = array('users' => $this->tables['users']);
@@ -600,7 +598,7 @@ TEXT;
 				)
 			)
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 	}
 
 /**
@@ -671,7 +669,7 @@ TEXT;
 		),
 	);
 TEXT;
-		$this->assertEqual($result, str_replace("\r\n", "\n", $expected));
+		$this->assertEquals($result, str_replace("\r\n", "\n", $expected));
 		$this->_unlink('12345_migration_test_file.php');
 	}
 
@@ -720,6 +718,7 @@ TEXT;
  * @return void
  */
 	public function testGenerateComparison() {
+		$this->Shell->type = 'TestMigrationPlugin4';
 		$this->Shell->expects($this->at(0))->method('in')->will($this->returnValue('y'));
 		$this->Shell->expects($this->at(2))->method('in')->will($this->returnValue('n'));
 		$this->Shell->expects($this->at(3))->method('in')->will($this->returnValue('drop slug field'));
@@ -738,14 +737,14 @@ TEXT;
 		foreach ($files as $f) {
 			unlink($f);
 		}
-		$this->assertNoPattern('/\'schema_migrations\'/', $result);
+		$this->assertNotRegExp('/\'schema_migrations\'/', $result);
 
 		$pattern = <<<TEXT
 /			'drop_field' => array\(
 				'articles' => array\('slug',\),
 			\),/
 TEXT;
-		$this->assertPattern(str_replace("\r\n", "\n", $pattern), $result);
+		$this->assertRegExp(str_replace("\r\n", "\n", $pattern), $result);
 
 		$pattern = <<<TEXT
 /			'create_field' => array\(
@@ -754,7 +753,7 @@ TEXT;
 				\),
 			\),/
 TEXT;
-		$this->assertPattern(str_replace("\r\n", "\n", $pattern), $result);
+		$this->assertRegExp(str_replace("\r\n", "\n", $pattern), $result);
 	}
 
 	public function returnMapping() {
@@ -773,9 +772,6 @@ TEXT;
 		$this->Shell->expects($this->at(2))->method('in')->will($this->returnValue('n'));
 		$this->Shell->expects($this->at(3))->method('in')->will($this->returnValue('schema dump'));
 
-		$mapping = array(
-			gmdate('U') => array('class' => 'M4af9d15154844819b7a0007058157726')
-		);
 		$this->Shell->Version->expects($this->any())->method('getMapping')->will($this->returnCallback(array($this, 'returnMapping')));
 
 		$this->assertEmpty(glob(TMP . 'tests' . DS . '*schema_dump.php'));
@@ -791,7 +787,9 @@ TEXT;
 		foreach ($files as $f) {
 			unlink($f);
 		}
+
 		$expected = file_get_contents(CakePlugin::path('Migrations') . '/Test/Fixture/test_migration.txt');
+		$expected = str_replace("\r\n", "\n", $expected);
 		$this->assertEquals($expected, $result);
 	}
 
@@ -800,7 +798,7 @@ TEXT;
  *
  * @return void
  */
-	public function testStatus() {
+	public function testMigrationStatus() {
 		$this->Shell->Version = new MigrationVersion(array('connection' => 'test'));
 		$this->Shell->status();
 		$result = $this->Shell->output;
@@ -812,14 +810,7 @@ Current version:
 Latest version:
   #003 003_increase_class_name_length/
 TEXT;
-		$this->assertPattern(str_replace("\r\n", "\n", $pattern), $result);
-
-		$this->Shell->output = '';
-		$this->Shell->args = array('outdated');
-		$this->Shell->status();
-		$result = $this->Shell->output;
-		$this->assertNoPattern(str_replace("\r\n", "\n", $pattern), $result);
-
+		$this->assertRegExp(str_replace("\r\n", "\n", $pattern), $result);
 		$this->Shell->Version->setVersion(3, 'migrations', false);
 		$this->Shell->output = '';
 		$this->Shell->args = array('outdated');
@@ -833,8 +824,7 @@ Current version:
 Latest version:
   #003 003_increase_class_name_length/
 TEXT;
-		$this->assertPattern(str_replace("\r\n", "\n", $pattern), $result);
-		$this->Shell->Version->setVersion(1, 'migrations');
+		$this->assertRegExp(str_replace("\r\n", "\n", $pattern), $result);
 	}
 
 /**
@@ -873,3 +863,4 @@ TEXT;
 	}
 
 }
+
