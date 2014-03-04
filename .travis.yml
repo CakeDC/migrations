@@ -27,7 +27,7 @@ matrix:
         - COVERALLS=1
 
 before_script:
-  - git clone https://github.com/friendsofcake/travis.git --depth 1 ../travis
+  - git clone https://github.com/burzum/travis.git --depth 1 ../travis
   - ../travis/before_script.sh
 
 script:
