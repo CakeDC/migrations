@@ -1,19 +1,14 @@
 <?php
 /**
- * CakePHP Migrations
- *
- * Copyright 2009 - 2013, Cake Development Corporation
- *                        1785 E. Sahara Avenue, Suite 490-423
- *                        Las Vegas, Nevada 89104
+ * Copyright 2009 - 2014, Cake Development Corporation (http://cakedc.com)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright 2009 - 2013, Cake Development Corporation
- * @link      http://codaset.com/cakedc/migrations/
- * @package   plugins.migrations
- * @license   MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright Copyright 2009 - 2014, Cake Development Corporation (http://cakedc.com)
+ * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
 App::uses('Shell', 'Console');
 App::uses('AppShell', 'Console/Command');
 App::uses('CakeSchema', 'Model');
