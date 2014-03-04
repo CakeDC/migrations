@@ -12,10 +12,6 @@ env:
     - MYSQL_CREATE_DB="mysql -e 'create database cakephp_test CHARACTER SET utf8 COLLATE utf8_general_ci;'"
 
   matrix:
-    - DB=mysql CAKE_VERSION=2.0
-    - DB=mysql CAKE_VERSION=2.1
-    - DB=mysql CAKE_VERSION=2.2
-    - DB=mysql CAKE_VERSION=2.3
     - DB=mysql CAKE_VERSION=2.4
 
 matrix:
