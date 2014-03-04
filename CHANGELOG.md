@@ -7,7 +7,7 @@ Release 2.3.0
 https://github.com/CakeDC/migrations/tree/2.3.0
 
 * [c52d7cb](https://github.com/CakeDC/migrations/commit/c52d7cb) Simplifying MigrationShellTest::testMigrationStatus
-* [f8f4acc](https://github.com/CakeDC/migrations/commit/f8f4acc) fixing testGenerateComparison
+* [f8f4acc](https://github.com/CakeDC/migrations/commit/f8f4acc) Fixing testGenerateComparison
 * [fb154ba](https://github.com/CakeDC/migrations/commit/fb154ba) Updating deprecated phpunit method names
 * [891d531](https://github.com/CakeDC/migrations/commit/891d531) Updating deprecated phpunit method calls
 * [8745815](https://github.com/CakeDC/migrations/commit/8745815) Fixing MigrationShellTest::testGenerateDump()
