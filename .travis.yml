@@ -23,6 +23,7 @@ matrix:
   include:
     - php: 5.4
       env:
+        - CAKE_VERSION=2.4
         - COVERALLS=1
 
 before_script:
