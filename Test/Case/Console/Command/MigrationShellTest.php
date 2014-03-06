@@ -773,6 +773,106 @@ TEXT;
 	}
 
 /**
+ * testGenerateFromCliParamsCreateTable method
+ * test the case of using a command such as:
+ * app/Console/cake Migrations.migration generate create_products id created modified name description:text in_stock:boolean price:float stock_count:integer
+ *
+ * @return void
+ */
+	public function testGenerateFromCliParamsCreateTable() {
+		$this->Shell->expects($this->at(0))->method('in')->will($this->returnValue('n'));
+		$this->assertEmpty(glob(TMP . 'tests' . DS . '*create_products.php'));
+
+		$this->Shell->args = array('create_products', 'id', 'created', 'modified', 'name', 'description:text', 'in_stock:boolean', 'price:float', 'stock_count:integer');
+		$this->Shell->params['force'] = true;
+		$this->Shell->generate();
+		$files = glob(TMP . 'tests' . DS . '*create_products.php');
+		$this->assertNotEmpty($files);
+		$result = $this->_getMigrationVariable(current($files));
+		foreach ($files as $f) {
+			unlink($f);
+		}
+
+		$expected = file_get_contents(CakePlugin::path('Migrations') . '/Test/Fixture/test_migration_create_table_from_cli.txt');
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * testGenerateFromCliParamsDropTable method
+ * test the case of using a command such as:
+ * app/Console/cake Migrations.migration generate drop_products
+ *
+ * @return void
+ */
+	public function testGenerateFromCliParamsDropTable() {
+		$this->Shell->expects($this->at(0))->method('in')->will($this->returnValue('n'));
+		$this->assertEmpty(glob(TMP . 'tests' . DS . '*drop_products.php'));
+
+		$this->Shell->args = array('drop_products');
+		$this->Shell->params['force'] = true;
+		$this->Shell->generate();
+		$files = glob(TMP . 'tests' . DS . '*drop_products.php');
+		$this->assertNotEmpty($files);
+		$result = $this->_getMigrationVariable(current($files));
+		foreach ($files as $f) {
+			unlink($f);
+		}
+
+		$expected = file_get_contents(CakePlugin::path('Migrations') . '/Test/Fixture/test_migration_drop_table_from_cli.txt');
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * testGenerateFromCliParamsAddFields method
+ * test the case of using a command such as:
+ * app/Console/cake Migrations.migration generate add_all_fields_to_products id created modified name description:text in_stock:boolean price:float stock_count:integer
+ *
+ * @return void
+ */
+	public function testGenerateFromCliParamsAddFields() {
+		$this->Shell->expects($this->at(0))->method('in')->will($this->returnValue('n'));
+		$this->assertEmpty(glob(TMP . 'tests' . DS . '*add_all_fields_to_products.php'));
+
+		$this->Shell->args = array('add_all_fields_to_products', 'id', 'created', 'modified', 'name', 'description:text', 'in_stock:boolean', 'price:float', 'stock_count:integer');
+		$this->Shell->params['force'] = true;
+		$this->Shell->generate();
+		$files = glob(TMP . 'tests' . DS . '*add_all_fields_to_products.php');
+		$this->assertNotEmpty($files);
+		$result = $this->_getMigrationVariable(current($files));
+		foreach ($files as $f) {
+			unlink($f);
+		}
+
+		$expected = file_get_contents(CakePlugin::path('Migrations') . '/Test/Fixture/test_migration_add_fields_from_cli.txt');
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * testGenerateFromCliParamsRemoveFields method
+ * test the case of using a command such as:
+ * app/Console/cake Migrations.migration generate remove_name_and_desc_from_products name description
+ *
+ * @return void
+ */
+	public function testGenerateFromCliParamsRemoveFields() {
+		$this->Shell->expects($this->at(0))->method('in')->will($this->returnValue('n'));
+		$this->assertEmpty(glob(TMP . 'tests' . DS . '*remove_name_and_desc_from_products.php'));
+
+		$this->Shell->args = array('remove_name_and_desc_from_products', 'name', 'description');
+		$this->Shell->params['force'] = true;
+		$this->Shell->generate();
+		$files = glob(TMP . 'tests' . DS . '*remove_name_and_desc_from_products.php');
+		$this->assertNotEmpty($files);
+		$result = $this->_getMigrationVariable(current($files));
+		foreach ($files as $f) {
+			unlink($f);
+		}
+
+		$expected = file_get_contents(CakePlugin::path('Migrations') . '/Test/Fixture/test_migration_remove_fields_from_cli.txt');
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * TestGenerateDump method
  *
  * @return void
