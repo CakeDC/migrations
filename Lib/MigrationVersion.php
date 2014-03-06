@@ -1,17 +1,12 @@
 <?php
 /**
- * CakePHP Migrations
- *
- * Copyright 2009 - 2013, Cake Development Corporation
- *                        1785 E. Sahara Avenue, Suite 490-423
- *                        Las Vegas, Nevada 89104
+ * Copyright 2009 - 2014, Cake Development Corporation (http://cakedc.com)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright 2009 - 2013, Cake Development Corporation
- * @link      http://codaset.com/cakedc/migrations/
- * @license   MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright Copyright 2009 - 2014, Cake Development Corporation (http://cakedc.com)
+ * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('CakeMigration', 'Migrations.Lib');
@@ -345,7 +340,13 @@ class MigrationVersion {
 					$this->log[$info['name']] = $migration->getQueryLog();
 				} catch (Exception $exception) {
 					$mapping = $this->getMapping($options['type']);
-					$latestVersionName = '#' . number_format($mapping[$latestVersion]['version'] / 100, 2, '', '') . ' ' . $mapping[$latestVersion]['name'];
+					if (isset($mapping[$latestVersion]['version'])) {
+						$latestVersionName = '#' .
+							number_format($mapping[$latestVersion]['version'] / 100, 2, '', '') . ' ' .
+							$mapping[$latestVersion]['name'];
+					} else {
+						$latestVersionName = null;
+					}
 					$errorMessage = __d('migrations', sprintf("There was an error during a migration. \n The error was: '%s' \n You must resolve the issue manually and try again.", $exception->getMessage(), $latestVersionName));
 					return $errorMessage;
 				}

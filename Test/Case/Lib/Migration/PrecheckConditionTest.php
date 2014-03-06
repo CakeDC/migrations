@@ -1,17 +1,12 @@
 <?php
 /**
- * Precheck Condition test case.
- *
- * Copyright 2009 - 2013, Cake Development Corporation
- *						1785 E. Sahara Avenue, Suite 490-423
- *						Las Vegas, Nevada 89104
+ * Copyright 2009 - 2014, Cake Development Corporation (http://cakedc.com)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright 2009 - 2013, Cake Development Corporation
- * @link	  http://codaset.com/cakedc/migrations/
- * @license   MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright Copyright 2009 - 2014, Cake Development Corporation (http://cakedc.com)
+ * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('MigrationVersion', 'Migrations.Lib');
@@ -281,11 +276,11 @@ class PrecheckConditionTest extends CakeTestCase {
 		$Migration->initDb();
 
 		$fields = $this->db->describe($Model);
-		$this->assertEqual($fields['published']['default'], 'N');
+		$this->assertEquals($fields['published']['default'], 'N');
 
 		$this->assertTrue($Migration->run('up'));
 		$fields = $this->db->describe($Model);
-		$this->assertEqual($fields['published']['default'], 'Y');
+		$this->assertEquals($fields['published']['default'], 'Y');
 
 		try {
 			$Migration->migration['up']['alter_field']['posts']['inexistent'] = array('default' => 'N');
@@ -293,12 +288,12 @@ class PrecheckConditionTest extends CakeTestCase {
 			$this->fail('No expectation triggered');
 			$this->setExpectedException('MigrationException');
 		} catch (MigrationException $e) {
-			$this->assertEqual('Undefined index: inexistent', $e->getMessage());
+			$this->assertEquals('Undefined index: inexistent', $e->getMessage());
 		}
 
 		$this->assertTrue($Migration->run('down'));
 		$fields = $this->db->describe($Model);
-		$this->assertEqual($fields['published']['default'], 'N');
+		$this->assertEquals($fields['published']['default'], 'N');
 	}
 
 /**
