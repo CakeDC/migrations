@@ -1,5 +1,5 @@
-Generate Migrations Without DB Interaction from CLI
-===================================================
+Generate Migrations Without DB Interaction
+==========================================
 
 This functionality only works when arguments are passed to the command `cake Migrations.migration generate`.
 

@@ -17,7 +17,7 @@ Documentation
 * [Examples](Documentation/Examples.md)
 * [Migrations](Documentation/Migrations.md)
 * [Pre-Migration Checks](Documentation/Pre-Migration-Checks.md)
-* [Generate Migrations Without DB-Interaction from CLI](Documentation/Generate-Migrations-Without-DB-Interaction-from-CLI.md)
+* [Generate Migrations Without DB Interaction](Documentation/Generate-Migrations-Without-DB-Interaction.md)
 
 Tutorials
 ---------
