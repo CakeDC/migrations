@@ -2,7 +2,6 @@ CakeDC Migrations Plugin
 ========================
 
 [![Bake Status](https://secure.travis-ci.org/CakeDC/migrations.png?branch=master)](http://travis-ci.org/CakeDC/migrations)
-[![Test Coverage](https://coveralls.io/repos/CakeDC/migrations/badge.png?branch=master)](https://coveralls.io/r/CakeDC/migrations?branch=master)
 [![Downloads](https://poser.pugx.org/CakeDC/migrations/d/total.png)](https://packagist.org/packages/CakeDC/migrations)
 [![Latest Version](https://poser.pugx.org/CakeDC/migrations/v/stable.png)](https://packagist.org/packages/CakeDC/migrations)
 
