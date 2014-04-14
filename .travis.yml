@@ -12,22 +12,19 @@ env:
     - MYSQL_CREATE_DB="mysql -e 'create database cakephp_test CHARACTER SET utf8 COLLATE utf8_general_ci;'"
 
   matrix:
-    - DB=mysql CAKE_VERSION=2.4
+    - DB=mysql CAKE_VERSION=master
 
 matrix:
   include:
     - php: 5.3
       env:
-        - CAKE_VERSION=2.4
-        - COVERALLS=1
+        - CAKE_VERSION=master
     - php: 5.4
       env:
-        - CAKE_VERSION=2.4
-        - COVERALLS=1
+        - CAKE_VERSION=master
     - php: 5.5
       env:
-        - CAKE_VERSION=2.4
-        - COVERALLS=1
+        - CAKE_VERSION=master
 
 before_script:
   - git clone https://github.com/burzum/travis.git --depth 1 ../travis
