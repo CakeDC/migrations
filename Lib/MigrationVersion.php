@@ -223,9 +223,9 @@ class MigrationVersion {
 		// For BC, 002 was not applied yet.
 		$bc = ($this->Version->schema('class') === null);
 		if ($bc) {
-			$migrated = Set::combine($migrated, '/' . $this->Version->alias . '/version', '/' . $this->Version->alias . '/created');
+			$migrated = Hash::combine($migrated, '{n}.' . $this->Version->alias . '.version', '{n}.' . $this->Version->alias . '.created');
 		} else {
-			$migrated = Set::combine($migrated, '/' . $this->Version->alias . '/class', '/' . $this->Version->alias . '/created');
+			$migrated = Hash::combine($migrated, '{n}.' . $this->Version->alias . '.class', '{n}.' . $this->Version->alias . '.created');
 		}
 
 		$bcMapping = array();
