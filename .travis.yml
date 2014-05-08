@@ -10,6 +10,7 @@ env:
     - PLUGIN_NAME=Migrations
     - DB=mysql
     - MYSQL_CREATE_DB="mysql -e 'create database cakephp_test CHARACTER SET utf8 COLLATE utf8_general_ci;'"
+    - REQUIRE="phpunit/phpunit:3.7.31"
 
   matrix:
     - DB=mysql CAKE_VERSION=master
