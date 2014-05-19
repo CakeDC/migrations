@@ -22,6 +22,11 @@ cake Migrations.migration generate
 
 Skip the comparison of the current database to the existing schema if asked. Then, open the newly created file under ```app/Config/Migrations```, then fill the file with the following migration directives.
 
+Column Keys
+-----------
+
+The **Migrations** plugin works on top of the *CakePHP* Model layer, so you can use all of the features that are supported by the framework to describe columns. See the section on [columns](http://book.cakephp.org/2.0/en/console-and-shells/schema-management-and-migrations.html#columns) for a complete list of all possible options.
+
 Create Table
 ------------
 

@@ -107,7 +107,7 @@ class ConvertVersionToClassNames extends CakeMigration {
  * @return void 
  */
 	public function checkPlugins() {
-		$types = Set::extract('/' . $this->Version->Version->alias . '/type', $this->records);
+		$types = Hash::extract($this->records, '{n}.' . $this->Version->Version->alias . '.type');
 		$types = $plugins = array_unique($types);
 
 		// Remove app from it
