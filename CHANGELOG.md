@@ -6,6 +6,18 @@ Release 2.3.0
 
 https://github.com/CakeDC/migrations/tree/2.3.0
 
+* [12c0f80](https://github.com/CakeDC/migrations/commit/12c0f80) Updating the required CakePHP version in the documentation
+* [3f1da70](https://github.com/CakeDC/migrations/commit/3f1da70) Adding documentation for the columns
+* [0d2a76c](https://github.com/CakeDC/migrations/commit/0d2a76c) Updating a test file
+* [7dec605](https://github.com/CakeDC/migrations/commit/7dec605) Fix reversal of Hash::extract and Set::extract arguments (woops)
+* [2e48fd5](https://github.com/CakeDC/migrations/commit/2e48fd5) Updating Travis
+* [0244df4](https://github.com/CakeDC/migrations/commit/0244df4) Adding CONTRIBUTING.md
+* [8c0c9d8](https://github.com/CakeDC/migrations/commit/8c0c9d8) Update deprecated Set calls to use Hash
+* [d548d3e](https://github.com/CakeDC/migrations/commit/d548d3e) Updating the documentation for generating migrations via CLI without DB
+* [4bdc354](https://github.com/CakeDC/migrations/commit/4bdc354) Updating the documentation for creating migrations interactive via CLI
+* [838a106](https://github.com/CakeDC/migrations/commit/838a106) Adding documentation for the new generate migrations without DB interaction via CLI feature
+* [c52d7cb](https://github.com/CakeDC/migrations/commit/c52d7cb) Simplifying MigrationShellTest::testMigrationStatus
+* [f8f4acc](https://github.com/CakeDC/migrations/commit/f8f4acc) Fixing testGenerateComparison
 * [70fa569](https://github.com/CakeDC/migrations/commit/70fa569) Adjust database setup in travis.yml
 * [7c89dae](https://github.com/CakeDC/migrations/commit/7c89dae) Update travis.yml to test with php 5.5 and more cake versions
 * [93f5943](https://github.com/CakeDC/migrations/commit/93f5943) Implement code & test for 'add fields' from cli arguments
