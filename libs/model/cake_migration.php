@@ -272,6 +272,8 @@ class CakeMigration extends Object {
  * @access protected
  */
 	function _alterTable($type, $tables) {
+		$connection = !empty($this->migration['connection']) ? $this->migration['connection'] : $this->connection;
+		
 		foreach ($tables as $table => $fields) {
 			$indexes = array();
 			if (isset($fields['indexes'])) {
