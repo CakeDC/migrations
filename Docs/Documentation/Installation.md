@@ -30,6 +30,14 @@ If you're using another branch, just change "master" for the branch you are curr
 
 If any updates are added, go back to the base of your own repository, commit and push your changes. This will update your repository to point to the latest updates to the plugin.
 
+
+Include the following line in bootstrap.php to make sure the plugin gets loaded.
+
+```
+CakePlugin::load('Migrations');
+```
+
+
 Composer
 --------
 
