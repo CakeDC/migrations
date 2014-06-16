@@ -921,7 +921,7 @@ class MigrationShell extends AppShell {
  * Write a migration with given name
  *
  * @param string $name Name of migration
- * @param integer the version number (timestamp)
+ * @param integer $version The version number (timestamp)
  * @param array $migration Migration instructions array
  * @return boolean
  */
