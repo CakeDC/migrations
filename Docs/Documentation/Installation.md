@@ -3,6 +3,12 @@ Installation
 
 To install the plugin, place the files in a directory labelled "Migrations/" in your "app/Plugin/" directory.
 
+Then, include the following line in your `app/Config/bootstrap.php` to load the plugin in your application.
+
+```
+CakePlugin::load('Migrations');
+```
+
 Git Submodule
 -------------
 
@@ -29,14 +35,6 @@ git pull origin master
 If you're using another branch, just change "master" for the branch you are currently using.
 
 If any updates are added, go back to the base of your own repository, commit and push your changes. This will update your repository to point to the latest updates to the plugin.
-
-
-Include the following line in bootstrap.php to make sure the plugin gets loaded.
-
-```
-CakePlugin::load('Migrations');
-```
-
 
 Composer
 --------
