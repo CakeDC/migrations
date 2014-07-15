@@ -696,7 +696,7 @@ class MigrationShell extends AppShell {
 		$name = Inflector::camelize($type) . 'Schema';
 
 		if ($type === 'app' && !class_exists($name)) {
-			$appDir = str_replace('-', '', APP_DIR);
+			$appDir = preg_replace('/[^a-zA-Z0-9]/', '', APP_DIR);
 			$name = Inflector::camelize($appDir) . 'Schema';
 		}
 
