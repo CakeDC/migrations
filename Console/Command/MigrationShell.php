@@ -105,15 +105,15 @@ class MigrationShell extends AppShell {
 		$this->Version = new MigrationVersion($options);
 
 		$this->_messages = array(
-			'create_table' => __d('migrations', 'Creating table :table.'),
-			'drop_table' => __d('migrations', 'Dropping table :table.'),
-			'rename_table' => __d('migrations', 'Renaming table :old_name to :new_name.'),
-			'add_field' => __d('migrations', 'Adding field :field to :table.'),
-			'drop_field' => __d('migrations', 'Dropping field :field from :table.'),
-			'change_field' => __d('migrations', 'Changing field :field from :table.'),
-			'rename_field' => __d('migrations', 'Renaming field :old_name to :new_name on :table.'),
-			'add_index' => __d('migrations', 'Adding index :index to :table.'),
-			'drop_index' => __d('migrations', 'Dropping index :index from :table.'),
+			'create_table' => __d('migrations', 'Creating table ":table".'),
+			'drop_table' => __d('migrations', 'Dropping table ":table".'),
+			'rename_table' => __d('migrations', 'Renaming table ":old_name" to ":new_name".'),
+			'add_field' => __d('migrations', 'Adding field ":field" to table ":table".'),
+			'drop_field' => __d('migrations', 'Dropping field ":field" from table ":table".'),
+			'change_field' => __d('migrations', 'Changing field ":field" from table ":table".'),
+			'rename_field' => __d('migrations', 'Renaming field ":old_name" to ":new_name" on table ":table".'),
+			'add_index' => __d('migrations', 'Adding index ":index" to table ":table".'),
+			'drop_index' => __d('migrations', 'Dropping index ":index" from table ":table".'),
 		);
 	}
 
