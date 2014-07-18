@@ -1,22 +1,24 @@
 # LANGUAGE translation of the CakePHP Migrations plugin
 #
-# Copyright 2010, Cake Development Corporation (http://cakedc.com)
+# Copyright 2010 - 2014, Cake Development Corporation (http://cakedc.com)
 #
 # Licensed under The MIT License
 # Redistributions of files must retain the above copyright notice.
 #
-# @copyright Copyright 2010, Cake Development Corporation (http://cakedc.com)
+# @copyright Copyright 2010 - 2014, Cake Development Corporation (http://cakedc.com)
 # @license MIT License (http://www.opensource.org/licenses/mit-license.php)
 #
+#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: \n"
+"Project-Id-Version: CakePHP Migrations Plugin\n"
 "POT-Creation-Date: 2014-07-18 18:10+0200\n"
 "PO-Revision-Date: 2014-07-18 18:28+0100\n"
 "Last-Translator: Florian Krämer <florian.kraemer@cakedc.com>\n"
 "Language-Team: Cake Development Corporation <info@cakedc.com>\n"
+"Language: de_DE\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n!=1);\n"
 "X-Poedit-Language: GERMAN\n"
