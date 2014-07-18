@@ -282,9 +282,3 @@ msgstr "Le champ \"%s\" existe déjà dans \"%s\"."
 #, fuzzy
 msgid "Migration Status"
 msgstr "Migration : %s"
-
-#~ msgid "%2$s does not contain a proper map.php file."
-#~ msgstr "%2$s ne contient pas de fichier map.php propre."
-
-#~ msgid "Mapping Migrations..."
-#~ msgstr "Mapping des Migrations ..."

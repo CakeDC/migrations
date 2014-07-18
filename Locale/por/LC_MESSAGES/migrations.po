@@ -277,9 +277,3 @@ msgstr "Coluna \"%s\" já existe em \"%s\"."
 #, fuzzy
 msgid "Migration Status"
 msgstr "Migração: %s"
-
-#~ msgid "%2$s does not contain a proper map.php file."
-#~ msgstr "%2$s não contém um arquivo map.php apropriado."
-
-#~ msgid "Mapping Migrations..."
-#~ msgstr "Mapeando Migrações..."

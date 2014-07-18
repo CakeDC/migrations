@@ -246,4 +246,3 @@ msgstr ""
 #: View/Elements/migrations_panel.ctp:12
 msgid "Migration Status"
 msgstr ""
-

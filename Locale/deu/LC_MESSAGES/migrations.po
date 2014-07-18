@@ -279,9 +279,3 @@ msgstr "Das Feld \"%s\" existiert bereits in der Tabelle \"%s\" ."
 #, fuzzy
 msgid "Migration Status"
 msgstr "Migrationsstatus"
-
-#~ msgid "%2$s does not contain a proper map.php file."
-#~ msgstr "%2$s enthält keine ordentliche map.php Datei."
-
-#~ msgid "Mapping Migrations..."
-#~ msgstr "Weise Migrationen zu..."
