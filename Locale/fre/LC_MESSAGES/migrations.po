@@ -246,10 +246,6 @@ msgstr ""
 "Le type d'action de la Migration (%s) ne fait pas partie des type d'actions "
 "valides."
 
-#: Lib/CakeMigration.php:301
-msgid "%s"
-msgstr ""
-
 #: Lib/CakeMigration.php:343;373;401;488;528
 msgid "SQL Error: %s"
 msgstr "Erreur SQL : %s"

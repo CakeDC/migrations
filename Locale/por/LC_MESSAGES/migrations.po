@@ -241,10 +241,6 @@ msgstr "Direção da Migração (%s) não é uma das direções válidas."
 msgid "Migration action type (%s) is not one of valid actions type."
 msgstr "Tipo de ação (%s) da Migração não é um dos tipos de ações válidos."
 
-#: Lib/CakeMigration.php:301
-msgid "%s"
-msgstr ""
-
 #: Lib/CakeMigration.php:343;373;401;488;528
 msgid "SQL Error: %s"
 msgstr "Erro SQL: %s"
