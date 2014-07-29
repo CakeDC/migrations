@@ -1,6 +1,9 @@
 Changelog
 =========
 
+Release 2.3.1
+-------------
+
 https://github.com/CakeDC/migrations/tree/2.3.1
 
 * [117e958](https://github.com/cakedc/migrations/commit/117e958) Updating the Installation.md
