@@ -393,7 +393,7 @@ class CakeMigration extends Object {
 
 				if ($this->dry) {
 					$this->logQuery($sql);
-					return true;
+					continue;
 				}
 
 				$this->_invokeCallbacks('beforeAction', 'rename_table', array('old_name' => $oldName, 'new_name' => $newName));
@@ -480,7 +480,7 @@ class CakeMigration extends Object {
 
 					if ($this->dry) {
 						$this->logQuery($sql);
-						return true;
+						continue;
 					}
 
 					$this->_invokeCallbacks('beforeAction', $type . '_field', $callbackData);
@@ -519,7 +519,7 @@ class CakeMigration extends Object {
 
 			if ($this->dry) {
 				$this->logQuery($sql);
-				return true;
+				continue;
 			}
 
 			if ($this->_invokePrecheck('beforeAction', $type . '_index', array('table' => $table, 'index' => $key))) {
