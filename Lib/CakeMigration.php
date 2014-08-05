@@ -431,7 +431,7 @@ class CakeMigration extends Object {
 				$tableFields = $this->db->describe($model);
 				$tableFields['indexes'] = $this->db->index($model);
 				$tableFields['tableParameters'] = $this->db->readTableParameters($this->db->fullTableName($model, false, false));
-				
+
 				if ($type === 'drop') {
 					$field = $col;
 				}
@@ -442,6 +442,7 @@ class CakeMigration extends Object {
 					$data = array('table' => $table, 'field' => $field);
 				}
 				$callbackData = $data;
+
 				if ($this->_invokePrecheck('beforeAction', $type . '_field', $data)) {
 					switch ($type) {
 						case 'add':
@@ -480,7 +481,7 @@ class CakeMigration extends Object {
 
 					if ($this->dry) {
 						$this->logQuery($sql);
-						return true;
+						continue;
 					}
 
 					$this->_invokeCallbacks('beforeAction', $type . '_field', $callbackData);
@@ -488,6 +489,9 @@ class CakeMigration extends Object {
 						throw new MigrationException($this, sprintf(__d('migrations', 'SQL Error: %s'), $this->db->error));
 					}
 					$this->_invokeCallbacks('afterAction', $type . '_field', $callbackData);
+				}
+				if ($this->dry) {
+					return true;
 				}
 			}
 
