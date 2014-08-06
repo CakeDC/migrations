@@ -166,6 +166,7 @@ class CakeMigration extends Object {
  * Constructor
  *
  * @param array $options optional load object properties
+ * @throws MigrationException
  */
 	public function __construct($options = array()) {
 		parent::__construct();
@@ -313,7 +314,6 @@ class CakeMigration extends Object {
  */
 	protected function migration_order($a, $b) {
 		$order = array('drop_table', 'rename_table', 'create_table', 'drop_field', 'rename_field', 'alter_field', 'create_field');
-
 		return array_search($a, $order) - array_search($b, $order);
 	}
 
@@ -393,7 +393,7 @@ class CakeMigration extends Object {
 
 				if ($this->dry) {
 					$this->logQuery($sql);
-					return true;
+					continue;
 				}
 
 				$this->_invokeCallbacks('beforeAction', 'rename_table', array('old_name' => $oldName, 'new_name' => $newName));
@@ -490,9 +490,6 @@ class CakeMigration extends Object {
 					}
 					$this->_invokeCallbacks('afterAction', $type . '_field', $callbackData);
 				}
-				if ($this->dry) {
-					return true;
-				}
 			}
 
 			if ($type !== 'drop') {
@@ -523,7 +520,7 @@ class CakeMigration extends Object {
 
 			if ($this->dry) {
 				$this->logQuery($sql);
-				return true;
+				continue;
 			}
 
 			if ($this->_invokePrecheck('beforeAction', $type . '_index', array('table' => $table, 'index' => $key))) {
