@@ -699,6 +699,8 @@ class MigrationShell extends AppShell {
 		$name = Inflector::camelize($name);
 		if ($suffix === true && (substr($name, -6) !== 'Schema')) {
 			$name .= 'Schema';
+		} elseif ($suffix === false && (substr($name, -6) === 'Schema')) {
+			$name = substr($name, 0, -6);
 		}
 		return $name;
 	}
