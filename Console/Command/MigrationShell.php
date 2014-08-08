@@ -156,6 +156,11 @@ class MigrationShell extends AppShell {
 				'boolean' => true,
 				'default' => false,
 				'help' => __('Disables automatic creation of migrations table and running any internal plugin migrations')))
+			->addOption('schema-class', array(
+				'short' => 's',
+				'boolean' => false,
+				'default' => 'App',
+				'help' => __('CamelCased Classname without the `Schema` suffix to use when reading or generating schema files. See `Console/cake schema generate --help`.')))
 			->addSubcommand('status', array(
 				'help' => __('Displays a status of all plugin and app migrations.')))
 			->addSubcommand('run', array(
@@ -677,6 +682,28 @@ class MigrationShell extends AppShell {
 	}
 
 /**
+ * Gets the schema class name
+ *
+ * @param string $name Can be 'app' or a plugin name
+ * @param boolean Return the class name with or without the "Schema" suffix, default is true
+ * @return string Returns the schema class name
+ */
+	protected function _getSchemaClassName($name = null, $suffix = true) {
+		if (empty($name)) {
+			$name = $this->type;
+		}
+		if (!empty($this->params['schema-class'])) {
+			$name = $this->params['schema-class'];
+		}
+		$name = preg_replace('/[^a-zA-Z0-9]/', '', $name);
+		$name = Inflector::camelize($name);
+		if ($suffix === true && (substr($name, -6) !== 'Schema')) {
+			$name .= 'Schema';
+		}
+		return $name;
+	}
+
+/**
  * Load and construct the schema class if exists
  *
  * @param string $type Can be 'app' or a plugin name
@@ -693,7 +720,7 @@ class MigrationShell extends AppShell {
 		}
 		require_once $file;
 
-		$name = Inflector::camelize($type) . 'Schema';
+		$name = $this->_getSchemaClassName($type);
 
 		if ($type === 'app' && !class_exists($name)) {
 			$appDir = preg_replace('/[^a-zA-Z0-9]/', '', APP_DIR);
@@ -731,6 +758,7 @@ class MigrationShell extends AppShell {
 		if ($this->params['force']) {
 			$command .= ' --force';
 		}
+		$command .= ' --name ' . $this->_getSchemaClassName($this->type, false);
 		$this->dispatchShell($command);
 	}
 
