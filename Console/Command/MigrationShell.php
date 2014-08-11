@@ -760,7 +760,7 @@ class MigrationShell extends AppShell {
 		if ($this->params['force']) {
 			$command .= ' --force';
 		}
-		$command .= ' --name ' . $this->_getSchemaClassName($this->type, false);
+		$command .= ' --file schema.php --name ' . $this->_getSchemaClassName($this->type, false);
 		$this->dispatchShell($command);
 	}
 
