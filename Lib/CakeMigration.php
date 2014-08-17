@@ -299,7 +299,7 @@ class CakeMigration extends Object {
 			try {
 				$result = $this->{$methodName}($type, $info);
 			} catch (Exception $e) {
-				throw new MigrationException($this, sprintf(__d('migrations', '%s'), $e->getMessage()));
+				throw new MigrationException($this, $e->getMessage());
 			}
 		}
 		return $result;
