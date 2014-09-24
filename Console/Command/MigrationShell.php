@@ -497,10 +497,9 @@ class MigrationShell extends AppShell {
 			$this->out($this->_generateMigration('Preview of migration', 'PreviewMigration', $migration));
 		}
 
-		if (empty($migrationName)) {
+		$name = $migrationName;
+		if (empty($name)) {
 			$name = $this->_promptForMigrationName();
-		} else {
-			$name = $migrationName;
 		}
 
 		$this->out(__d('migrations', 'Generating Migration...'));
