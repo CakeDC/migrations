@@ -1,6 +1,15 @@
 Changelog
 =========
 
+Release 2.3.1
+-------------
+
+https://github.com/CakeDC/migrations/tree/2.3.1
+
+* [117e958](https://github.com/cakedc/migrations/commit/117e958) Updating the Installation.md
+* [71acf74](https://github.com/cakedc/migrations/commit/71acf74) Adding in the load statement to be added in to bootstrap
+* [a1467a5](https://github.com/cakedc/migrations/commit/a1467a5) Fix the doc blocks
+
 Release 2.3.0
 -------------
 
