@@ -903,7 +903,10 @@ class MigrationShell extends AppShell {
 
 						$content .= "\t\t\t\t'" . $table . "' => array(";
 						if (!empty($fields)) {
-							$content .= "'" . implode("', '", $fields) . "', ";
+							$content .= "'" . implode("', '", $fields) . "'";
+						}
+						if (!empty($fields) && !empty($indexes)) {
+							$content .= ", ";
 						}
 						if (!empty($indexes)) {
 							$content .= "'indexes' => array('" . implode("', '", $indexes) . "')";

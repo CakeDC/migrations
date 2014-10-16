@@ -808,7 +808,7 @@ TEXT;
 
 		$pattern = <<<TEXT
 /			'drop_field' => array\(
-				'articles' => array\('slug',\),
+				'articles' => array\('slug'\),
 			\),/
 TEXT;
 		$this->assertRegExp(str_replace("\r\n", "\n", $pattern), $result);
