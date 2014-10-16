@@ -494,13 +494,12 @@ class MigrationShell extends AppShell {
 	protected function _finalizeGeneratedMigration(&$migration, &$migrationName, &$fromSchema) {
 		$response = $this->in(__d('migrations', 'Do you want to preview the file before generation?'), array('y', 'n'), 'y');
 		if (strtolower($response) === 'y') {
-			$this->out($this->_generateMigration('', 'PreviewMigration', $migration));
+			$this->out($this->_generateMigration('Preview of migration', 'PreviewMigration', $migration));
 		}
 
-		if (empty($migrationName)) {
+		$name = $migrationName;
+		if (empty($name)) {
 			$name = $this->_promptForMigrationName();
-		} else {
-			$name = $migrationName;
 		}
 
 		$this->out(__d('migrations', 'Generating Migration...'));
