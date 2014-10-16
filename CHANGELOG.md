@@ -1,6 +1,36 @@
 Changelog
 =========
 
+Release 2.3.2
+-------------
+
+https://github.com/CakeDC/migrations/tree/2.3.2
+
+* [d3a3af7](https://github.com/cakedc/migrations/commit/d3a3af7) Fix CS in generated migrations (remove comma from param name in docblock)
+* [abc4c92](https://github.com/cakedc/migrations/commit/abc4c92) Fix CS in generated migrations (remove trailing comma from drop_field array)
+* [c952119](https://github.com/cakedc/migrations/commit/c952119) Fix migration generation when only indexes are changed (closes [#189](https://github.com/CakeDC/migrations/issues/189))
+* [6386cd0](https://github.com/cakedc/migrations/commit/6386cd0) Removed else clause
+* [735401f](https://github.com/cakedc/migrations/commit/735401f) Added preview description when generating preview migration class
+* [4526828](https://github.com/cakedc/migrations/commit/4526828) Output entered description into $description in generated migration class
+* [4ffb6bf](https://github.com/cakedc/migrations/commit/4ffb6bf) Removed redundant and seemingly superfluous migration template
+* [ca982f6](https://github.com/cakedc/migrations/commit/ca982f6) Refs [#140](https://github.com/CakeDC/migrations/issues/140) Fixing the dry run output in other places as well
+* [d6cc1fa](https://github.com/cakedc/migrations/commit/d6cc1fa) Fixing [#140](https://github.com/CakeDC/migrations/issues/140) Migration run dry is not equal to run in real
+* [dcdbb20](https://github.com/cakedc/migrations/commit/dcdbb20) Update CHANGELOG.md
+* [cca5544](https://github.com/cakedc/migrations/commit/cca5544) Removed disabled translations in PO files
+* [72c3abc](https://github.com/cakedc/migrations/commit/72c3abc) Removed superfluous translation call
+* [409de07](https://github.com/cakedc/migrations/commit/409de07) Added .idea to .gitignore
+* [7de581c](https://github.com/cakedc/migrations/commit/7de581c) Set up some .gitignore rules
+* [c31eca8](https://github.com/cakedc/migrations/commit/c31eca8) Updated PO file headers from POT file
+* [d9a7ea3](https://github.com/cakedc/migrations/commit/d9a7ea3) Improved POT file header
+* [92158ab](https://github.com/cakedc/migrations/commit/92158ab) Updated spa locale from POT file
+* [4554b23](https://github.com/cakedc/migrations/commit/4554b23) Updated por locale from POT file
+* [7b9d383](https://github.com/cakedc/migrations/commit/7b9d383) Updated ita locale from POT file
+* [5acffda](https://github.com/cakedc/migrations/commit/5acffda) Updated fre locale from POT file
+* [af97e06](https://github.com/cakedc/migrations/commit/af97e06) Updated deu locale from POT file
+* [a33853c](https://github.com/cakedc/migrations/commit/a33853c) Regenerated migrations.pot file
+* [e830bc3](https://github.com/cakedc/migrations/commit/e830bc3) Made the migration shell messages more clear by adding quotes and the word table
+* [bc4bbe6](https://github.com/cakedc/migrations/commit/bc4bbe6) Fixing the class name generation in MigrationShell::_getSchema()
+
 Release 2.3.1
 -------------
 
