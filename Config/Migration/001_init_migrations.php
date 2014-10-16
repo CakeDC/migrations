@@ -37,7 +37,7 @@ class InitMigrations extends CakeMigration {
 /**
  * Before migration callback
  *
- * @param string $direction, up or down direction of migration process
+ * @param string $direction Direction of migration process (up or down)
  * @return boolean Should process continue
  */
 	public function before($direction) {
@@ -47,7 +47,7 @@ class InitMigrations extends CakeMigration {
 /**
  * After migration callback
  *
- * @param string $direction, up or down direction of migration process
+ * @param string $direction Direction of migration process (up or down)
  * @return boolean Should process continue
  */
 	public function after($direction) {

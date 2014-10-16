@@ -126,7 +126,7 @@ class CakeMigration extends Object {
 /**
  * Before migration callback
  *
- * @param string $direction, up or down direction of migration process
+ * @param string $direction Direction of migration process (up or down)
  * @return boolean Should process continue
  */
 	public function before($direction) {
@@ -136,7 +136,7 @@ class CakeMigration extends Object {
 /**
  * After migration callback
  *
- * @param string $direction, up or down direction of migration process
+ * @param string $direction Direction of migration process (up or down)
  * @return boolean Should process continue
  */
 	public function after($direction) {
@@ -219,7 +219,7 @@ class CakeMigration extends Object {
 /**
  * Run migration
  *
- * @param string $direction, up or down direction of migration process
+ * @param string $direction Direction of migration process (up or down)
  * @return boolean Status of the process
  * @throws MigrationException
  */
