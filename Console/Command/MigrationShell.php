@@ -901,9 +901,15 @@ class MigrationShell extends AppShell {
 						}
 						unset($fields['indexes']);
 
-						$content .= "\t\t\t\t'" . $table . "' => array('" . implode("', '", $fields) . "',";
+						$content .= "\t\t\t\t'" . $table . "' => array(";
+						if (!empty($fields)) {
+							$content .= "'" . implode("', '", $fields) . "'";
+						}
+						if (!empty($fields) && !empty($indexes)) {
+							$content .= ", ";
+						}
 						if (!empty($indexes)) {
-							$content .= " 'indexes' => array('" . implode("', '", $indexes) . "')";
+							$content .= "'indexes' => array('" . implode("', '", $indexes) . "')";
 						}
 						$content .= "),\n";
 					}
