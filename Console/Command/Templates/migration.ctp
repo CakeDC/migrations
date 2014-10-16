@@ -17,7 +17,7 @@ class <?php echo $class; ?> extends CakeMigration {
  *
  * @var string
  */
-	public $description = '';
+	public $description = '<?php echo $name; ?>';
 
 /**
  * Actions to be performed
