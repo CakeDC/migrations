@@ -684,6 +684,63 @@ TEXT;
 	}
 
 /**
+ * Test writing migration that only contains index changes
+ *
+ * @return void
+ * @link https://github.com/CakeDC/migrations/issues/189
+ */
+	public function testWriteMigrationIndexesOnly() {
+		$this->_unlink('12345_migration_test_file.php');
+
+		$users = $this->tables['users'];
+		$users['indexes'] = array('UNIQUE_USER' => array('column' => 'user', 'unique' => true));
+		$migration = array(
+			'up' => array(
+				'create_field' => array(
+					'posts' => array(
+						'indexes' => array(
+							'USER_ID' => array('column' => 'user_id', 'unique' => false)
+						)
+					)
+				)
+			),
+			'down' => array(
+				'drop_field' => array(
+					'posts' => array(
+						'indexes' => array('USER_ID')
+					)
+				)
+			)
+		);
+
+		$this->assertFalse(file_exists(TMP . 'tests' . DS . '12345_migration_test_file.php'));
+		$this->assertTrue($this->Shell->writeMigration('migration_test_file', 12345, $migration));
+		$this->assertTrue(file_exists(TMP . 'tests' . DS . '12345_migration_test_file.php'));
+
+		$result = $this->_getMigrationVariable(TMP . 'tests' . DS . '12345_migration_test_file.php');
+		$expected = <<<TEXT
+	public \$migration = array(
+		'up' => array(
+			'create_field' => array(
+				'posts' => array(
+					'indexes' => array(
+						'USER_ID' => array('column' => 'user_id', 'unique' => false),
+					),
+				),
+			),
+		),
+		'down' => array(
+			'drop_field' => array(
+				'posts' => array('indexes' => array('USER_ID')),
+			),
+		),
+	);
+TEXT;
+		$this->assertEquals($result, str_replace("\r\n", "\n", $expected));
+		$this->_unlink('12345_migration_test_file.php');
+	}
+
+/**
  * TestGenerate method
  *
  * @return void
