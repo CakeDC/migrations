@@ -126,7 +126,7 @@ class CakeMigration extends Object {
 /**
  * Before migration callback
  *
- * @param string $direction, up or down direction of migration process
+ * @param string $direction Direction of migration process (up or down)
  * @return boolean Should process continue
  */
 	public function before($direction) {
@@ -136,7 +136,7 @@ class CakeMigration extends Object {
 /**
  * After migration callback
  *
- * @param string $direction, up or down direction of migration process
+ * @param string $direction Direction of migration process (up or down)
  * @return boolean Should process continue
  */
 	public function after($direction) {
@@ -166,6 +166,7 @@ class CakeMigration extends Object {
  * Constructor
  *
  * @param array $options optional load object properties
+ * @throws MigrationException
  */
 	public function __construct($options = array()) {
 		parent::__construct();
@@ -218,7 +219,7 @@ class CakeMigration extends Object {
 /**
  * Run migration
  *
- * @param string $direction, up or down direction of migration process
+ * @param string $direction Direction of migration process (up or down)
  * @return boolean Status of the process
  * @throws MigrationException
  */
@@ -298,7 +299,7 @@ class CakeMigration extends Object {
 			try {
 				$result = $this->{$methodName}($type, $info);
 			} catch (Exception $e) {
-				throw new MigrationException($this, sprintf(__d('migrations', '%s'), $e->getMessage()));
+				throw new MigrationException($this, $e->getMessage());
 			}
 		}
 		return $result;
@@ -313,7 +314,6 @@ class CakeMigration extends Object {
  */
 	protected function migration_order($a, $b) {
 		$order = array('drop_table', 'rename_table', 'create_table', 'drop_field', 'rename_field', 'alter_field', 'create_field');
-
 		return array_search($a, $order) - array_search($b, $order);
 	}
 
@@ -393,7 +393,7 @@ class CakeMigration extends Object {
 
 				if ($this->dry) {
 					$this->logQuery($sql);
-					return true;
+					continue;
 				}
 
 				$this->_invokeCallbacks('beforeAction', 'rename_table', array('old_name' => $oldName, 'new_name' => $newName));
@@ -431,7 +431,7 @@ class CakeMigration extends Object {
 				$tableFields = $this->db->describe($model);
 				$tableFields['indexes'] = $this->db->index($model);
 				$tableFields['tableParameters'] = $this->db->readTableParameters($this->db->fullTableName($model, false, false));
-				
+
 				if ($type === 'drop') {
 					$field = $col;
 				}
@@ -442,6 +442,7 @@ class CakeMigration extends Object {
 					$data = array('table' => $table, 'field' => $field);
 				}
 				$callbackData = $data;
+
 				if ($this->_invokePrecheck('beforeAction', $type . '_field', $data)) {
 					switch ($type) {
 						case 'add':
@@ -480,7 +481,7 @@ class CakeMigration extends Object {
 
 					if ($this->dry) {
 						$this->logQuery($sql);
-						return true;
+						continue;
 					}
 
 					$this->_invokeCallbacks('beforeAction', $type . '_field', $callbackData);
@@ -519,7 +520,7 @@ class CakeMigration extends Object {
 
 			if ($this->dry) {
 				$this->logQuery($sql);
-				return true;
+				continue;
 			}
 
 			if ($this->_invokePrecheck('beforeAction', $type . '_index', array('table' => $table, 'index' => $key))) {

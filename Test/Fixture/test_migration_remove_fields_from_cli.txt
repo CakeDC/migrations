@@ -1,7 +1,7 @@
 	public $migration = array(
 		'up' => array(
 			'drop_field' => array(
-				'products' => array('name', 'description',),
+				'products' => array('name', 'description'),
 			),
 		),
 		'down' => array(

@@ -47,7 +47,7 @@ class ConvertVersionToClassNames extends CakeMigration {
 /**
  * Before migration callback
  *
- * @param string $direction, up or down direction of migration process
+ * @param string $direction Direction of migration process (up or down)
  * @return boolean Should process continue
  * @throws InternalErrorException
  */
@@ -68,7 +68,7 @@ class ConvertVersionToClassNames extends CakeMigration {
 /**
  * After migration callback
  *
- * @param string $direction, up or down direction of migration process
+ * @param string $direction Direction of migration process (up or down)
  * @return boolean Should process continue
  */
 	public function after($direction) {
@@ -104,7 +104,7 @@ class ConvertVersionToClassNames extends CakeMigration {
  * Check if every plugin is loaded/reachable, we need access to them
  *
  * @throws MissingPluginException
- * @return void 
+ * @return void
  */
 	public function checkPlugins() {
 		$types = Hash::extract($this->records, '{n}.' . $this->Version->Version->alias . '.type');

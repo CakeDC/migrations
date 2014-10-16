@@ -105,15 +105,15 @@ class MigrationShell extends AppShell {
 		$this->Version = new MigrationVersion($options);
 
 		$this->_messages = array(
-			'create_table' => __d('migrations', 'Creating table :table.'),
-			'drop_table' => __d('migrations', 'Dropping table :table.'),
-			'rename_table' => __d('migrations', 'Renaming table :old_name to :new_name.'),
-			'add_field' => __d('migrations', 'Adding field :field to :table.'),
-			'drop_field' => __d('migrations', 'Dropping field :field from :table.'),
-			'change_field' => __d('migrations', 'Changing field :field from :table.'),
-			'rename_field' => __d('migrations', 'Renaming field :old_name to :new_name on :table.'),
-			'add_index' => __d('migrations', 'Adding index :index to :table.'),
-			'drop_index' => __d('migrations', 'Dropping index :index from :table.'),
+			'create_table' => __d('migrations', 'Creating table ":table".'),
+			'drop_table' => __d('migrations', 'Dropping table ":table".'),
+			'rename_table' => __d('migrations', 'Renaming table ":old_name" to ":new_name".'),
+			'add_field' => __d('migrations', 'Adding field ":field" to table ":table".'),
+			'drop_field' => __d('migrations', 'Dropping field ":field" from table ":table".'),
+			'change_field' => __d('migrations', 'Changing field ":field" from table ":table".'),
+			'rename_field' => __d('migrations', 'Renaming field ":old_name" to ":new_name" on table ":table".'),
+			'add_index' => __d('migrations', 'Adding index ":index" to table ":table".'),
+			'drop_index' => __d('migrations', 'Dropping index ":index" from table ":table".'),
 		);
 	}
 
@@ -494,13 +494,12 @@ class MigrationShell extends AppShell {
 	protected function _finalizeGeneratedMigration(&$migration, &$migrationName, &$fromSchema) {
 		$response = $this->in(__d('migrations', 'Do you want to preview the file before generation?'), array('y', 'n'), 'y');
 		if (strtolower($response) === 'y') {
-			$this->out($this->_generateMigration('', 'PreviewMigration', $migration));
+			$this->out($this->_generateMigration('Preview of migration', 'PreviewMigration', $migration));
 		}
 
-		if (empty($migrationName)) {
+		$name = $migrationName;
+		if (empty($name)) {
 			$name = $this->_promptForMigrationName();
-		} else {
-			$name = $migrationName;
 		}
 
 		$this->out(__d('migrations', 'Generating Migration...'));
@@ -696,7 +695,7 @@ class MigrationShell extends AppShell {
 		$name = Inflector::camelize($type) . 'Schema';
 
 		if ($type === 'app' && !class_exists($name)) {
-			$appDir = str_replace('-', '', APP_DIR);
+			$appDir = preg_replace('/[^a-zA-Z0-9]/', '', APP_DIR);
 			$name = Inflector::camelize($appDir) . 'Schema';
 		}
 
@@ -901,9 +900,15 @@ class MigrationShell extends AppShell {
 						}
 						unset($fields['indexes']);
 
-						$content .= "\t\t\t\t'" . $table . "' => array('" . implode("', '", $fields) . "',";
+						$content .= "\t\t\t\t'" . $table . "' => array(";
+						if (!empty($fields)) {
+							$content .= "'" . implode("', '", $fields) . "'";
+						}
+						if (!empty($fields) && !empty($indexes)) {
+							$content .= ", ";
+						}
 						if (!empty($indexes)) {
-							$content .= " 'indexes' => array('" . implode("', '", $indexes) . "')";
+							$content .= "'indexes' => array('" . implode("', '", $indexes) . "')";
 						}
 						$content .= "),\n";
 					}
