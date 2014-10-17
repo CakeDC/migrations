@@ -1,6 +1,17 @@
 Changelog
 =========
 
+Release 2.3.3
+-------------
+
+https://github.com/CakeDC/migrations/tree/2.3.3
+
+* [14a3cc4](https://github.com/cakedc/migrations/commit/14a3cc4) Bump minimum required CakePHP version to 2.5.4 (refs [#184](https://github.com/CakeDC/migrations/issues/184))
+* [f6f3490](https://github.com/cakedc/migrations/commit/f6f3490) CS: Changed doc block "boolean" to "bool"
+* [b6c579c](https://github.com/cakedc/migrations/commit/b6c579c) Fixes Schema/app.php issue.
+* [749e634](https://github.com/cakedc/migrations/commit/749e634) Improved logic for schema class name detection.
+* [9ef51fd](https://github.com/cakedc/migrations/commit/9ef51fd) Adds an option for specifying the Schema class name.
+
 Release 2.3.2
 -------------
 
