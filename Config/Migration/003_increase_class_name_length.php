@@ -34,7 +34,7 @@ class IncreaseClassNameLength extends CakeMigration {
  * Before migration callback
  *
  * @param string $direction Direction of migration process (up or down)
- * @return boolean Should process continue
+ * @return bool Should process continue
  */
 	public function before($direction) {
 		return true;
@@ -44,7 +44,7 @@ class IncreaseClassNameLength extends CakeMigration {
  * After migration callback
  *
  * @param string $direction Direction of migration process (up or down)
- * @return boolean Should process continue
+ * @return bool Should process continue
  */
 	public function after($direction) {
 		return true;

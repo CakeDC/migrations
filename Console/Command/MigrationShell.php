@@ -488,7 +488,7 @@ class MigrationShell extends AppShell {
  * prompts for a name, writes the file, and updates db version if needed.
  * @param array $migration reference to variable of the same name in generate() method
  * @param array $migrationName reference to variable of the same name in generate() method
- * @param  boolean $fromSchema reference to variable of the same name in generate() method
+ * @param  bool $fromSchema reference to variable of the same name in generate() method
  * @return void
  */
 	protected function _finalizeGeneratedMigration(&$migration, &$migrationName, &$fromSchema) {
@@ -928,7 +928,7 @@ class MigrationShell extends AppShell {
  * @param string $name Name of migration
  * @param integer $version The version number (timestamp)
  * @param array $migration Migration instructions array
- * @return boolean
+ * @return bool
  */
 	protected function _writeMigration($name, $version, $migration) {
 		$content = '';

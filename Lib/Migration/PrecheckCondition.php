@@ -17,7 +17,7 @@ class PrecheckCondition extends PrecheckBase {
  * Perform check before table drop.
  *
  * @param string $table
- * @return boolean
+ * @return bool
  */
 	public function checkDropTable($table) {
 		return $this->tableExists($table);
@@ -27,7 +27,7 @@ class PrecheckCondition extends PrecheckBase {
  * Perform check before table create.
  *
  * @param string $table
- * @return boolean
+ * @return bool
  */
 	public function checkCreateTable($table) {
 		return !$this->tableExists($table);
@@ -38,7 +38,7 @@ class PrecheckCondition extends PrecheckBase {
  *
  * @param string $table
  * @param string $field
- * @return boolean
+ * @return bool
  */
 	public function checkDropField($table, $field) {
 		return $this->tableExists($table) && $this->fieldExists($table, $field);
@@ -49,7 +49,7 @@ class PrecheckCondition extends PrecheckBase {
  *
  * @param string $table
  * @param string $field
- * @return boolean
+ * @return bool
  */
 	public function checkAddField($table, $field) {
 		return $this->tableExists($table) && !$this->fieldExists($table, $field);

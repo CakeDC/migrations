@@ -65,7 +65,7 @@ class MigrationVersion {
  * If try, the SQL will be outputted to screen rather than
  * applied to the database
  *
- * @var boolean
+ * @var bool
  */
 	public $dry = false;
 
@@ -147,9 +147,9 @@ class MigrationVersion {
  *
  * @param integer $version Current version
  * @param string $type Can be 'app' or a plugin name
- * @param boolean $migrated If true, will add the record to the database
+ * @param bool $migrated If true, will add the record to the database
  * 		If false, will remove the record from the database
- * @return boolean
+ * @return bool
  */
 	public function setVersion($version, $type, $migrated = true) {
 		if ($this->dry) {
@@ -189,7 +189,7 @@ class MigrationVersion {
  * Get mapping for the given type
  *
  * @param string $type Can be 'app' or a plugin name
- * @param boolean   $cache
+ * @param bool   $cache
  * @return mixed False in case of no file found or empty mapping, array with mapping
  */
 	public function getMapping($type, $cache = true) {
@@ -264,7 +264,7 @@ class MigrationVersion {
  * @param string $class Migration class name
  * @param string $type Can be 'app' or a plugin name
  * @param array $options Extra options to send to CakeMigration class
- * @return boolean|CakeMigration False in case of no file found, instance of the migration
+ * @return bool|CakeMigration False in case of no file found, instance of the migration
  * @throws MigrationVersionException
  */
 	public function getMigration($name, $class, $type, $options = array()) {
@@ -294,7 +294,7 @@ class MigrationVersion {
  * - `version` - Until what version want migrate to
  *
  * @param array $options An array with options.
- * @return boolean
+ * @return bool
  * @throws Exception
  */
 	public function run($options) {
