@@ -790,7 +790,7 @@ TEXT;
 		$this->Shell->expects($this->at(2))->method('in')->will($this->returnValue('n'));
 		$this->Shell->expects($this->at(3))->method('in')->will($this->returnValue('drop slug field'));
 		$this->Shell->expects($this->at(4))->method('in')->will($this->returnValue('y'));
-		$this->Shell->expects($this->at(5))->method('dispatchShell')->with('schema generate --connection test --force');
+		$this->Shell->expects($this->at(5))->method('dispatchShell')->with('schema generate --connection test --force --file schema.php --name TestMigrationPlugin4');
 
 		$this->Shell->Version->expects($this->any())->method('getMapping')->will($this->returnCallback(array($this, 'returnMapping')));
 
