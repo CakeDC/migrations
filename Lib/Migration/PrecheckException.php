@@ -18,7 +18,7 @@ class PrecheckException extends PrecheckBase {
  *
  * @param string $table
  * @throws MigrationException
- * @return boolean
+ * @return bool
  */
 	public function checkDropTable($table) {
 		if (!$this->tableExists($table)) {
@@ -34,7 +34,7 @@ class PrecheckException extends PrecheckBase {
  *
  * @param string $table
  * @throws MigrationException
- * @return boolean
+ * @return bool
  */
 	public function checkCreateTable($table) {
 		if ($this->tableExists($table)) {
@@ -51,7 +51,7 @@ class PrecheckException extends PrecheckBase {
  * @param string $table
  * @param string $field
  * @throws MigrationException
- * @return boolean
+ * @return bool
  */
 	public function checkDropField($table, $field) {
 		if ($this->tableExists($table) && !$this->fieldExists($table, $field)) {
@@ -68,7 +68,7 @@ class PrecheckException extends PrecheckBase {
  * @param string $table
  * @param string $field
  * @throws MigrationException
- * @return boolean
+ * @return bool
  */
 	public function checkAddField($table, $field) {
 		if ($this->tableExists($table) && $this->fieldExists($table, $field)) {

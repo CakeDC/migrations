@@ -21,7 +21,7 @@ abstract class PrecheckBase {
  *
  * @param string $table
  * @param string $field
- * @return boolean
+ * @return bool
  */
 	abstract public function checkAddField($table, $field);
 
@@ -29,7 +29,7 @@ abstract class PrecheckBase {
  * Perform check before table create.
  *
  * @param string $table
- * @return boolean
+ * @return bool
  */
 	abstract public function checkCreateTable($table);
 
@@ -37,7 +37,7 @@ abstract class PrecheckBase {
  * Perform check before table drop.
  *
  * @param string $table
- * @return boolean
+ * @return bool
  */
 	abstract public function checkDropTable($table);
 
@@ -46,7 +46,7 @@ abstract class PrecheckBase {
  *
  * @param string $table
  * @param string $field
- * @return boolean
+ * @return bool
  */
 	abstract public function checkDropField($table, $field);
 
@@ -54,7 +54,7 @@ abstract class PrecheckBase {
  * Check that table exists.
  *
  * @param string $table
- * @return boolean
+ * @return bool
  */
 	public function tableExists($table) {
 		$this->_migration->db->cacheSources = false;
@@ -67,7 +67,7 @@ abstract class PrecheckBase {
  *
  * @param string $table
  * @param string $field
- * @return boolean
+ * @return bool
  */
 	public function fieldExists($table, $field) {
 		if (!$this->tableExists($table)) {
@@ -84,7 +84,7 @@ abstract class PrecheckBase {
  * @param string $type
  * @param array $data
  * @throws MigrationException
- * @return boolean
+ * @return bool
  */
 	public function beforeAction($migration, $type, $data) {
 		$this->_migration = $migration;
