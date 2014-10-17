@@ -1,6 +1,13 @@
 Changelog
 =========
 
+Release 2.3.4
+-------------
+
+https://github.com/CakeDC/migrations/tree/2.3.4
+
+* [94a7fe9](https://github.com/cakedc/migrations/commit/94a7fe9) Removed cakephp dependency from composer.json
+
 Release 2.3.3
 -------------
 
