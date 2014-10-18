@@ -8,26 +8,26 @@
 # @copyright Copyright 2010 - 2014, Cake Development Corporation (http://cakedc.com)
 # @license MIT License (http://www.opensource.org/licenses/mit-license.php)
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: CakePHP Migrations Plugin\n"
 "POT-Creation-Date: 2014-07-18 18:10+0200\n"
 "PO-Revision-Date: \n"
-"Last-Translator: Pierre MARTIN <contact@pierre-martin.fr>\n"
+"Last-Translator: Chris Burke <chris.burke@cakedc.com>\n"
 "Language-Team: Cake Development Corporation <info@cakedc.com>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n!=1);\n"
-"X-Poedit-Language: FRENCH\n"
-"X-Poedit-Country: FRANCE\n"
 "X-Poedit-SourceCharset: utf-8\n"
+"X-Generator: Poedit 1.6.10\n"
 
 #: Config/Migration/002_convert_version_to_class_names.php:56
 msgid "Sorry, I can't downgrade. Why would you want that anyways?"
 msgstr ""
+"Désolé, je ne peux pas rétrograder. Pourquoi voudriez-vous que de toute "
+"façon?"
 
 #: Console/Command/MigrationShell.php:75
 msgid "Cake Migration Shell"
@@ -78,75 +78,81 @@ msgstr "Ajout de l'index :index à :table."
 msgid "Dropping index \":index\" from table \":table\"."
 msgstr "Suppression de l'index :index de :table."
 
-#: Console/Command/MigrationShell.php:190
+#: Console/Command/MigrationShell.php:195
 msgid "No migrations available."
 msgstr "Aucune migration disponible."
 
-#: Console/Command/MigrationShell.php:220
+#: Console/Command/MigrationShell.php:225
 msgid "Running migrations:"
 msgstr "Exécution des migrations :"
 
-#: Console/Command/MigrationShell.php:232
+#: Console/Command/MigrationShell.php:237
 msgid "Migration will run dry, no database changes will be made"
 msgstr ""
+"Migration va fonctionner à sec, pas de changement de base de données seront "
+"effectués"
 
-#: Console/Command/MigrationShell.php:241
+#: Console/Command/MigrationShell.php:246
 msgid "All migrations have completed."
 msgstr "Toutes les migrations ont été exécutées."
 
-#: Console/Command/MigrationShell.php:252
+#: Console/Command/MigrationShell.php:257
 msgid "An error occurred when processing the migration:"
 msgstr "Une erreur est apparue lors de l'exécution de la migration :"
 
-#: Console/Command/MigrationShell.php:253
+#: Console/Command/MigrationShell.php:258
 msgid "Migration: %s"
 msgstr "Migration : %s"
 
-#: Console/Command/MigrationShell.php:254
+#: Console/Command/MigrationShell.php:259
 msgid "Error: %s"
 msgstr "Erreur : %s"
 
-#: Console/Command/MigrationShell.php:258
+#: Console/Command/MigrationShell.php:263
 msgid "Do you want to mark the migration as successful?. [y]es or [a]bort."
-msgstr ""
+msgstr "Voulez-vous marquer la migration réussie ? [y] oui ou [a]vorter."
 
-#: Console/Command/MigrationShell.php:306;319;346
+#: Console/Command/MigrationShell.php:311;324;351
 msgid "Not a valid migration version."
 msgstr "Version de migration invalide."
 
-#: Console/Command/MigrationShell.php:327
+#: Console/Command/MigrationShell.php:332
 msgid "Please, choose what version you want to migrate to. [q]uit or [c]lean."
 msgstr ""
 "Veuillez choisir la version vers laquelle vous souhaitez migrer. [q]uitter "
 "ou [c] pour nettoyer"
 
-#: Console/Command/MigrationShell.php:373
+#: Console/Command/MigrationShell.php:378
 msgid "Do you want compare the schema.php file to the database?"
 msgstr "Voulez vous comparer le fichier schema.php à la base de données ?"
 
-#: Console/Command/MigrationShell.php:379
+#: Console/Command/MigrationShell.php:384
 msgid "Do you want generate a dump from current database?"
 msgstr "Voulez vous générer un dump de votre base de données actuelle ?"
 
-#: Console/Command/MigrationShell.php:390
+#: Console/Command/MigrationShell.php:394
+msgid "No database changes detected."
+msgstr "Aucun changement de base de données détectées."
+
+#: Console/Command/MigrationShell.php:401
 #, fuzzy
 msgid "Do you want update the schema.php file?"
 msgstr "Voulez vous comparer le fichier schema.php à la base de données ?"
 
-#: Console/Command/MigrationShell.php:406
+#: Console/Command/MigrationShell.php:417
 msgid "Comparing schema.php to the database..."
 msgstr "Comparaison de schema.php à la base de données ..."
 
-#: Console/Command/MigrationShell.php:425
+#: Console/Command/MigrationShell.php:436
 #, fuzzy
 msgid "Generating migration from commandline arguments..."
 msgstr "Génération de la Migration ..."
 
-#: Console/Command/MigrationShell.php:453;775
+#: Console/Command/MigrationShell.php:464;810
 msgid "Invalid argument"
-msgstr ""
+msgstr "Invalid argument"
 
-#: Console/Command/MigrationShell.php:453
+#: Console/Command/MigrationShell.php:464
 #, fuzzy
 msgid ""
 "Migration name (%s) is invalid. It cannot be used to generate a migration "
@@ -155,28 +161,28 @@ msgstr ""
 "Le nom de la Migration (%s) est invalide. Il ne doit contenir que des "
 "caractères alphanumériques."
 
-#: Console/Command/MigrationShell.php:474
+#: Console/Command/MigrationShell.php:485
 msgid "Generating dump from current database..."
 msgstr "Génération d'un dump de la base de données actuelle ..."
 
-#: Console/Command/MigrationShell.php:495
+#: Console/Command/MigrationShell.php:506
 #, fuzzy
 msgid "Do you want to preview the file before generation?"
 msgstr "Voulez vous comparer le fichier schema.php à la base de données ?"
 
-#: Console/Command/MigrationShell.php:506
+#: Console/Command/MigrationShell.php:516
 msgid "Generating Migration..."
 msgstr "Génération de la Migration ..."
 
-#: Console/Command/MigrationShell.php:515
+#: Console/Command/MigrationShell.php:525
 msgid "Done."
 msgstr "Exécuté."
 
-#: Console/Command/MigrationShell.php:524
+#: Console/Command/MigrationShell.php:534
 msgid "Please enter the descriptive name of the migration to generate:"
 msgstr "Veuillez entrer le nom décrivant la migration à générer :"
 
-#: Console/Command/MigrationShell.php:527
+#: Console/Command/MigrationShell.php:537
 #, fuzzy
 msgid ""
 "Migration name (%s) is invalid. It must only contain alphanumeric characters "
@@ -185,7 +191,7 @@ msgstr ""
 "Le nom de la Migration (%s) est invalide. Il ne doit contenir que des "
 "caractères alphanumériques."
 
-#: Console/Command/MigrationShell.php:530
+#: Console/Command/MigrationShell.php:540
 #, fuzzy
 msgid ""
 "Migration name (%s) is invalid. It cannot be longer than 255 characters."
@@ -193,64 +199,64 @@ msgstr ""
 "Le nom de la Migration (%s) est invalide. Il ne doit contenir que des "
 "caractères alphanumériques."
 
-#: Console/Command/MigrationShell.php:566
+#: Console/Command/MigrationShell.php:576
 msgid "Current version:"
 msgstr "Version actuelle :"
 
-#: Console/Command/MigrationShell.php:571
+#: Console/Command/MigrationShell.php:581
 msgid "None applied."
 msgstr "Aucune appliquée."
 
-#: Console/Command/MigrationShell.php:574
+#: Console/Command/MigrationShell.php:584
 msgid "Latest version:"
 msgstr "Dernière version :"
 
-#: Console/Command/MigrationShell.php:598
+#: Console/Command/MigrationShell.php:608
 msgid "Current migration version:"
 msgstr "Version actuelle de la Migration :"
 
-#: Console/Command/MigrationShell.php:603
+#: Console/Command/MigrationShell.php:613
 msgid "Available migrations:"
 msgstr "Migrations disponibles :"
 
-#: Console/Command/MigrationShell.php:609
+#: Console/Command/MigrationShell.php:619
 msgid "applied"
 msgstr "appliquée"
 
-#: Console/Command/MigrationShell.php:611
+#: Console/Command/MigrationShell.php:621
 msgid "not applied"
 msgstr "non appliquée"
 
-#: Console/Command/MigrationShell.php:775
+#: Console/Command/MigrationShell.php:810
 msgid "Missing required argument 'name' for migration"
-msgstr ""
+msgstr "Nécessaire argument 'nom' de la migration manquant"
 
-#: Lib/CakeMigration.php:204
+#: Lib/CakeMigration.php:205
 msgid "Migration precheck class (%s) could not be loaded."
-msgstr ""
+msgstr "Migration classe de précontrôle (%s) n'a pas pu être chargé."
 
-#: Lib/CakeMigration.php:212
+#: Lib/CakeMigration.php:213
 #, fuzzy
 msgid "Migration precheck class (%s) is not a valid precheck class."
 msgstr ""
 "La direction de la Migration (%s) ne fait pas partie des directions valides."
 
-#: Lib/CakeMigration.php:228
+#: Lib/CakeMigration.php:229
 msgid "Migration direction (%s) is not one of valid directions."
 msgstr ""
 "La direction de la Migration (%s) ne fait pas partie des directions valides."
 
-#: Lib/CakeMigration.php:294 Lib/Migration/PrecheckBase.php:111
+#: Lib/CakeMigration.php:295 Lib/Migration/PrecheckBase.php:111
 msgid "Migration action type (%s) is not one of valid actions type."
 msgstr ""
 "Le type d'action de la Migration (%s) ne fait pas partie des type d'actions "
 "valides."
 
-#: Lib/CakeMigration.php:343;373;401;488;528
+#: Lib/CakeMigration.php:343;373;401;489;529
 msgid "SQL Error: %s"
 msgstr "Erreur SQL : %s"
 
-#: Lib/CakeMigration.php:566
+#: Lib/CakeMigration.php:567
 msgid "Interrupted when running \"%s\" callback."
 msgstr "Interrompu lors de l'exécution du callback \"%s\"."
 
