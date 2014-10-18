@@ -1,6 +1,12 @@
 Changelog
 =========
 
+Release 2.3.5
+-------------
+
+* [69e6136](https://github.com/cakedc/migrations/commit/69e6136) Add translations for new/missing strings
+* [c98ecdd](https://github.com/cakedc/migrations/commit/c98ecdd) Exit shell if comparing schema.php and nothing has changed
+
 Release 2.3.4
 -------------
 
