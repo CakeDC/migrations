@@ -117,17 +117,17 @@ msgid "Not a valid migration version."
 msgstr "Version de migration invalide."
 
 #: Console/Command/MigrationShell.php:332
-msgid "Please, choose what version you want to migrate to. [q]uit or [c]lean."
+msgid "Please choose which version you want to migrate to. [q]uit or [c]lean."
 msgstr ""
 "Veuillez choisir la version vers laquelle vous souhaitez migrer. [q]uitter "
 "ou [c] pour nettoyer"
 
 #: Console/Command/MigrationShell.php:378
-msgid "Do you want compare the schema.php file to the database?"
+msgid "Do you want to compare the schema.php file to the database?"
 msgstr "Voulez vous comparer le fichier schema.php à la base de données ?"
 
 #: Console/Command/MigrationShell.php:384
-msgid "Do you want generate a dump from current database?"
+msgid "Do you want to generate a dump from the current database?"
 msgstr "Voulez vous générer un dump de votre base de données actuelle ?"
 
 #: Console/Command/MigrationShell.php:394
@@ -136,7 +136,7 @@ msgstr "Aucun changement de base de données détectées."
 
 #: Console/Command/MigrationShell.php:401
 #, fuzzy
-msgid "Do you want update the schema.php file?"
+msgid "Do you want to update the schema.php file?"
 msgstr "Voulez vous comparer le fichier schema.php à la base de données ?"
 
 #: Console/Command/MigrationShell.php:417
@@ -162,7 +162,7 @@ msgstr ""
 "caractères alphanumériques."
 
 #: Console/Command/MigrationShell.php:485
-msgid "Generating dump from current database..."
+msgid "Generating dump from the current database..."
 msgstr "Génération d'un dump de la base de données actuelle ..."
 
 #: Console/Command/MigrationShell.php:506
@@ -269,7 +269,7 @@ msgid "File `%1$s` not found in the %2$s."
 msgstr "Fichier `%1$s` introuvable dans %2$s."
 
 #: Lib/Migration/PrecheckException.php:26
-msgid "Table \"%s\" does not exists in database."
+msgid "Table \"%s\" does not exist in database."
 msgstr "La table \"%s\" n'existe pas dans la base de données."
 
 #: Lib/Migration/PrecheckException.php:42
@@ -277,7 +277,7 @@ msgid "Table \"%s\" already exists in database."
 msgstr "La table \"%s\" existe déjà dans la base de données."
 
 #: Lib/Migration/PrecheckException.php:59
-msgid "Field \"%s\" does not exists in \"%s\"."
+msgid "Field \"%s\" does not exist in \"%s\"."
 msgstr "Le champ \"%s\" n'existe pas dans \"%s\"."
 
 #: Lib/Migration/PrecheckException.php:76

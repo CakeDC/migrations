@@ -115,21 +115,21 @@ msgid "Not a valid migration version."
 msgstr "Não é uma versão de migração válida,"
 
 #: Console/Command/MigrationShell.php:327
-msgid "Please, choose what version you want to migrate to. [q]uit or [c]lean."
+msgid "Please choose which version you want to migrate to. [q]uit or [c]lean."
 msgstr ""
 "Por favor, escolha para qual versão você deseja migrar. [q]uit ou [c]lean."
 
 #: Console/Command/MigrationShell.php:373
-msgid "Do you want compare the schema.php file to the database?"
+msgid "Do you want to compare the schema.php file to the database?"
 msgstr "Você deseja comparar o arquivo schema.php com o banco de dados?"
 
 #: Console/Command/MigrationShell.php:379
-msgid "Do you want generate a dump from current database?"
+msgid "Do you want to generate a dump from the current database?"
 msgstr "Você deseja gerar um dump do banco de dados atual?"
 
 #: Console/Command/MigrationShell.php:390
 #, fuzzy
-msgid "Do you want update the schema.php file?"
+msgid "Do you want to update the schema.php file?"
 msgstr "Você deseja comparar o arquivo schema.php com o banco de dados?"
 
 #: Console/Command/MigrationShell.php:406
@@ -154,7 +154,7 @@ msgstr ""
 "alfanuméricos."
 
 #: Console/Command/MigrationShell.php:474
-msgid "Generating dump from current database..."
+msgid "Generating dump from the current database..."
 msgstr "Gerando dump do banco de dados atual..."
 
 #: Console/Command/MigrationShell.php:495
@@ -257,7 +257,7 @@ msgid "File `%1$s` not found in the %2$s."
 msgstr "Arquivo `%1$s` não encontrada no %2$s."
 
 #: Lib/Migration/PrecheckException.php:26
-msgid "Table \"%s\" does not exists in database."
+msgid "Table \"%s\" does not exist in database."
 msgstr "Table \"%s\" não existe no banco de dados."
 
 #: Lib/Migration/PrecheckException.php:42
@@ -265,7 +265,7 @@ msgid "Table \"%s\" already exists in database."
 msgstr "Tabela \"%s\" já existe no banco de dados."
 
 #: Lib/Migration/PrecheckException.php:59
-msgid "Field \"%s\" does not exists in \"%s\"."
+msgid "Field \"%s\" does not exist in \"%s\"."
 msgstr "Coluna \"%s\" não existe em \"%s\"."
 
 #: Lib/Migration/PrecheckException.php:76

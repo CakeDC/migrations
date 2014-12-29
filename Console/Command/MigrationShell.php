@@ -329,7 +329,7 @@ class MigrationShell extends AppShell {
 			$this->hr();
 
 			while (true) {
-				$response = $this->in(__d('migrations', 'Please, choose what version you want to migrate to. [q]uit or [c]lean.'));
+				$response = $this->in(__d('migrations', 'Please choose which version you want to migrate to. [q]uit or [c]lean.'));
 				if (strtolower($response) === 'q') {
 					return $this->_stop();
 				} elseif (strtolower($response) === 'c') {
@@ -375,7 +375,7 @@ class MigrationShell extends AppShell {
 		} else {
 			$oldSchema = $this->_getSchema($this->type);
 			if ($oldSchema !== false) {
-				$response = $this->in(__d('migrations', 'Do you want compare the schema.php file to the database?'), array('y', 'n'), 'y');
+				$response = $this->in(__d('migrations', 'Do you want to compare the schema.php file to the database?'), array('y', 'n'), 'y');
 				if (strtolower($response) === 'y') {
 					$this->_generateFromComparison($migration, $oldSchema, $comparison);
 					if (empty($comparison)) {
@@ -386,7 +386,7 @@ class MigrationShell extends AppShell {
 					$fromSchema = true;
 				}
 			} else {
-				$response = $this->in(__d('migrations', 'Do you want generate a dump from current database?'), array('y', 'n'), 'y');
+				$response = $this->in(__d('migrations', 'Do you want to generate a dump from the current database?'), array('y', 'n'), 'y');
 				if (strtolower($response) === 'y') {
 					$this->_generateDump($migration);
 					$fromSchema = true;
@@ -397,7 +397,7 @@ class MigrationShell extends AppShell {
 		$this->_finalizeGeneratedMigration($migration, $migrationName, $fromSchema);
 
 		if ($fromSchema && isset($comparison)) {
-			$response = $this->in(__d('migrations', 'Do you want update the schema.php file?'), array('y', 'n'), 'y');
+			$response = $this->in(__d('migrations', 'Do you want to update the schema.php file?'), array('y', 'n'), 'y');
 			if (strtolower($response) === 'y') {
 				$this->_updateSchema();
 			}
@@ -481,7 +481,7 @@ class MigrationShell extends AppShell {
  */
 	protected function _generateDump(&$migration) {
 		$this->hr();
-		$this->out(__d('migrations', 'Generating dump from current database...'));
+		$this->out(__d('migrations', 'Generating dump from the current database...'));
 
 		$dump = $this->_readSchema();
 		$dump = $dump['tables'];

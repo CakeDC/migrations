@@ -288,7 +288,7 @@ class CakeMigrationTest extends CakeTestCase {
 			$migration->run('down');
 			$this->fail('No exception triggered');
 		} catch (MigrationException $e) {
-			$this->assertEquals('Field "views" does not exists in "posts".', $e->getMessage());
+			$this->assertEquals('Field "views" does not exist in "posts".', $e->getMessage());
 		}
 	}
 
