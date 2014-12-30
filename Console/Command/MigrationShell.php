@@ -159,7 +159,7 @@ class MigrationShell extends AppShell {
 			->addOption('schema-class', array(
 				'short' => 's',
 				'boolean' => false,
-				'default' => 'App',
+				'default' => false,
 				'help' => __('CamelCased Classname without the `Schema` suffix to use when reading or generating schema files. See `Console/cake schema generate --help`.')))
 			->addSubcommand('status', array(
 				'help' => __('Displays a status of all plugin and app migrations.')))
