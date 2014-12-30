@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Copyright 2009 - 2014, Cake Development Corporation (http://cakedc.com)
  *
@@ -14,9 +14,9 @@ App::uses('PrecheckBase', 'Migrations.Lib/Migration');
 class PrecheckException extends PrecheckBase {
 
 /**
- * Check that table exists.
+ * Check if table does not exist.
  *
- * @param string $table
+ * @param string $table Table to look for
  * @throws MigrationException
  * @return bool
  */
@@ -30,9 +30,9 @@ class PrecheckException extends PrecheckBase {
 	}
 
 /**
- * Check that table exists.
+ * Check if table already exists.
  *
- * @param string $table
+ * @param string $table Table to look for
  * @throws MigrationException
  * @return bool
  */
@@ -48,8 +48,8 @@ class PrecheckException extends PrecheckBase {
 /**
  * Perform check before field drop.
  *
- * @param string $table
- * @param string $field
+ * @param string $table Table to look in
+ * @param string $field Field to look for
  * @throws MigrationException
  * @return bool
  */
@@ -65,8 +65,8 @@ class PrecheckException extends PrecheckBase {
 /**
  * Perform check before field create.
  *
- * @param string $table
- * @param string $field
+ * @param string $table Table to look in
+ * @param string $field Field to look for
  * @throws MigrationException
  * @return bool
  */

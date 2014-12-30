@@ -248,6 +248,13 @@ class MigrationShell extends AppShell {
 		return true;
 	}
 
+/**
+ * Execute migration
+ *
+ * @param array $options Options for migration
+ * @param bool $once True to only run once, false to retry
+ * @return bool True if success
+ */
 	protected function _execute($options, $once) {
 		$result = true;
 		try {
@@ -278,7 +285,7 @@ class MigrationShell extends AppShell {
 /**
  * Output the SQL log in dry mode
  *
- * @param $log array
+ * @param array $log List of queries per migration
  * @return void
  */
 	protected function _outputLog($log) {
@@ -297,6 +304,14 @@ class MigrationShell extends AppShell {
 		$this->hr();
 	}
 
+/**
+ * Single step options for up/down migrations
+ *
+ * @param array $mapping Migration version mappings
+ * @param string $latestVersion Latest migration version
+ * @param array $default Default options for migration
+ * @return array Modified options for migration
+ */
 	protected function _singleStepOptions($mapping, $latestVersion, $default = array()) {
 		$options = $default;
 		$versions = array_keys($mapping);
@@ -315,6 +330,13 @@ class MigrationShell extends AppShell {
 		return $options;
 	}
 
+/**
+ * Output prompt with different migration versions to choose from
+ *
+ * @param array $mapping Migration version mappings
+ * @param string $latestVersion Latest migration version
+ * @return array User-chosen options for migration
+ */
 	protected function _promptVersionOptions($mapping, $latestVersion) {
 		if (isset($this->args[0]) && is_numeric($this->args[0])) {
 			$options['version'] = (int)$this->args[0];
@@ -405,10 +427,11 @@ class MigrationShell extends AppShell {
 	}
 
 /**
- * generate a migration by comparing schema.php with the database.
- * @param array $migration reference to variable of the same name in generate() method
- * @param array $oldSchema reference to variable of the same name in generate() method
- * @param array $comparison reference to variable of the same name in generate() method
+ * Generate a migration by comparing schema.php with the database.
+ *
+ * @param array &$migration Reference to variable of the same name in generate() method
+ * @param array &$oldSchema Reference to variable of the same name in generate() method
+ * @param array &$comparison Reference to variable of the same name in generate() method
  * @return void (The variables passed by reference are changed; nothing is returned)
  */
 	protected function _generateFromComparison(&$migration, &$oldSchema, &$comparison) {
@@ -424,10 +447,11 @@ class MigrationShell extends AppShell {
 	}
 
 /**
- * generate a migration from arguments passed in at the command line
- * @param array $migration reference to variable of the same name in generate() method
- * @param array $migrationName reference to variable of the same name in generate() method
- * @param array $comparison reference to variable of the same name in generate() method
+ * Generate a migration from arguments passed in at the command line
+ *
+ * @param array &$migration Reference to variable of the same name in generate() method
+ * @param array &$migrationName Reference to variable of the same name in generate() method
+ * @param array &$comparison Reference to variable of the same name in generate() method
  * @return void (The variables passed by reference are changed; nothing is returned)
  */
 	protected function _generateFromCliArgs(&$migration, &$migrationName, &$comparison) {
@@ -464,6 +488,12 @@ class MigrationShell extends AppShell {
 		}
 	}
 
+/**
+ * Return list of field names from array of field/index definitions
+ *
+ * @param array $fields Field/index definitions
+ * @return array List of field names
+ */
 	protected function _fieldNamesArray($fields) {
 		$fieldNames = array();
 		foreach ($fields as $name => $value) {
@@ -476,7 +506,8 @@ class MigrationShell extends AppShell {
 
 /**
  * Generate a dump of the current database.
- * @param array $migration reference to variable of the same name in generate() method
+ *
+ * @param array &$migration Reference to variable of the same name in generate() method
  * @return void (The variables passed by reference are changed; nothing is returned)
  */
 	protected function _generateDump(&$migration) {
@@ -496,9 +527,10 @@ class MigrationShell extends AppShell {
 /**
  * Finalizes the generated migration - offers to preview it,
  * prompts for a name, writes the file, and updates db version if needed.
- * @param array $migration reference to variable of the same name in generate() method
- * @param array $migrationName reference to variable of the same name in generate() method
- * @param  bool $fromSchema reference to variable of the same name in generate() method
+ *
+ * @param array &$migration Reference to variable of the same name in generate() method
+ * @param array &$migrationName Reference to variable of the same name in generate() method
+ * @param bool &$fromSchema Reference to variable of the same name in generate() method
  * @return void
  */
 	protected function _finalizeGeneratedMigration(&$migration, &$migrationName, &$fromSchema) {
@@ -526,6 +558,7 @@ class MigrationShell extends AppShell {
 
 /**
  * Prompt the user for a name for their new migration.
+ *
  * @return string
  */
 	protected function _promptForMigrationName() {
@@ -689,7 +722,7 @@ class MigrationShell extends AppShell {
  * Gets the schema class name
  *
  * @param string $name Can be 'app' or a plugin name
- * @param boolean Return the class name with or without the "Schema" suffix, default is true
+ * @param bool $suffix Return the class name with or without the "Schema" suffix, default is true
  * @return string Returns the schema class name
  */
 	protected function _getSchemaClassName($name = null, $suffix = true) {
@@ -814,10 +847,12 @@ class MigrationShell extends AppShell {
 
 /**
  * Parse a single argument from the command line into the fields array
- * @param  array $fields reference to variable of same name in _parseCommandLineFields()
- * @param  string $field a single command line argument - eg. 'id:primary_key' or 'name:string'
- * @param  array $validTypes valid data types for the relevant database - eg. string, integer, biginteger, etc.
- * @return [type]         [description]
+ *
+ * @param array &$fields Reference to variable of same name in _parseCommandLineFields()
+ * @param array &$indexes Reference to variable of same name in _parseCommandLineFields()
+ * @param string $field A single command line argument - eg. 'id:primary_key' or 'name:string'
+ * @param array $validTypes Valid data types for the relevant database - eg. string, integer, biginteger, etc.
+ * @return void
  */
 	protected function _parseSingleCommandLineField(&$fields, &$indexes, $field, $validTypes) {
 		if (preg_match('/^(\w*)(?::(\w*))?(?::(\w*))?(?::(\w*))?/', $field, $matches)) {
@@ -876,6 +911,14 @@ class MigrationShell extends AppShell {
 		}
 	}
 
+/**
+ * Return valid field type based on name of field
+ *
+ * @param string $field Name of field
+ * @param string $type Current type
+ * @param array $validTypes List of valid types
+ * @return string Recognized type (eg. integer vs bigint)
+ */
 	protected function _getFieldType($field, $type, $validTypes) {
 		if (!in_array($type, $validTypes)) {
 			if ($field == 'id') {
@@ -961,7 +1004,7 @@ class MigrationShell extends AppShell {
  * Write a migration with given name
  *
  * @param string $name Name of migration
- * @param integer $version The version number (timestamp)
+ * @param int $version The version number (timestamp)
  * @param array $migration Migration instructions array
  * @return bool
  */
@@ -1029,7 +1072,7 @@ class MigrationShell extends AppShell {
 /**
  * Callback used to display what migration is being runned
  *
- * @param CakeMigration $Migration Migration being performed
+ * @param CakeMigration &$Migration Migration being performed
  * @param string $direction Direction being runned
  * @return void
  */
@@ -1040,7 +1083,7 @@ class MigrationShell extends AppShell {
 /**
  * Callback used to create a new line after the migration
  *
- * @param CakeMigration $Migration Migration being performed
+ * @param CakeMigration &$Migration Migration being performed
  * @param string $direction Direction being runned
  * @return void
  */
@@ -1051,7 +1094,7 @@ class MigrationShell extends AppShell {
 /**
  * Callback used to display actions being performed
  *
- * @param CakeMigration $Migration Migration being performed
+ * @param CakeMigration &$Migration Migration being performed
  * @param string $type Type of action. i.e: create_table, drop_table, etc.
  * @param array $data Data to send to the callback
  * @return void

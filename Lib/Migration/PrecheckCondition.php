@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Copyright 2009 - 2014, Cake Development Corporation (http://cakedc.com)
  *
@@ -16,7 +16,7 @@ class PrecheckCondition extends PrecheckBase {
 /**
  * Perform check before table drop.
  *
- * @param string $table
+ * @param string $table Table to look for
  * @return bool
  */
 	public function checkDropTable($table) {
@@ -26,7 +26,7 @@ class PrecheckCondition extends PrecheckBase {
 /**
  * Perform check before table create.
  *
- * @param string $table
+ * @param string $table Table to look for
  * @return bool
  */
 	public function checkCreateTable($table) {
@@ -36,8 +36,8 @@ class PrecheckCondition extends PrecheckBase {
 /**
  * Perform check before field drop.
  *
- * @param string $table
- * @param string $field
+ * @param string $table Table to look for
+ * @param string $field Field to look for
  * @return bool
  */
 	public function checkDropField($table, $field) {
@@ -47,8 +47,8 @@ class PrecheckCondition extends PrecheckBase {
 /**
  * Perform check before field create.
  *
- * @param string $table
- * @param string $field
+ * @param string $table Table to look for
+ * @param string $field Field to look for
  * @return bool
  */
 	public function checkAddField($table, $field) {
@@ -56,4 +56,3 @@ class PrecheckCondition extends PrecheckBase {
 	}
 
 }
-
