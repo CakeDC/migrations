@@ -338,6 +338,8 @@ class MigrationVersion {
 				try {
 					$result = $migration->run($direction, $options);
 					$this->log[$info['name']] = $migration->getQueryLog();
+				} catch (MigrationException $migrationException){
+					throw $migrationException; // throw to MigrationShell::_execute
 				} catch (Exception $exception) {
 					$mapping = $this->getMapping($options['type']);
 					if (isset($mapping[$latestVersion]['version'])) {
