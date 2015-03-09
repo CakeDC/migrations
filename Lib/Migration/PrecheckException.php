@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Copyright 2009 - 2014, Cake Development Corporation (http://cakedc.com)
  *
@@ -14,25 +14,25 @@ App::uses('PrecheckBase', 'Migrations.Lib/Migration');
 class PrecheckException extends PrecheckBase {
 
 /**
- * Check that table exists.
+ * Check if table does not exist.
  *
- * @param string $table
+ * @param string $table Table to look for
  * @throws MigrationException
  * @return bool
  */
 	public function checkDropTable($table) {
 		if (!$this->tableExists($table)) {
 			throw new MigrationException($this->_migration,
-				__d('migrations', 'Table "%s" does not exists in database.', $this->_migration->db->fullTableName($table, false, false))
+				__d('migrations', 'Table "%s" does not exist in database.', $this->_migration->db->fullTableName($table, false, false))
 			);
 		}
 		return true;
 	}
 
 /**
- * Check that table exists.
+ * Check if table already exists.
  *
- * @param string $table
+ * @param string $table Table to look for
  * @throws MigrationException
  * @return bool
  */
@@ -48,15 +48,15 @@ class PrecheckException extends PrecheckBase {
 /**
  * Perform check before field drop.
  *
- * @param string $table
- * @param string $field
+ * @param string $table Table to look in
+ * @param string $field Field to look for
  * @throws MigrationException
  * @return bool
  */
 	public function checkDropField($table, $field) {
 		if ($this->tableExists($table) && !$this->fieldExists($table, $field)) {
 			throw new MigrationException($this->_migration, sprintf(
-				__d('migrations', 'Field "%s" does not exists in "%s".'), $field, $table
+				__d('migrations', 'Field "%s" does not exist in "%s".'), $field, $table
 			));
 		}
 		return true;
@@ -65,8 +65,8 @@ class PrecheckException extends PrecheckBase {
 /**
  * Perform check before field create.
  *
- * @param string $table
- * @param string $field
+ * @param string $table Table to look in
+ * @param string $field Field to look for
  * @throws MigrationException
  * @return bool
  */

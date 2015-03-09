@@ -146,7 +146,7 @@ class CakeMigration extends Object {
 /**
  * Log a dry run SQL query
  *
- * @param str $sql
+ * @param string $sql SQL query
  * @return void
  */
 	public function logQuery($sql) {
@@ -310,7 +310,7 @@ class CakeMigration extends Object {
  *
  * @param string $a Type
  * @param string $b Type
- * @return integer Comparison value
+ * @return int Comparison value
  */
 	protected function migration_order($a, $b) {
 		$order = array('drop_table', 'rename_table', 'create_table', 'drop_field', 'rename_field', 'alter_field', 'create_field');
@@ -573,10 +573,9 @@ class CakeMigration extends Object {
  * This method will invoke the before/afterAction callbacks, it is good when
  * you need track every action.
  *
- * @param string $callback Callback name, beforeMigration, beforeAction
-  *         or afterMigration.
- * @param string $type Type of action. i.e: create_table, drop_table, etc.
- *         Or also can be the direction, for before and after Migration callbacks
+ * @param string $callback Callback name, beforeMigration, beforeAction or afterMigration.
+ * @param string $type Type of action (e.g. create_table, drop_table, etc.)
+ *   Also can be the direction (before/after) for Migration callbacks
  * @param array $data Data to send to the callback
  * @return bool
  */
@@ -620,7 +619,7 @@ class CakeMigration extends Object {
  *
  * @param string $name Model name to be initialized
  * @param string $table Table name to be initialized
- * @param array $options
+ * @param array $options Model constructor options
  * @return Model
  */
 	public function generateModel($name, $table = null, $options = array()) {
@@ -654,7 +653,7 @@ class MigrationException extends Exception {
  *
  * @param CakeMigration $Migration Reference to the Migration
  * @param string $message Message explaining the error
- * @param integer $code Error code
+ * @param int $code Error code
  * @return \MigrationException
  */
 	public function __construct($Migration, $message = '', $code = 0) {

@@ -126,7 +126,7 @@ class MigrationVersion {
  * Get last version for given type
  *
  * @param string $type Can be 'app' or a plugin name
- * @return integer Last version migrated
+ * @return int Last version migrated
  */
 	public function getVersion($type) {
 		$mapping = $this->getMapping($type);
@@ -145,7 +145,7 @@ class MigrationVersion {
 /**
  * Set current version for given type
  *
- * @param integer $version Current version
+ * @param int $version Current version
  * @param string $type Can be 'app' or a plugin name
  * @param bool $migrated If true, will add the record to the database
  * 		If false, will remove the record from the database
@@ -189,7 +189,7 @@ class MigrationVersion {
  * Get mapping for the given type
  *
  * @param string $type Can be 'app' or a plugin name
- * @param bool   $cache
+ * @param bool $cache Whether to return the cached value or not
  * @return mixed False in case of no file found or empty mapping, array with mapping
  */
 	public function getMapping($type, $cache = true) {
@@ -338,6 +338,8 @@ class MigrationVersion {
 				try {
 					$result = $migration->run($direction, $options);
 					$this->log[$info['name']] = $migration->getQueryLog();
+				} catch (MigrationException $migrationException){
+					throw $migrationException; // throw to MigrationShell::_execute
 				} catch (Exception $exception) {
 					$mapping = $this->getMapping($options['type']);
 					if (isset($mapping[$latestVersion]['version'])) {

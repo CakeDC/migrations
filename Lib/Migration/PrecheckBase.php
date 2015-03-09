@@ -12,6 +12,8 @@
 abstract class PrecheckBase {
 
 /**
+ * CakeMigration instance
+ *
  * @var CakeMigration
  */
 	protected $_migration;
@@ -19,8 +21,8 @@ abstract class PrecheckBase {
 /**
  * Perform check before field create.
  *
- * @param string $table
- * @param string $field
+ * @param string $table Table to look for
+ * @param string $field Field to look for
  * @return bool
  */
 	abstract public function checkAddField($table, $field);
@@ -28,7 +30,7 @@ abstract class PrecheckBase {
 /**
  * Perform check before table create.
  *
- * @param string $table
+ * @param string $table Table to look for
  * @return bool
  */
 	abstract public function checkCreateTable($table);
@@ -36,7 +38,7 @@ abstract class PrecheckBase {
 /**
  * Perform check before table drop.
  *
- * @param string $table
+ * @param string $table Table to look for
  * @return bool
  */
 	abstract public function checkDropTable($table);
@@ -44,8 +46,8 @@ abstract class PrecheckBase {
 /**
  * Perform check before field drop.
  *
- * @param string $table
- * @param string $field
+ * @param string $table Table to look for
+ * @param string $field Field to look for
  * @return bool
  */
 	abstract public function checkDropField($table, $field);
@@ -53,7 +55,7 @@ abstract class PrecheckBase {
 /**
  * Check that table exists.
  *
- * @param string $table
+ * @param string $table Table to look for
  * @return bool
  */
 	public function tableExists($table) {
@@ -65,8 +67,8 @@ abstract class PrecheckBase {
 /**
  * Check that field exists.
  *
- * @param string $table
- * @param string $field
+ * @param string $table Table to look for
+ * @param string $field Field to look for
  * @return bool
  */
 	public function fieldExists($table, $field) {
@@ -80,9 +82,9 @@ abstract class PrecheckBase {
 /**
  * Before action precheck callback.
  *
- * @param $migration
- * @param string $type
- * @param array $data
+ * @param CakeMigration $migration Migration to perform
+ * @param string $type Type of action being performed
+ * @param array $data Data passed to action
  * @throws MigrationException
  * @return bool
  */

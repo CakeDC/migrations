@@ -310,8 +310,8 @@ class MigrationVersionTest extends CakeTestCase {
 /**
  * _mapping method
  *
- * @param integer $start
- * @param integer $end
+ * @param int $start
+ * @param int $end
  * @return array
  */
 	protected function _mapping($start = 0, $end = 0) {
