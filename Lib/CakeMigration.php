@@ -196,8 +196,10 @@ class CakeMigration extends Object {
 			App::uses('PrecheckException', 'Migrations.Lib/Migration');
 			$this->Precheck = new PrecheckException();
 		} else {
-			$class = Inflector::camelize($options['precheck']);
-			list($plugin, $class) = pluginSplit($class, true);
+			list($plugin, $class) = pluginSplit($options['precheck'], true);
+			$plugin = Inflector::camelize($plugin);
+			$class = Inflector::camelize($class);
+
 			App::uses($class, $plugin . 'Lib/Migration');
 
 			if (!class_exists($class)) {
