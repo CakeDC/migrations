@@ -23,6 +23,10 @@ App::uses('ClassRegistry', 'Utility');
 class MigrationShell extends AppShell {
 
 /**
+ * Call the ConnectionManager Model
+ */
+	public $uses = ['ConnectionManager'];
+/**
  * Connection used for the migration_schema table of the migration versions
  *
  * @var null|string
@@ -79,9 +83,8 @@ class MigrationShell extends AppShell {
 			$this->connection = $this->params['connection'];
 		}
 
-		if (!empty($this->params['migrationConnection'])) {
-			$this->migrationConnection = $this->params['migrationConnection'];
-		}
+		$this->migrationConnection = $this->_startMigrationConnection();
+
 
 		if (!empty($this->params['plugin'])) {
 			$this->type = $this->params['plugin'];
@@ -115,6 +118,32 @@ class MigrationShell extends AppShell {
 			'add_index' => __d('migrations', 'Adding index ":index" to table ":table".'),
 			'drop_index' => __d('migrations', 'Dropping index ":index" from table ":table".'),
 		);
+	}
+
+/**
+ * Get connection names list
+ * @return Array
+ */
+	protected function _connectionNamesEnum(){
+		return array_keys($this->ConnectionManager->enumConnectionObjects());
+	}
+
+/**
+ * Check if have a migration connect parameter when connection is custom
+ * @return String
+ */
+	protected function _startMigrationConnection(){
+		if (!empty($this->params['connection']) && empty($this->params['migrationConnection'])) {
+			return $this->in(
+					"You did not set a migration connection (-i), which do you will use?",
+					$this->_connectionNamesEnum(),
+					$this->params['connection']
+				);
+		}
+
+		if (!empty($this->params['migrationConnection'])) {
+			return $this->params['migrationConnection'];
+		}
 	}
 
 /**
