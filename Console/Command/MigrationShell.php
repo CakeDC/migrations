@@ -124,15 +124,17 @@ class MigrationShell extends AppShell {
 	}
 
 /**
- * Get connection names list
- * @return Array
+ * Get a list of connection names.
+ *
+ * @return array The list of connection names
  */
 	protected function _connectionNamesEnum() {
 		return array_keys(ConnectionManager::enumConnectionObjects());
 	}
 
 /**
- * Check if have a migration connect parameter when connection is custom
+ * Set a migrationConnection
+ *
  * @return String
  */
 	protected function _startMigrationConnection() {
