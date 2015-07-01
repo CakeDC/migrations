@@ -170,6 +170,11 @@ class MigrationShellTest extends CakeTestCase {
 		$this->Shell->startup();
 		$this->assertEquals($this->Shell->connection, 'test');
 		$this->assertEquals($this->Shell->type, 'Migrations');
+
+		$this->Shell->expects($this->any())->method('in')->will($this->returnValue('test'));
+		$this->Shell->expects($this->any())->method('_startMigrationConnection')->will($this->returnValue('test'));
+		$this->Shell->startup();
+		$this->assertEquals($this->Shell->migrationConnection, 'test');
 	}
 
 /**
