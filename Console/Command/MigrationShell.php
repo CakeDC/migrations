@@ -15,7 +15,7 @@ App::uses('CakeSchema', 'Model');
 App::uses('MigrationVersion', 'Migrations.Lib');
 App::uses('String', 'Utility');
 App::uses('ClassRegistry', 'Utility');
-App::uses('ConnectionManager','Model');
+App::uses('ConnectionManager', 'Model');
 
 /**
  * Migration shell.
@@ -81,7 +81,6 @@ class MigrationShell extends AppShell {
 		}
 
 		$this->migrationConnection = $this->_startMigrationConnection();
-
 
 		if (!empty($this->params['plugin'])) {
 			$this->type = $this->params['plugin'];
