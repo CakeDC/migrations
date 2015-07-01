@@ -25,7 +25,7 @@ class MigrationShell extends AppShell {
 /**
  * Call the ConnectionManager Model
  */
-	public $uses = ['ConnectionManager'];
+	public $uses = array('ConnectionManager');
 /**
  * Connection used for the migration_schema table of the migration versions
  *
