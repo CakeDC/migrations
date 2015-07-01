@@ -127,9 +127,9 @@ class MigrationShell extends AppShell {
 	}
 
 /**
- * Set a migrationConnection
+ * Set a migration connection
  *
- * @return String
+ * @return string The name of the migration connection.
  */
 	protected function _startMigrationConnection() {
 		if (!empty($this->params['connection']) && empty($this->params['migrationConnection'])) {
