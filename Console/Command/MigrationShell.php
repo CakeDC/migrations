@@ -23,9 +23,12 @@ App::uses('ClassRegistry', 'Utility');
 class MigrationShell extends AppShell {
 
 /**
- * Call the ConnectionManager Model
+ * ConnectionManager instance
+ *
+ * @var ConnectionManager
  */
 	public $uses = array('ConnectionManager');
+
 /**
  * Connection used for the migration_schema table of the migration versions
  *
