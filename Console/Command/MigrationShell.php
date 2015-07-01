@@ -15,19 +15,13 @@ App::uses('CakeSchema', 'Model');
 App::uses('MigrationVersion', 'Migrations.Lib');
 App::uses('String', 'Utility');
 App::uses('ClassRegistry', 'Utility');
+App::uses('ConnectionManager','Model');
 
 /**
  * Migration shell.
  *
  */
 class MigrationShell extends AppShell {
-
-/**
- * ConnectionManager instance
- *
- * @var ConnectionManager
- */
-	public $uses = array('ConnectionManager');
 
 /**
  * Connection used for the migration_schema table of the migration versions
