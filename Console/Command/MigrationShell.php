@@ -124,7 +124,7 @@ class MigrationShell extends AppShell {
  * Get connection names list
  * @return Array
  */
-	protected function _connectionNamesEnum(){
+	protected function _connectionNamesEnum() {
 		return array_keys($this->ConnectionManager->enumConnectionObjects());
 	}
 
@@ -132,13 +132,13 @@ class MigrationShell extends AppShell {
  * Check if have a migration connect parameter when connection is custom
  * @return String
  */
-	protected function _startMigrationConnection(){
+	protected function _startMigrationConnection() {
 		if (!empty($this->params['connection']) && empty($this->params['migrationConnection'])) {
 			return $this->in(
-					"You did not set a migration connection (-i), which connection do you want to use?",
-					$this->_connectionNamesEnum(),
-					$this->params['connection']
-				);
+				"You did not set a migration connection (-i), which connection do you want to use?",
+				$this->_connectionNamesEnum(),
+				$this->params['connection']
+			);
 		}
 
 		if (!empty($this->params['migrationConnection'])) {
