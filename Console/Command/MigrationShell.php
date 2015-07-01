@@ -128,7 +128,7 @@ class MigrationShell extends AppShell {
  * @return Array
  */
 	protected function _connectionNamesEnum() {
-		return array_keys($this->ConnectionManager->enumConnectionObjects());
+		return array_keys(ConnectionManager::enumConnectionObjects());
 	}
 
 /**
