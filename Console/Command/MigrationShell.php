@@ -135,7 +135,7 @@ class MigrationShell extends AppShell {
 	protected function _startMigrationConnection(){
 		if (!empty($this->params['connection']) && empty($this->params['migrationConnection'])) {
 			return $this->in(
-					"You did not set a migration connection (-i), which do you will use?",
+					"You did not set a migration connection (-i), which connection do you want to use?",
 					$this->_connectionNamesEnum(),
 					$this->params['connection']
 				);
