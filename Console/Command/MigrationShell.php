@@ -15,6 +15,7 @@ App::uses('CakeSchema', 'Model');
 App::uses('MigrationVersion', 'Migrations.Lib');
 App::uses('String', 'Utility');
 App::uses('ClassRegistry', 'Utility');
+App::uses('ConnectionManager', 'Model');
 
 /**
  * Migration shell.
@@ -79,9 +80,7 @@ class MigrationShell extends AppShell {
 			$this->connection = $this->params['connection'];
 		}
 
-		if (!empty($this->params['migrationConnection'])) {
-			$this->migrationConnection = $this->params['migrationConnection'];
-		}
+		$this->migrationConnection = $this->_startMigrationConnection();
 
 		if (!empty($this->params['plugin'])) {
 			$this->type = $this->params['plugin'];
@@ -115,6 +114,34 @@ class MigrationShell extends AppShell {
 			'add_index' => __d('migrations', 'Adding index ":index" to table ":table".'),
 			'drop_index' => __d('migrations', 'Dropping index ":index" from table ":table".'),
 		);
+	}
+
+/**
+ * Get a list of connection names.
+ *
+ * @return array The list of connection names
+ */
+	protected function _connectionNamesEnum() {
+		return array_keys(ConnectionManager::enumConnectionObjects());
+	}
+
+/**
+ * Set a migration connection
+ *
+ * @return string The name of the migration connection.
+ */
+	protected function _startMigrationConnection() {
+		if (!empty($this->params['connection']) && empty($this->params['migrationConnection'])) {
+			return $this->in(
+				"You did not set a migration connection (-i), which connection do you want to use?",
+				$this->_connectionNamesEnum(),
+				$this->params['connection']
+			);
+		}
+
+		if (!empty($this->params['migrationConnection'])) {
+			return $this->params['migrationConnection'];
+		}
 	}
 
 /**
