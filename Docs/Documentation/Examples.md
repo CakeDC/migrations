@@ -69,3 +69,12 @@ Gets the status of all migrations.
 ```
 cake Migrations.migration status
 ```
+
+Adding a specific datasource
+--------------------------------------------------
+
+Will set the datasource and will run the migrations in this datasource.
+
+```
+cake Migrations.migration run --connection my_data_source
+```
