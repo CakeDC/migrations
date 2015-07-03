@@ -1,6 +1,31 @@
 Changelog
 =========
 
+Release 2.4.0
+-------------
+
+* [43228df](https://github.com/cakedc/migrations/commit/43228df) Code standard fix
+* [4352ed8](https://github.com/cakedc/migrations/commit/4352ed8) Changed method comment to a clearer comment
+* [25d7181](https://github.com/cakedc/migrations/commit/25d7181) Changed uses of the ConnectionManager class to static
+* [9a56814](https://github.com/cakedc/migrations/commit/9a56814) Fixed method comments
+* [2ee4c1e](https://github.com/cakedc/migrations/commit/2ee4c1e) Changed call of enumConnectionObjects to static
+* [caf1730](https://github.com/cakedc/migrations/commit/caf1730) Correct definition of the connection manager class uses
+* [193ed70](https://github.com/cakedc/migrations/commit/193ed70) Fixed code formating
+* [283590a](https://github.com/cakedc/migrations/commit/283590a) Fixed console input message that asks migrationConnection
+* [1909320](https://github.com/cakedc/migrations/commit/1909320) Added test case to check migrationConnection shell parameter
+* [b60fa05](https://github.com/cakedc/migrations/commit/b60fa05) Fixed array syntax in model uses
+* [9237949](https://github.com/cakedc/migrations/commit/9237949) Validate migrateConnection argument when a custom connection is set
+* [6374acc](https://github.com/cakedc/migrations/commit/6374acc) Added example to set a specific datasource on run
+
+Release 2.3.6
+-------------
+
+* [1489496](https://github.com/cakedc/migrations/commit/1489496) Revert "fixing unit tests" to pass tests in travis env
+* [ebf6bc6](https://github.com/cakedc/migrations/commit/ebf6bc6) using minor for travis CakePHP
+* [517a810](https://github.com/cakedc/migrations/commit/517a810) updating travis
+* [180fe03](https://github.com/cakedc/migrations/commit/180fe03) fixed class condition after some changes done in Inflector::camelize in 2.6.6
+* [27d5afb](https://github.com/cakedc/migrations/commit/27d5afb) fixing unit tests
+
 Release 2.3.6
 -------------
 
