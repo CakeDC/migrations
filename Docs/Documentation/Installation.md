@@ -39,4 +39,8 @@ If any updates are added, go back to the base of your own repository, commit and
 Composer
 --------
 
-The plugin also provides a "composer.json" file, to easily use the plugin through the Composer dependency manager.
+To install the plugin with the [Composer dependency manager](https://getcomposer.org/), run the following from your CakePHP project's ROOT directory (where the ``composer.json`` file is located):
+
+```
+php composer.phar require cakedc/migrations "~2.4.0"
+```
