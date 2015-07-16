@@ -389,7 +389,6 @@ class MigrationShell extends AppShell {
 		$migration = array('up' => array(), 'down' => array());
 		$migrationName = '';
 		$comparison = array();
-
 		if (!empty($this->args)) {
 			// If args are passed in from the command line, we just want to
 			// generate a migration based on them - don't offer to compare to database
@@ -421,7 +420,7 @@ class MigrationShell extends AppShell {
 		if ($fromSchema && isset($comparison)) {
 			$response = $this->in(__d('migrations', 'Do you want to update the schema.php file?'), array('y', 'n'), 'y');
 			if (strtolower($response) === 'y') {
-				$this->_updateSchema();
+				$this->_updateSchema($comparison);
 			}
 		}
 	}
@@ -442,8 +441,9 @@ class MigrationShell extends AppShell {
 			unset($oldSchema->tables['schema_migrations']);
 		}
 		$newSchema = $this->_readSchema();
-		$comparison = $this->Schema->compare($oldSchema, $newSchema);
-		$migration = $this->_fromComparison($migration, $comparison, $oldSchema->tables, $newSchema['tables']);
+		$comparison = $this->Schema->compare($oldSchema->tables, $newSchema['tables']['missing']);
+		unset($comparison['schema_migrations']);
+		$migration = $this->_fromComparison($migration, $comparison, $oldSchema->tables, $newSchema['tables']['missing']);
 	}
 
 /**
@@ -789,15 +789,23 @@ class MigrationShell extends AppShell {
  *
  * @return void
  */
-	protected function _updateSchema() {
-		$command = 'schema generate --connection ' . $this->connection;
-		if (!empty($this->params['plugin'])) {
-			$command .= ' --plugin ' . $this->params['plugin'];
+	protected function _updateSchema(&$comparison) {
+		if (!empty($comparison)) {
+			$command = 'schema generate -f -m --exclude schema_migrations';
 		}
-		if ($this->params['force']) {
-			$command .= ' --force';
+		else {
+
+			debug($this->params);
+			die();
+			$command = 'schema generate --connection ' . $this->connection;
+			if (!empty($this->params['plugin'])) {
+				$command .= ' --plugin ' . $this->params['plugin'];
+			}
+			if ($this->params['force']) {
+				$command .= ' --force';
+			}
+			$command .= ' --file schema.php --name ' . $this->_getSchemaClassName($this->type, false);
 		}
-		$command .= ' --file schema.php --name ' . $this->_getSchemaClassName($this->type, false);
 		$this->dispatchShell($command);
 	}
 
