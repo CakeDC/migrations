@@ -794,9 +794,6 @@ class MigrationShell extends AppShell {
 			$command = 'schema generate -f -m --exclude schema_migrations';
 		}
 		else {
-
-			debug($this->params);
-			die();
 			$command = 'schema generate --connection ' . $this->connection;
 			if (!empty($this->params['plugin'])) {
 				$command .= ' --plugin ' . $this->params['plugin'];
