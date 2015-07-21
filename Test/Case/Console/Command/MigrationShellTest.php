@@ -746,7 +746,8 @@ TEXT;
 	public function testGenerate() {
 		$this->Shell->expects($this->at(0))->method('in')->will($this->returnValue('n'));
 		$this->Shell->expects($this->at(1))->method('in')->will($this->returnValue('n'));
-		$this->Shell->expects($this->at(2))->method('in')->will($this->returnValue('Initial Schema'));
+		$this->Shell->expects($this->at(2))->method('in')->will($this->returnValue('n'));
+		$this->Shell->expects($this->at(3))->method('in')->will($this->returnValue('Initial Schema'));
 
 		$this->Shell->generate();
 
@@ -764,9 +765,10 @@ TEXT;
 		$this->Shell->expects($this->atLeastOnce())->method('err');
 		$this->Shell->expects($this->at(0))->method('in')->will($this->returnValue('n'));
 		$this->Shell->expects($this->at(1))->method('in')->will($this->returnValue('n'));
-		$this->Shell->expects($this->at(2))->method('in')->will($this->returnValue('002 invalid name'));
-		$this->Shell->expects($this->at(4))->method('in')->will($this->returnValue('invalid-name'));
-		$this->Shell->expects($this->at(6))->method('in')->will($this->returnValue('create some sample_data'));
+		$this->Shell->expects($this->at(2))->method('in')->will($this->returnValue('n'));
+		$this->Shell->expects($this->at(3))->method('in')->will($this->returnValue('002 invalid name'));
+		$this->Shell->expects($this->at(5))->method('in')->will($this->returnValue('invalid-name'));
+		$this->Shell->expects($this->at(7))->method('in')->will($this->returnValue('create some sample_data'));
 
 		$this->Shell->generate();
 
