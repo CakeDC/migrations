@@ -400,12 +400,15 @@ class MigrationShell extends AppShell {
 				$response = $this->in(__d('migrations', 'Do you want to compare the schema.php file to the database?'), array('y', 'n'), 'y');
 				if (strtolower($response) === 'y') {
 					$this->_generateFromComparison($migration, $oldSchema, $comparison);
-					if (empty($comparison)) {
-						$this->hr();
-						$this->out(__d('migrations', 'No database changes detected.'));
-						return $this->_stop();
-					}
+					$this->_comparisonChanges($comparison);
 					$fromSchema = true;
+				} else {
+					$response = $this->in(__d('migrations', 'Do you want to compare the database to the schema.php file?'), array('y', 'n'), 'y');
+					if(strtolower($response) === 'y') {
+						$this->_generateFromInverseComparison($migration, $oldSchema, $comparison);
+						$this->_comparisonChanges($comparison);
+						$fromSchema = false;
+					}
 				}
 			} else {
 				$response = $this->in(__d('migrations', 'Do you want to generate a dump from the current database?'), array('y', 'n'), 'y');
@@ -423,6 +426,14 @@ class MigrationShell extends AppShell {
 			if (strtolower($response) === 'y') {
 				$this->_updateSchema();
 			}
+		}
+	}
+
+	protected function _comparisonChanges(&$comparison) {
+		if (empty($comparison)) {
+			$this->hr();
+			$this->out(__d('migrations', 'No database changes detected.'));
+			return $this->_stop();
 		}
 	}
 
@@ -444,6 +455,26 @@ class MigrationShell extends AppShell {
 		$newSchema = $this->_readSchema();
 		$comparison = $this->Schema->compare($oldSchema, $newSchema);
 		$migration = $this->_fromComparison($migration, $comparison, $oldSchema->tables, $newSchema['tables']);
+	}
+
+/**
+ * Generate a migration by comparing the database with schema.php.
+ *
+ * @param array &$migration Reference to variable of the same name in generate() method
+ * @param array &$oldSchema Reference to variable of the same name in generate() method
+ * @param array &$comparison Reference to variable of the same name in generate() method
+ * @return void (The variables passed by reference are changed; nothing is returned)
+ */
+	protected function _generateFromInverseComparison(&$migration, &$oldSchema, &$comparison) {
+		$this->hr();
+		$this->out(__d('migrations', 'Comparing database to the schema.php...'));
+
+		if ($this->type !== 'migrations') {
+			unset($oldSchema->tables['schema_migrations']);
+		}
+		$database = $this->_readSchema();
+		$comparison = $this->Schema->compare($database, $oldSchema);
+		$migration = $this->_fromComparison($migration, $comparison, $oldSchema->tables, $database['tables']);
 	}
 
 /**
