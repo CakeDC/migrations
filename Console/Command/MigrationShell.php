@@ -765,7 +765,7 @@ class MigrationShell extends AppShell {
 		$name = $this->_getSchemaClassName($type);
 		$file = $this->_findSchemaFile($folder, $schema_files, $name);
 
-		if ($type === 'app' && $file === false) {
+		if ($type === 'app' && empty($file)) {
 			$appDir = preg_replace('/[^a-zA-Z0-9]/', '', APP_DIR);
 			$name = Inflector::camelize($appDir) . 'Schema';
 			$file = $this->_getPath($type) . 'Config' . DS . 'Schema' . DS . 'schema.php';
@@ -784,17 +784,17 @@ class MigrationShell extends AppShell {
  * @param Folder $folder Folder object with schema folder path.
  * @param string $schema_files Schema files inside schema folder.
  * @param string $name Schema-class name.
- * @return mixed False in case of no file found, schema file.
+ * @return mixed null in case of no file found, schema file.
  */
-	protected function _findSchemaFile(&$folder, &$schema_files, &$name) {
+	protected function _findSchemaFile($folder, $schema_files, $name) {
 		foreach ($schema_files as $schema_file) {
-			$file = $folder->pwd() . DS . $schema_file;
-			$content = file_get_contents($file);
+			$file = new File($folder->pwd() . DS . $schema_file);
+			$content = $file->read();
 			if (strpos($content, $name) !== false) {
-				return $file;
+				return $file->path;
 			}
 		}
-		return false;
+		return null;
 	}
 
 /**
