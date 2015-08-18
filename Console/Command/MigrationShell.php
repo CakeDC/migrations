@@ -16,6 +16,7 @@ App::uses('MigrationVersion', 'Migrations.Lib');
 App::uses('String', 'Utility');
 App::uses('ClassRegistry', 'Utility');
 App::uses('Folder', 'Utility');
+App::uses('File', 'Utility');
 
 /**
  * Migration shell.
