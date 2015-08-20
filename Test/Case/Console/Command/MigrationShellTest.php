@@ -748,6 +748,7 @@ TEXT;
 		$this->Shell->expects($this->at(1))->method('in')->will($this->returnValue('n'));
 		$this->Shell->expects($this->at(2))->method('in')->will($this->returnValue('Initial Schema'));
 
+		$this->Shell->params['overwrite'] = false;
 		$this->Shell->generate();
 
 		$files = glob(TMP . 'tests' . DS . '*initial_schema.php');
@@ -768,6 +769,7 @@ TEXT;
 		$this->Shell->expects($this->at(4))->method('in')->will($this->returnValue('invalid-name'));
 		$this->Shell->expects($this->at(6))->method('in')->will($this->returnValue('create some sample_data'));
 
+		$this->Shell->params['overwrite'] = false;
 		$this->Shell->generate();
 
 		$files = glob(TMP . 'tests' . DS . '*create_some_sample_data.php');
@@ -791,7 +793,10 @@ TEXT;
 		$this->Shell->Version->expects($this->any())->method('getMapping')->will($this->returnCallback(array($this, 'returnMapping')));
 
 		$this->assertEmpty(glob(TMP . 'tests' . DS . '*drop_slug_field.php'));
-		$this->Shell->params['force'] = true;
+		$this->Shell->params = array(
+			'force' => true,
+			'overwrite' => false
+		);
 		$this->Shell->generate();
 		$files = glob(TMP . 'tests' . DS . '*drop_slug_field.php');
 		$this->assertNotEmpty($files);
@@ -835,7 +840,10 @@ TEXT;
 		$this->assertEmpty(glob(TMP . 'tests' . DS . '*create_products.php'));
 
 		$this->Shell->args = array('create_products', 'id', 'created', 'modified', 'name', 'description:text', 'in_stock:boolean', 'price:float', 'stock_count:integer');
-		$this->Shell->params['force'] = true;
+		$this->Shell->params = array(
+			'force' => true,
+			'overwrite' => false
+		);
 		$this->Shell->generate();
 		$files = glob(TMP . 'tests' . DS . '*create_products.php');
 		$this->assertNotEmpty($files);
@@ -858,7 +866,10 @@ TEXT;
 		$this->assertEmpty(glob(TMP . 'tests' . DS . '*drop_products.php'));
 
 		$this->Shell->args = array('drop_products');
-		$this->Shell->params['force'] = true;
+		$this->Shell->params = array(
+			'force' => true,
+			'overwrite' => false
+		);
 		$this->Shell->generate();
 		$files = glob(TMP . 'tests' . DS . '*drop_products.php');
 		$this->assertNotEmpty($files);
@@ -881,7 +892,10 @@ TEXT;
 		$this->assertEmpty(glob(TMP . 'tests' . DS . '*add_all_fields_to_products.php'));
 
 		$this->Shell->args = array('add_all_fields_to_products', 'id', 'created', 'modified', 'name', 'description:text', 'in_stock:boolean', 'price:float', 'stock_count:integer');
-		$this->Shell->params['force'] = true;
+		$this->Shell->params = array(
+			'force' => true,
+			'overwrite' => false
+		);
 		$this->Shell->generate();
 		$files = glob(TMP . 'tests' . DS . '*add_all_fields_to_products.php');
 		$this->assertNotEmpty($files);
@@ -904,7 +918,10 @@ TEXT;
 		$this->assertEmpty(glob(TMP . 'tests' . DS . '*remove_name_and_desc_from_products.php'));
 
 		$this->Shell->args = array('remove_name_and_desc_from_products', 'name', 'description');
-		$this->Shell->params['force'] = true;
+		$this->Shell->params = array(
+			'force' => true,
+			'overwrite' => false
+		);
 		$this->Shell->generate();
 		$files = glob(TMP . 'tests' . DS . '*remove_name_and_desc_from_products.php');
 		$this->assertNotEmpty($files);
@@ -929,9 +946,12 @@ TEXT;
 
 		$this->assertEmpty(glob(TMP . 'tests' . DS . '*schema_dump.php'));
 		$this->Shell->type = 'TestMigrationPlugin2';
-		$this->Shell->params['force'] = true;
-		$this->Shell->params['dry'] = false;
-		$this->Shell->params['precheck'] = 'Migrations.PrecheckException';
+		$this->Shell->params = array(
+			'force' => true,
+			'dry' => false,
+			'precheck' => 'Migrations.PrecheckException',
+			'overwrite' => false
+		);
 		$this->Shell->generate();
 		$files = glob(TMP . 'tests' . DS . '*schema_dump.php');
 		$this->assertNotEmpty($files);
