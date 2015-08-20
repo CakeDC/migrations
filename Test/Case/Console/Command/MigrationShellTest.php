@@ -753,6 +753,7 @@ TEXT;
 		$this->Shell->expects($this->at(1))->method('in')->will($this->returnValue('n'));
 		$this->Shell->expects($this->at(2))->method('in')->will($this->returnValue('Initial Schema'));
 
+		$this->Shell->params['compare'] = false;
 		$this->Shell->generate();
 
 		$files = glob(TMP . 'tests' . DS . '*initial_schema.php');
@@ -773,6 +774,7 @@ TEXT;
 		$this->Shell->expects($this->at(4))->method('in')->will($this->returnValue('invalid-name'));
 		$this->Shell->expects($this->at(6))->method('in')->will($this->returnValue('create some sample_data'));
 
+		$this->Shell->params['compare'] = false;
 		$this->Shell->generate();
 
 		$files = glob(TMP . 'tests' . DS . '*create_some_sample_data.php');
@@ -797,6 +799,7 @@ TEXT;
 
 		$this->assertEmpty(glob(TMP . 'tests' . DS . '*drop_slug_field.php'));
 		$this->Shell->params['force'] = true;
+		$this->Shell->params['compare'] = false;
 		$this->Shell->generate();
 		$files = glob(TMP . 'tests' . DS . '*drop_slug_field.php');
 		$this->assertNotEmpty($files);

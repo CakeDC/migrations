@@ -165,6 +165,9 @@ class MigrationShell extends AppShell {
 				'short' => 'f',
 				'boolean' => true,
 				'help' => __('Force \'generate\' to compare all tables.')))
+			->addOption('compare', array(
+				'boolean' => true,
+				'help' => __('Compare the schema.php file to the database.')))
 			->addOption('connection', array(
 				'short' => 'c',
 				'default' => null,
@@ -423,16 +426,13 @@ class MigrationShell extends AppShell {
 			$this->_generateFromCliArgs($migration, $migrationName, $comparison);
 		} else {
 			$oldSchema = $this->_getSchema($this->type);
-			if ($oldSchema !== false) {
+			
+			if ($oldSchema !== false && $this->params['compare'] === true) {
+				$this->_compareSchemaFileToDatabase($migration, $oldSchema, $comparison, $fromSchema);
+			} elseif ($oldSchema !== false) {
 				$response = $this->in(__d('migrations', 'Do you want to compare the schema.php file to the database?'), array('y', 'n'), 'y');
 				if (strtolower($response) === 'y') {
-					$this->_generateFromComparison($migration, $oldSchema, $comparison);
-					if (empty($comparison)) {
-						$this->hr();
-						$this->out(__d('migrations', 'No database changes detected.'));
-						return $this->_stop();
-					}
-					$fromSchema = true;
+					$this->_compareSchemaFileToDatabase($migration, $oldSchema, $comparison, $fromSchema);
 				}
 			} else {
 				$response = $this->in(__d('migrations', 'Do you want to generate a dump from the current database?'), array('y', 'n'), 'y');
@@ -451,6 +451,16 @@ class MigrationShell extends AppShell {
 				$this->_updateSchema();
 			}
 		}
+	}
+
+	protected function _compareSchemaFileToDatabase(&$migration, &$oldSchema, &$comparison, &$fromSchema) {
+		$this->_generateFromComparison($migration, $oldSchema, $comparison);
+		if (empty($comparison)) {
+			$this->hr();
+			$this->out(__d('migrations', 'No database changes detected.'));
+			return $this->_stop();
+		}
+		$fromSchema = true;
 	}
 
 /**
