@@ -1202,12 +1202,21 @@ class MigrationShell extends AppShell {
 /**
  * Callback used to display what migration is being runned
  *
+ * Additionally, shows the generation date of the migration,
+ * if the version is greater than '2000-01-01'.
+ *
  * @param CakeMigration &$Migration Migration being performed
  * @param string $direction Direction being runned
  * @return void
  */
 	public function beforeMigration(&$Migration, $direction) {
-		$this->out('  [' . sprintf("%'.03d", $Migration->info['version']) . '] ' . $Migration->info['name']);
+		$version = $Migration->info['version'];
+		$generationDate = '';
+		if ($version > 946684800) {
+			$generationDate =  ' (' .	CakeTime::format($version, '%Y-%m-%d %H:%M:%S') . ')';
+		}
+		$this->out('  [' . sprintf("%'.03d", $version) . '] ' . $Migration->info['name'] . $generationDate
+		);
 	}
 
 /**
