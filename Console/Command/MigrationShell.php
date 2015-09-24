@@ -675,13 +675,13 @@ class MigrationShell extends AppShell {
 				$this->out(__d('migrations', 'Current version:'));
 				if ($version != 0) {
 					$info = $mapping[$version];
-					$this->out('  #' . number_format($info['version'] / 100, 2, '', '') . ' ' . $info['name']);
+					$this->out('  #' . sprintf("%'.03d", $info['version']) . ' ' . $info['name']);
 				} else {
 					$this->out('  ' . __d('migrations', 'None applied.'));
 				}
 
 				$this->out(__d('migrations', 'Latest version:'));
-				$this->out('  #' . number_format($latest['version'] / 100, 2, '', '') . ' ' . $latest['name']);
+				$this->out('  #' . sprintf("%'.03d", $latest['version']) . ' ' . $latest['name']);
 				$this->hr();
 			} catch (MigrationVersionException $e) {
 				continue;
@@ -705,13 +705,13 @@ class MigrationShell extends AppShell {
 		if ($version != 0) {
 			$info = $mapping[$version];
 			$this->out(__d('migrations', 'Current migration version:'));
-			$this->out('  #' . number_format($version / 100, 2, '', '') . ' ' . $info['name']);
+			$this->out('  #' . sprintf("%'.03d", $version) . ' ' . $info['name']);
 			$this->hr();
 		}
 
 		$this->out(__d('migrations', 'Available migrations:'));
 		foreach ($mapping as $version => $info) {
-			$this->out('  [' . number_format($version / 100, 2, '', '') . '] ' . $info['name']);
+			$this->out('  [' . sprintf("%'.03d", $version) . '] ' . $info['name']);
 
 			$this->out('        ', false);
 			if ($info['migrated'] !== null) {
@@ -1206,7 +1206,7 @@ class MigrationShell extends AppShell {
  * @return void
  */
 	public function beforeMigration(&$Migration, $direction) {
-		$this->out('  [' . number_format($Migration->info['version'] / 100, 2, '', '') . '] ' . $Migration->info['name']);
+		$this->out('  [' . sprintf("%'.03d", $Migration->info['version']) . '] ' . $Migration->info['name']);
 	}
 
 /**
