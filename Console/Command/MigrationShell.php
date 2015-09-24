@@ -18,6 +18,7 @@ App::uses('ClassRegistry', 'Utility');
 App::uses('ConnectionManager', 'Model');
 App::uses('Folder', 'Utility');
 App::uses('File', 'Utility');
+App::uses('CakeTime', 'Utility');
 
 /**
  * Migration shell.
@@ -715,7 +716,7 @@ class MigrationShell extends AppShell {
 
 			$this->out('        ', false);
 			if ($info['migrated'] !== null) {
-				$this->out(__d('migrations', 'applied') . ' ' . date('r', strtotime($info['migrated'])));
+				$this->out(__d('migrations', 'applied') . ' ' . CakeTime::nice(strtotime($info['migrated'])));
 			} else {
 				$this->out(__d('migrations', 'not applied'));
 			}
