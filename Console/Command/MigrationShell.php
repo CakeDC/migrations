@@ -705,7 +705,7 @@ class MigrationShell extends AppShell {
 		if ($version != 0) {
 			$info = $mapping[$version];
 			$this->out(__d('migrations', 'Current migration version:'));
-			$this->out('  #' . number_format($version / 100, 2, '', '') . '  ' . $info['name']);
+			$this->out('  #' . number_format($version / 100, 2, '', '') . ' ' . $info['name']);
 			$this->hr();
 		}
 
