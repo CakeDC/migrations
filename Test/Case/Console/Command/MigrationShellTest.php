@@ -14,7 +14,6 @@ App::uses('MigrationShell', 'Migrations.Console/Command');
 
 /**
  * TestMigrationShell
- *
  */
 class TestMigrationShell extends MigrationShell {
 
@@ -64,7 +63,6 @@ class TestMigrationShell extends MigrationShell {
 
 /**
  * MigrationShellTest
- *
  */
 class MigrationShellTest extends CakeTestCase {
 

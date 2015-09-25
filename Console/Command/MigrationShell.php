@@ -19,7 +19,6 @@ App::uses('ConnectionManager', 'Model');
 
 /**
  * Migration shell.
- *
  */
 class MigrationShell extends AppShell {
 
