@@ -267,7 +267,7 @@ class MigrationShell extends AppShell {
 
 		$result = $this->_execute($options, $once);
 		if ($result !== true) {
-			$this->out(__d('migrations', $result));
+			$this->out($result);
 		}
 
 		$this->out(__d('migrations', 'All migrations have completed.'));
