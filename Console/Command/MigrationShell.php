@@ -156,44 +156,44 @@ class MigrationShell extends AppShell {
 				'')
 			->addOption('plugin', array(
 				'short' => 'p',
-				'help' => __('Plugin name to be used')))
+				'help' => __d('migrations', 'Plugin name to be used')))
 			->addOption('precheck', array(
 				'short' => 'm',
 				'default' => 'Migrations.PrecheckException',
-				'help' => __('Precheck migrations')))
+				'help' => __d('migrations', 'Precheck migrations')))
 			->addOption('force', array(
 				'short' => 'f',
 				'boolean' => true,
-				'help' => __('Force \'generate\' to compare all tables.')))
+				'help' => __d('migrations', 'Force \'generate\' to compare all tables.')))
 			->addOption('connection', array(
 				'short' => 'c',
 				'default' => null,
-				'help' => __('Overrides the \'default\' connection of the MigrationVersion')))
+				'help' => __d('migrations', 'Overrides the \'default\' connection of the MigrationVersion')))
 			->addOption('migrationConnection', array(
 				'short' => 'i',
 				'default' => null,
-				'help' => __('Overrides the \'default\' connection of the CakeMigrations that are applied')))
+				'help' => __d('migrations', 'Overrides the \'default\' connection of the CakeMigrations that are applied')))
 			->addOption('dry', array(
 				'short' => 'd',
 				'boolean' => true,
 				'default' => false,
-				'help' => __('Output the raw SQL queries rather than applying them to the database.')))
+				'help' => __d('migrations', 'Output the raw SQL queries rather than applying them to the database.')))
 			->addOption('no-auto-init', array(
 				'short' => 'n',
 				'boolean' => true,
 				'default' => false,
-				'help' => __('Disables automatic creation of migrations table and running any internal plugin migrations')))
+				'help' => __d('migrations', 'Disables automatic creation of migrations table and running any internal plugin migrations')))
 			->addOption('schema-class', array(
 				'short' => 's',
 				'boolean' => false,
 				'default' => false,
-				'help' => __('CamelCased Classname without the `Schema` suffix to use when reading or generating schema files. See `Console/cake schema generate --help`.')))
+				'help' => __d('migrations', 'CamelCased Classname without the `Schema` suffix to use when reading or generating schema files. See `Console/cake schema generate --help`.')))
 			->addSubcommand('status', array(
-				'help' => __('Displays a status of all plugin and app migrations.')))
+				'help' => __d('migrations', 'Displays a status of all plugin and app migrations.')))
 			->addSubcommand('run', array(
-				'help' => __('Run a migration to given direction or version.')))
+				'help' => __d('migrations', 'Run a migration to given direction or version.')))
 			->addSubcommand('generate', array(
-				'help' => __('Generates a migration file.')));
+				'help' => __d('migrations', 'Generates a migration file.')));
 	}
 
 /**
