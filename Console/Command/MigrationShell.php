@@ -427,7 +427,7 @@ class MigrationShell extends AppShell {
 				$response = $this->in(__d('migrations', 'Do you want to compare the schema.php file to the database?'), array('y', 'n'), 'y');
 				if (strtolower($response) === 'y') {
 					$this->_generateFromComparison($migration, $oldSchema, $comparison);
-					if (empty($comparison)) {
+					if (empty($migration)) {
 						$this->hr();
 						$this->out(__d('migrations', 'No database changes detected.'));
 						return $this->_stop();
