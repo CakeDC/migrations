@@ -15,6 +15,8 @@ App::uses('CakeSchema', 'Model');
 App::uses('MigrationVersion', 'Migrations.Lib');
 App::uses('String', 'Utility');
 App::uses('ClassRegistry', 'Utility');
+App::uses('Folder', 'Utility');
+App::uses('File', 'Utility');
 
 /**
  * Migration shell.
@@ -404,12 +406,15 @@ class MigrationShell extends AppShell {
 				$response = $this->in(__d('migrations', 'Do you want to compare the schema.php file to the database?'), array('y', 'n'), 'y');
 				if (strtolower($response) === 'y') {
 					$this->_generateFromComparison($migration, $oldSchema, $comparison);
-					if (empty($comparison)) {
-						$this->hr();
-						$this->out(__d('migrations', 'No database changes detected.'));
-						return $this->_stop();
-					}
+					$this->_migrationChanges($migration);
 					$fromSchema = true;
+				} else {
+					$response = $this->in(__d('migrations', 'Do you want to compare the database to the schema.php file?'), array('y', 'n'), 'y');
+					if(strtolower($response) === 'y') {
+						$this->_generateFromInverseComparison($migration, $oldSchema, $comparison);
+						$this->_migrationChanges($migration);
+						$fromSchema = false;
+					}
 				}
 			} else {
 				$response = $this->in(__d('migrations', 'Do you want to generate a dump from the current database?'), array('y', 'n'), 'y');
@@ -434,6 +439,14 @@ class MigrationShell extends AppShell {
 		}
 	}
 
+	protected function _migrationChanges(&$migration) {
+		if (empty($migration)) {
+			$this->hr();
+			$this->out(__d('migrations', 'No database changes detected.'));
+			return $this->_stop();
+		}
+	}
+
 /**
  * Generate a migration by comparing schema.php with the database.
  *
@@ -452,6 +465,26 @@ class MigrationShell extends AppShell {
 		$newSchema = $this->_readSchema();
 		$comparison = $this->Schema->compare($oldSchema, $newSchema);
 		$migration = $this->_fromComparison($migration, $comparison, $oldSchema->tables, $newSchema['tables']);
+	}
+
+/**
+ * Generate a migration by comparing the database with schema.php.
+ *
+ * @param array &$migration Reference to variable of the same name in generate() method
+ * @param array &$oldSchema Reference to variable of the same name in generate() method
+ * @param array &$comparison Reference to variable of the same name in generate() method
+ * @return void (The variables passed by reference are changed; nothing is returned)
+ */
+	protected function _generateFromInverseComparison(&$migration, &$oldSchema, &$comparison) {
+		$this->hr();
+		$this->out(__d('migrations', 'Comparing database to the schema.php...'));
+
+		if ($this->type !== 'migrations') {
+			unset($oldSchema->tables['schema_migrations']);
+		}
+		$database = $this->_readSchema();
+		$comparison = $this->Schema->compare($database, $oldSchema);
+		$migration = $this->_fromComparison($migration, $comparison, $oldSchema->tables, $database['tables']);
 	}
 
 /**
@@ -761,22 +794,47 @@ class MigrationShell extends AppShell {
 			$plugin = ($this->type === 'app') ? null : $this->type;
 			return new CakeSchema(array('connection' => $this->connection, 'plugin' => $plugin));
 		}
-		$file = $this->_getPath($type) . 'Config' . DS . 'Schema' . DS . 'schema.php';
-		if (!file_exists($file)) {
+
+		$folder = new Folder($this->_getPath($type) . 'Config' . DS . 'Schema');
+		$schema_files = $folder->find('.*schema.*.php');
+		
+		if (count($schema_files) === 0) {
 			return false;
 		}
-		require_once $file;
 
 		$name = $this->_getSchemaClassName($type);
+		$file = $this->_findSchemaFile($folder, $schema_files, $name);
 
-		if ($type === 'app' && !class_exists($name)) {
+		if ($type === 'app' && empty($file)) {
 			$appDir = preg_replace('/[^a-zA-Z0-9]/', '', APP_DIR);
 			$name = Inflector::camelize($appDir) . 'Schema';
+			$file = $this->_getPath($type) . 'Config' . DS . 'Schema' . DS . 'schema.php';
 		}
+
+		require_once $file;
 
 		$plugin = ($type === 'app') ? null : $type;
 		$schema = new $name(array('connection' => $this->connection, 'plugin' => $plugin));
 		return $schema;
+	}
+
+/**
+ * Finds schema file
+ *
+ * @param Folder $folder Folder object with schema folder path.
+ * @param string $schema_files Schema files inside schema folder.
+ * @param string $name Schema-class name.
+ * @return mixed null in case of no file found, schema file.
+ */
+	protected function _findSchemaFile($folder, $schema_files, $name) {
+		foreach ($schema_files as $schema_file) {
+			$file = new File($folder->pwd() . DS . $schema_file);
+			$content = $file->read();
+			if (strpos($content, $name) !== false) {
+				return $file->path;
+			}
+		}
+		return null;
 	}
 
 /**
