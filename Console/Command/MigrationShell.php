@@ -16,6 +16,8 @@ App::uses('MigrationVersion', 'Migrations.Lib');
 App::uses('String', 'Utility');
 App::uses('ClassRegistry', 'Utility');
 App::uses('ConnectionManager', 'Model');
+App::uses('Folder', 'Utility');
+App::uses('File', 'Utility');
 
 /**
  * Migration shell.
@@ -780,22 +782,47 @@ class MigrationShell extends AppShell {
 			$plugin = ($this->type === 'app') ? null : $this->type;
 			return new CakeSchema(array('connection' => $this->connection, 'plugin' => $plugin));
 		}
-		$file = $this->_getPath($type) . 'Config' . DS . 'Schema' . DS . 'schema.php';
-		if (!file_exists($file)) {
+
+		$folder = new Folder($this->_getPath($type) . 'Config' . DS . 'Schema');
+		$schema_files = $folder->find('.*schema.*.php');
+
+		if (count($schema_files) === 0) {
 			return false;
 		}
-		require_once $file;
 
 		$name = $this->_getSchemaClassName($type);
+		$file = $this->_findSchemaFile($folder, $schema_files, $name);
 
-		if ($type === 'app' && !class_exists($name)) {
+		if ($type === 'app' && empty($file)) {
 			$appDir = preg_replace('/[^a-zA-Z0-9]/', '', APP_DIR);
 			$name = Inflector::camelize($appDir) . 'Schema';
+			$file = $this->_getPath($type) . 'Config' . DS . 'Schema' . DS . 'schema.php';
 		}
+
+		require_once $file;
 
 		$plugin = ($type === 'app') ? null : $type;
 		$schema = new $name(array('connection' => $this->connection, 'plugin' => $plugin));
 		return $schema;
+	}
+
+/**
+ * Finds schema file
+ *
+ * @param Folder $folder Folder object with schema folder path.
+ * @param string $schema_files Schema files inside schema folder.
+ * @param string $name Schema-class name.
+ * @return mixed null in case of no file found, schema file.
+ */
+	protected function _findSchemaFile($folder, $schema_files, $name) {
+		foreach ($schema_files as $schema_file) {
+			$file = new File($folder->pwd() . DS . $schema_file);
+			$content = $file->read();
+			if (strpos($content, $name) !== false) {
+				return $file->path;
+			}
+		}
+		return null;
 	}
 
 /**
