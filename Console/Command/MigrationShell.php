@@ -168,7 +168,7 @@ class MigrationShell extends AppShell {
 			->addOption('overwrite', array(
 				'short' => 'o',
 				'boolean' => true,
-				'help' => __d('Overwrite the schema.php file after generated a migration.')))
+				'help' => __d('migrations', 'Overwrite the schema.php file after generated a migration.')))
 			->addOption('connection', array(
 				'short' => 'c',
 				'default' => null,
