@@ -751,7 +751,8 @@ TEXT;
 	public function testGenerate() {
 		$this->Shell->expects($this->at(0))->method('in')->will($this->returnValue('n'));
 		$this->Shell->expects($this->at(1))->method('in')->will($this->returnValue('n'));
-		$this->Shell->expects($this->at(2))->method('in')->will($this->returnValue('Initial Schema'));
+		$this->Shell->expects($this->at(2))->method('in')->will($this->returnValue('n'));
+		$this->Shell->expects($this->at(3))->method('in')->will($this->returnValue('Initial Schema'));
 
 		$this->Shell->params['overwrite'] = false;
 		$this->Shell->generate();
@@ -770,9 +771,10 @@ TEXT;
 		$this->Shell->expects($this->atLeastOnce())->method('err');
 		$this->Shell->expects($this->at(0))->method('in')->will($this->returnValue('n'));
 		$this->Shell->expects($this->at(1))->method('in')->will($this->returnValue('n'));
-		$this->Shell->expects($this->at(2))->method('in')->will($this->returnValue('002 invalid name'));
-		$this->Shell->expects($this->at(4))->method('in')->will($this->returnValue('invalid-name'));
-		$this->Shell->expects($this->at(6))->method('in')->will($this->returnValue('create some sample_data'));
+		$this->Shell->expects($this->at(2))->method('in')->will($this->returnValue('n'));
+		$this->Shell->expects($this->at(3))->method('in')->will($this->returnValue('002 invalid name'));
+		$this->Shell->expects($this->at(5))->method('in')->will($this->returnValue('invalid-name'));
+		$this->Shell->expects($this->at(7))->method('in')->will($this->returnValue('create some sample_data'));
 
 		$this->Shell->params['overwrite'] = false;
 		$this->Shell->generate();
@@ -834,6 +836,50 @@ TEXT;
 	}
 
 /**
+ * TestGenerateInverseComparison method
+ *
+ * @return void
+ */
+	public function testGenerateInverseComparison() {
+		$this->Shell->type = 'TestMigrationPlugin4';
+		$this->Shell->expects($this->at(0))->method('in')->will($this->returnValue('n'));
+		$this->Shell->expects($this->at(1))->method('in')->will($this->returnValue('y'));
+		$this->Shell->expects($this->at(3))->method('in')->will($this->returnValue('n'));
+		$this->Shell->expects($this->at(4))->method('in')->will($this->returnValue('create slug field'));
+
+		$this->Shell->Version->expects($this->any())->method('getMapping')->will($this->returnCallback(array($this, 'returnMapping')));
+
+		$this->assertEmpty(glob(TMP . 'tests' . DS . '*create_slug_field.php'));
+		$this->Shell->params = array(
+			'force' => true,
+			'overwrite' => false
+		);
+		$this->Shell->generate();
+		$files = glob(TMP . 'tests' . DS . '*create_slug_field.php');
+		$this->assertNotEmpty($files);
+
+		$result = $this->_getMigrationVariable(current($files));
+		$this->_unlink($files);
+		$this->assertNotRegExp('/\'schema_migrations\'/', $result);
+
+		$pattern = <<<TEXT
+/			'create_field' => array\(
+				'articles' => array\(
+					'slug' => array\('type' => 'string', 'null' => false, 'after' => 'title'\),
+				\),
+			\),/
+TEXT;
+		$this->assertRegExp(str_replace("\r\n", "\n", $pattern), $result);
+
+		$pattern = <<<TEXT
+/			'drop_field' => array\(
+				'articles' => array\('slug'\),
+			\),/
+TEXT;
+		$this->assertRegExp(str_replace("\r\n", "\n", $pattern), $result);
+	}
+
+/**
  * testGenerateFromCliParamsCreateTable method
  * test the case of using a command such as:
  * app/Console/cake Migrations.migration generate create_products id created modified name description:text in_stock:boolean price:float stock_count:integer
@@ -874,8 +920,7 @@ TEXT;
 		$this->Shell->params = array(
 			'force' => true,
 			'overwrite' => false
-		);
-		$this->Shell->generate();
+		);		$this->Shell->generate();
 		$files = glob(TMP . 'tests' . DS . '*drop_products.php');
 		$this->assertNotEmpty($files);
 		$result = $this->_getMigrationVariable(current($files));
@@ -1038,4 +1083,3 @@ TEXT;
 	}
 
 }
-
