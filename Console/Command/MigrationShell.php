@@ -167,6 +167,10 @@ class MigrationShell extends AppShell {
 				'short' => 'f',
 				'boolean' => true,
 				'help' => __d('migrations', 'Force \'generate\' to compare all tables.')))
+			->addOption('overwrite', array(
+				'short' => 'o',
+				'boolean' => true,
+				'help' => __d('migrations', 'Overwrite the schema.php file after generated a migration.')))
 			->addOption('connection', array(
 				'short' => 'c',
 				'default' => null,
@@ -449,6 +453,10 @@ class MigrationShell extends AppShell {
 		}
 
 		$this->_finalizeGeneratedMigration($migration, $migrationName, $fromSchema);
+
+		if ($this->params['overwrite'] === true) {
+			$this->_overwriteSchema();
+		}
 
 		if ($fromSchema && isset($comparison)) {
 			$response = $this->in(__d('migrations', 'Do you want to update the schema.php file?'), array('y', 'n'), 'y');
@@ -884,6 +892,43 @@ class MigrationShell extends AppShell {
 		}
 		$command .= ' --file schema.php --name ' . $this->_getSchemaClassName($this->type, false);
 		$this->dispatchShell($command);
+	}
+
+/**
+ * Overwrite the schema.php file
+ *
+ * @return void
+ */
+
+	protected function _overwriteSchema() {
+		$options = array();
+		if ($this->params['force']) {
+			$options['models'] = false;
+		} elseif (!empty($this->params['models'])) {
+			$options['models'] = String::tokenize($this->params['models']);
+		}
+
+		$cacheDisable = Configure::read('Cache.disable');
+		Configure::write('Cache.disable', true);
+
+		$content = $this->Schema->read($options);
+		$file = 'schema.php';
+
+		Configure::write('Cache.disable', $cacheDisable);
+
+		if (!empty($this->params['exclude']) && !empty($content)) {
+			$excluded = String::tokenize($this->params['exclude']);
+			foreach ($excluded as $table) {
+				unset($content['tables'][$table]);
+			}
+		}
+
+		if ($this->Schema->write($content)) {
+			$this->out(__d('cake_console', 'Schema file: %s generated', $file));
+			return $this->_stop();
+		}
+		$this->err(__d('cake_console', 'Schema file: %s generated'));
+		return $this->_stop();
 	}
 
 /**
