@@ -18,7 +18,6 @@ App::uses('MigrationVersionException', 'Migrations.Lib');
 
 /**
  * Migration version management.
- *
  */
 class MigrationVersion {
 
@@ -492,7 +491,6 @@ class MigrationVersion {
 
 /**
  * Usually used when migrations file/class or map files are not found
- *
  */
 class MigrationVersionException extends Exception {
 

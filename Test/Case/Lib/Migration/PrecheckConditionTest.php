@@ -14,7 +14,6 @@ App::uses('CakeMigration', 'Migrations.Lib');
 
 /**
  * TestPrecheckCakeMigration
- *
  */
 class TestPrecheckCakeMigration extends CakeMigration {
 

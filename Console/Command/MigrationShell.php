@@ -21,7 +21,6 @@ App::uses('File', 'Utility');
 
 /**
  * Migration shell.
- *
  */
 class MigrationShell extends AppShell {
 
