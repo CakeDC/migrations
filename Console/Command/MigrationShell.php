@@ -166,6 +166,9 @@ class MigrationShell extends AppShell {
 				'short' => 'f',
 				'boolean' => true,
 				'help' => __d('migrations', 'Force \'generate\' to compare all tables.')))
+            ->addOption('skip', array(
+                'boolean' => true,
+                'help' => __('Skip to a certain migration.')))
 			->addOption('overwrite', array(
 				'short' => 'o',
 				'boolean' => true,
@@ -395,6 +398,9 @@ class MigrationShell extends AppShell {
 				if ($valid) {
 					$options['version'] = (int)$response;
 					$direction = 'up';
+                    if ($this->params['skip'] === true) {
+                        $this->_skipVersion($mapping, $response);
+                    }
 					if (empty($mapping[(int)$response]['migrated'])) {
 						$direction = 'up';
 					} elseif ((int)$response <= $latestVersion) {
@@ -472,6 +478,19 @@ class MigrationShell extends AppShell {
 			return $this->_stop();
 		}
 	}
+
+/**
+ * Skip to a certain migration, saving others migrations in schema_migration table.
+ *
+ * @return void
+ */
+    protected function _skipVersion($mapping, $response) {
+        foreach ($mapping as $version) {
+            if ($version['version'] !== (int)$response) {
+                $this->Version->setVersion($version['version'], $version['type']);
+            }
+        }
+    }
 
 /**
  * Generate a migration by comparing schema.php with the database.
