@@ -16,10 +16,11 @@ App::uses('MigrationVersion', 'Migrations.Lib');
 App::uses('String', 'Utility');
 App::uses('ClassRegistry', 'Utility');
 App::uses('ConnectionManager', 'Model');
+App::uses('Folder', 'Utility');
+App::uses('File', 'Utility');
 
 /**
  * Migration shell.
- *
  */
 class MigrationShell extends AppShell {
 
@@ -156,44 +157,48 @@ class MigrationShell extends AppShell {
 				'')
 			->addOption('plugin', array(
 				'short' => 'p',
-				'help' => __('Plugin name to be used')))
+				'help' => __d('migrations', 'Plugin name to be used')))
 			->addOption('precheck', array(
 				'short' => 'm',
 				'default' => 'Migrations.PrecheckException',
-				'help' => __('Precheck migrations')))
+				'help' => __d('migrations', 'Precheck migrations')))
 			->addOption('force', array(
 				'short' => 'f',
 				'boolean' => true,
-				'help' => __('Force \'generate\' to compare all tables.')))
+				'help' => __d('migrations', 'Force \'generate\' to compare all tables.')))
+			->addOption('overwrite', array(
+				'short' => 'o',
+				'boolean' => true,
+				'help' => __d('migrations', 'Overwrite the schema.php file after generated a migration.')))
 			->addOption('connection', array(
 				'short' => 'c',
 				'default' => null,
-				'help' => __('Overrides the \'default\' connection of the MigrationVersion')))
+				'help' => __d('migrations', 'Overrides the \'default\' connection of the MigrationVersion')))
 			->addOption('migrationConnection', array(
 				'short' => 'i',
 				'default' => null,
-				'help' => __('Overrides the \'default\' connection of the CakeMigrations that are applied')))
+				'help' => __d('migrations', 'Overrides the \'default\' connection of the CakeMigrations that are applied')))
 			->addOption('dry', array(
 				'short' => 'd',
 				'boolean' => true,
 				'default' => false,
-				'help' => __('Output the raw SQL queries rather than applying them to the database.')))
+				'help' => __d('migrations', 'Output the raw SQL queries rather than applying them to the database.')))
 			->addOption('no-auto-init', array(
 				'short' => 'n',
 				'boolean' => true,
 				'default' => false,
-				'help' => __('Disables automatic creation of migrations table and running any internal plugin migrations')))
+				'help' => __d('migrations', 'Disables automatic creation of migrations table and running any internal plugin migrations')))
 			->addOption('schema-class', array(
 				'short' => 's',
 				'boolean' => false,
 				'default' => false,
-				'help' => __('CamelCased Classname without the `Schema` suffix to use when reading or generating schema files. See `Console/cake schema generate --help`.')))
+				'help' => __d('migrations', 'CamelCased Classname without the `Schema` suffix to use when reading or generating schema files. See `Console/cake schema generate --help`.')))
 			->addSubcommand('status', array(
-				'help' => __('Displays a status of all plugin and app migrations.')))
+				'help' => __d('migrations', 'Displays a status of all plugin and app migrations.')))
 			->addSubcommand('run', array(
-				'help' => __('Run a migration to given direction or version.')))
+				'help' => __d('migrations', 'Run a migration to given direction or version.')))
 			->addSubcommand('generate', array(
-				'help' => __('Generates a migration file.')));
+				'help' => __d('migrations', 'Generates a migration file.')));
 	}
 
 /**
@@ -267,7 +272,7 @@ class MigrationShell extends AppShell {
 
 		$result = $this->_execute($options, $once);
 		if ($result !== true) {
-			$this->out(__d('migrations', $result));
+			$this->out($result);
 		}
 
 		$this->out(__d('migrations', 'All migrations have completed.'));
@@ -427,12 +432,15 @@ class MigrationShell extends AppShell {
 				$response = $this->in(__d('migrations', 'Do you want to compare the schema.php file to the database?'), array('y', 'n'), 'y');
 				if (strtolower($response) === 'y') {
 					$this->_generateFromComparison($migration, $oldSchema, $comparison);
-					if (empty($comparison)) {
-						$this->hr();
-						$this->out(__d('migrations', 'No database changes detected.'));
-						return $this->_stop();
-					}
+					$this->_migrationChanges($migration);
 					$fromSchema = true;
+				} else {
+					$response = $this->in(__d('migrations', 'Do you want to compare the database to the schema.php file?'), array('y', 'n'), 'y');
+					if(strtolower($response) === 'y') {
+						$this->_generateFromInverseComparison($migration, $oldSchema, $comparison);
+						$this->_migrationChanges($migration);
+						$fromSchema = false;
+					}
 				}
 			} else {
 				$response = $this->in(__d('migrations', 'Do you want to generate a dump from the current database?'), array('y', 'n'), 'y');
@@ -445,11 +453,23 @@ class MigrationShell extends AppShell {
 
 		$this->_finalizeGeneratedMigration($migration, $migrationName, $fromSchema);
 
+		if ($this->params['overwrite'] === true) {
+			$this->_overwriteSchema();
+		}
+
 		if ($fromSchema && isset($comparison)) {
 			$response = $this->in(__d('migrations', 'Do you want to update the schema.php file?'), array('y', 'n'), 'y');
 			if (strtolower($response) === 'y') {
 				$this->_updateSchema();
 			}
+		}
+	}
+
+	protected function _migrationChanges($migration) {
+		if (empty($migration)) {
+			$this->hr();
+			$this->out(__d('migrations', 'No database changes detected.'));
+			return $this->_stop();
 		}
 	}
 
@@ -471,6 +491,26 @@ class MigrationShell extends AppShell {
 		$newSchema = $this->_readSchema();
 		$comparison = $this->Schema->compare($oldSchema, $newSchema);
 		$migration = $this->_fromComparison($migration, $comparison, $oldSchema->tables, $newSchema['tables']);
+	}
+
+/**
+ * Generate a migration by comparing the database with schema.php.
+ *
+ * @param array &$migration Reference to variable of the same name in generate() method
+ * @param array &$oldSchema Reference to variable of the same name in generate() method
+ * @param array &$comparison Reference to variable of the same name in generate() method
+ * @return void (The variables passed by reference are changed; nothing is returned)
+ */
+	protected function _generateFromInverseComparison(&$migration, &$oldSchema, &$comparison) {
+		$this->hr();
+		$this->out(__d('migrations', 'Comparing database to the schema.php...'));
+
+		if ($this->type !== 'migrations') {
+			unset($oldSchema->tables['schema_migrations']);
+		}
+		$database = $this->_readSchema();
+		$comparison = $this->Schema->compare($database, $oldSchema);
+		$migration = $this->_fromComparison($migration, $comparison, $oldSchema->tables, $database['tables']);
 	}
 
 /**
@@ -780,22 +820,47 @@ class MigrationShell extends AppShell {
 			$plugin = ($this->type === 'app') ? null : $this->type;
 			return new CakeSchema(array('connection' => $this->connection, 'plugin' => $plugin));
 		}
-		$file = $this->_getPath($type) . 'Config' . DS . 'Schema' . DS . 'schema.php';
-		if (!file_exists($file)) {
+
+		$folder = new Folder($this->_getPath($type) . 'Config' . DS . 'Schema');
+		$schema_files = $folder->find('.*schema.*.php');
+
+		if (count($schema_files) === 0) {
 			return false;
 		}
-		require_once $file;
 
 		$name = $this->_getSchemaClassName($type);
+		$file = $this->_findSchemaFile($folder, $schema_files, $name);
 
-		if ($type === 'app' && !class_exists($name)) {
+		if ($type === 'app' && empty($file)) {
 			$appDir = preg_replace('/[^a-zA-Z0-9]/', '', APP_DIR);
 			$name = Inflector::camelize($appDir) . 'Schema';
+			$file = $this->_getPath($type) . 'Config' . DS . 'Schema' . DS . 'schema.php';
 		}
+
+		require_once $file;
 
 		$plugin = ($type === 'app') ? null : $type;
 		$schema = new $name(array('connection' => $this->connection, 'plugin' => $plugin));
 		return $schema;
+	}
+
+/**
+ * Finds schema file
+ *
+ * @param Folder $folder Folder object with schema folder path.
+ * @param string $schema_files Schema files inside schema folder.
+ * @param string $name Schema-class name.
+ * @return mixed null in case of no file found, schema file.
+ */
+	protected function _findSchemaFile($folder, $schema_files, $name) {
+		foreach ($schema_files as $schema_file) {
+			$file = new File($folder->pwd() . DS . $schema_file);
+			$content = $file->read();
+			if (strpos($content, $name) !== false) {
+				return $file->path;
+			}
+		}
+		return null;
 	}
 
 /**
@@ -826,6 +891,43 @@ class MigrationShell extends AppShell {
 		}
 		$command .= ' --file schema.php --name ' . $this->_getSchemaClassName($this->type, false);
 		$this->dispatchShell($command);
+	}
+
+/**
+ * Overwrite the schema.php file
+ *
+ * @return void
+ */
+
+	protected function _overwriteSchema() {
+		$options = array();
+		if ($this->params['force']) {
+			$options['models'] = false;
+		} elseif (!empty($this->params['models'])) {
+			$options['models'] = String::tokenize($this->params['models']);
+		}
+
+		$cacheDisable = Configure::read('Cache.disable');
+		Configure::write('Cache.disable', true);
+
+		$content = $this->Schema->read($options);
+		$file = 'schema.php';
+
+		Configure::write('Cache.disable', $cacheDisable);
+
+		if (!empty($this->params['exclude']) && !empty($content)) {
+			$excluded = String::tokenize($this->params['exclude']);
+			foreach ($excluded as $table) {
+				unset($content['tables'][$table]);
+			}
+		}
+
+		if ($this->Schema->write($content)) {
+			$this->out(__d('cake_console', 'Schema file: %s generated', $file));
+			return $this->_stop();
+		}
+		$this->err(__d('cake_console', 'Schema file: %s generated'));
+		return $this->_stop();
 	}
 
 /**

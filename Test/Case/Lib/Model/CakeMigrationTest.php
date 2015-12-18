@@ -14,7 +14,6 @@ App::uses('MigrationVersion', 'Migrations.Lib');
 
 /**
  * TestCakeMigration
- *
  */
 class TestCakeMigration extends CakeMigration {
 
@@ -28,7 +27,6 @@ class TestCakeMigration extends CakeMigration {
 
 /**
  * TestCallbackCakeMigration
- *
  */
 class TestCallbackCakeMigration {
 
@@ -89,7 +87,6 @@ class TestCallbackCakeMigration {
 
 /**
  * CakeMigrationTest
- *
  */
 class CakeMigrationTest extends CakeTestCase {
 

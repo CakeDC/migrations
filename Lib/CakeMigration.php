@@ -13,7 +13,6 @@ App::uses('CakeSchema', 'Model');
 
 /**
  * Base Class for Migration management
- *
  */
 class CakeMigration extends Object {
 
@@ -637,7 +636,6 @@ class CakeMigration extends Object {
 
 /**
  * Exception used when something goes wrong on migrations
- *
  */
 class MigrationException extends Exception {
 

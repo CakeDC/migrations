@@ -22,7 +22,6 @@ App::import('Lib', 'Migrations.MigrationVersion');
  *    'panels' => array('Migrations.migrations')
  * ));
  * @@@
- *
  */
 class MigrationsPanel extends DebugPanel {
 

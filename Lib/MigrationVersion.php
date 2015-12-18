@@ -18,7 +18,6 @@ App::uses('MigrationVersionException', 'Migrations.Lib');
 
 /**
  * Migration version management.
- *
  */
 class MigrationVersion {
 
@@ -349,7 +348,7 @@ class MigrationVersion {
 					} else {
 						$latestVersionName = null;
 					}
-					$errorMessage = __d('migrations', sprintf("There was an error during a migration. \n The error was: '%s' \n You must resolve the issue manually and try again.", $exception->getMessage(), $latestVersionName));
+					$errorMessage = __d('migrations', "There was an error during a migration. \n The error was: '%s' \n You must resolve the issue manually and try again.", $exception->getMessage(), $latestVersionName);
 					return $errorMessage;
 				}
 
@@ -492,7 +491,6 @@ class MigrationVersion {
 
 /**
  * Usually used when migrations file/class or map files are not found
- *
  */
 class MigrationVersionException extends Exception {
 
