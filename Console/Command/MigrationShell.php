@@ -225,7 +225,7 @@ class MigrationShell extends AppShell {
 
 		if ($mapping === false) {
 			$this->out(__d('migrations', 'No migrations available.'));
-			return $this->_stop(0);
+			return $this->_stop();
 		}
 		$latestVersion = $this->Version->getVersion($this->type);
 
