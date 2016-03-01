@@ -13,7 +13,7 @@ App::uses('Shell', 'Console');
 App::uses('AppShell', 'Console/Command');
 App::uses('CakeSchema', 'Model');
 App::uses('MigrationVersion', 'Migrations.Lib');
-App::uses('String', 'Utility');
+App::uses('CakeText', 'Utility');
 App::uses('ClassRegistry', 'Utility');
 App::uses('ConnectionManager', 'Model');
 App::uses('Folder', 'Utility');
@@ -1230,7 +1230,7 @@ class MigrationShell extends AppShell {
  */
 	public function beforeAction(&$Migration, $type, $data) {
 		if (isset($this->_messages[$type])) {
-			$message = String::insert($this->_messages[$type], $data);
+			$message = CakeText::insert($this->_messages[$type], $data);
 			$this->out('      > ' . $message);
 		}
 	}
