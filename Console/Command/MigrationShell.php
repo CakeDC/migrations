@@ -13,7 +13,7 @@ App::uses('Shell', 'Console');
 App::uses('AppShell', 'Console/Command');
 App::uses('CakeSchema', 'Model');
 App::uses('MigrationVersion', 'Migrations.Lib');
-App::uses('String', 'Utility');
+App::uses('CakeText', 'Utility');
 App::uses('ClassRegistry', 'Utility');
 App::uses('ConnectionManager', 'Model');
 App::uses('Folder', 'Utility');
@@ -904,7 +904,7 @@ class MigrationShell extends AppShell {
 		if ($this->params['force']) {
 			$options['models'] = false;
 		} elseif (!empty($this->params['models'])) {
-			$options['models'] = String::tokenize($this->params['models']);
+			$options['models'] = CakeText::tokenize($this->params['models']);
 		}
 
 		$cacheDisable = Configure::read('Cache.disable');
@@ -916,7 +916,7 @@ class MigrationShell extends AppShell {
 		Configure::write('Cache.disable', $cacheDisable);
 
 		if (!empty($this->params['exclude']) && !empty($content)) {
-			$excluded = String::tokenize($this->params['exclude']);
+			$excluded = CakeText::tokenize($this->params['exclude']);
 			foreach ($excluded as $table) {
 				unset($content['tables'][$table]);
 			}
@@ -1230,7 +1230,7 @@ class MigrationShell extends AppShell {
  */
 	public function beforeAction(&$Migration, $type, $data) {
 		if (isset($this->_messages[$type])) {
-			$message = String::insert($this->_messages[$type], $data);
+			$message = CakeText::insert($this->_messages[$type], $data);
 			$this->out('      > ' . $message);
 		}
 	}
