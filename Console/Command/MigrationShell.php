@@ -1156,7 +1156,12 @@ class MigrationShell extends AppShell {
 		if (is_array($values)) {
 			foreach ($values as $key => $value) {
 				if (is_array($value)) {
-					$_values[] = "'" . $key . "' => array('" . implode("', '", $value) . "')";
+					if (array_keys($value) !== range(0, count($value) - 1)) {
+						$set = implode("', '", $this->_values($value));
+					} else {
+						$set = "'" . implode("', '", $value) . "'";
+					}
+					$_values[] = "'" . $key . "' => array(" . $set . ")";
 				} elseif (!is_numeric($key)) {
 					$value = var_export($value, true);
 					$_values[] = "'" . $key . "' => " . $value;
