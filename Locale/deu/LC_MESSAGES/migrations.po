@@ -135,7 +135,7 @@ msgstr "Möchten Sie einen Dump von der aktuellen Datenbank generieren?"
 #: Console/Command/MigrationShell.php:422
 #, fuzzy
 msgid "Do you want to update the schema.php file?"
-msgstr "Möchten Sie die schema.php Datei mit der Datenbank vergleichen?"
+msgstr "Möchten Sie die schema.php Datei aktualisieren?"
 
 #: Console/Command/MigrationShell.php:439
 msgid "Comparing schema.php to the database..."

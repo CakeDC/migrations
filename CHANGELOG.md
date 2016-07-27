@@ -1,6 +1,11 @@
 Changelog
 =========
 
+Release 2.4.1
+-------------
+
+* Bugfix/Improvement release
+
 Release 2.4.0
 -------------
 
