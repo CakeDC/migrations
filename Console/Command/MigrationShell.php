@@ -167,6 +167,10 @@ class MigrationShell extends AppShell {
 				'short' => 'f',
 				'boolean' => true,
 				'help' => __d('migrations', 'Force \'generate\' to compare all tables.')))
+			->addOption('compare', array(
+				'short' => 'm',
+				'boolean' => true,
+				'help' => __d('migrations', 'Force the comparison between schema file and database')))
 			->addOption('overwrite', array(
 				'short' => 'o',
 				'boolean' => true,
@@ -430,6 +434,12 @@ class MigrationShell extends AppShell {
 		} else {
 			$oldSchema = $this->_getSchema($this->type);
 			if ($oldSchema !== false) {
+				$response = isset($this->params['compare']) && $this->params['compare'] === true ? 'y' : false;
+
+				if ($response === false) {
+					$response = $this->in(__d('migrations', 'Do you want to compare the schema.php file to the database?'), array('y', 'n'), 'y');
+				}
+
 				$response = $this->in(__d('migrations', 'Do you want to compare the schema.php file to the database?'), array('y', 'n'), 'y');
 				if (strtolower($response) === 'y') {
 					$this->_generateFromComparison($migration, $oldSchema, $comparison);
