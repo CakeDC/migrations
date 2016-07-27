@@ -160,7 +160,7 @@ class MigrationShell extends AppShell {
 /**
  * Get the option parser.
  *
- * @return void
+ * @return string
  */
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
@@ -180,6 +180,10 @@ class MigrationShell extends AppShell {
 				'help' => __d('migrations', 'Force \'generate\' to compare all tables.')))
 			->addOption('skip', array(
 				'help' => __('Skip to a certain migration.')))
+			->addOption('compare', array(
+				'short' => 'm',
+				'boolean' => true,
+				'help' => __d('migrations', 'Force the comparison between schema file and database')))
 			->addOption('overwrite', array(
 				'short' => 'o',
 				'boolean' => true,
@@ -443,6 +447,12 @@ class MigrationShell extends AppShell {
 		} else {
 			$oldSchema = $this->_getSchema($this->type);
 			if ($oldSchema !== false) {
+				$response = isset($this->params['compare']) && $this->params['compare'] === true ? 'y' : false;
+
+				if ($response === false) {
+					$response = $this->in(__d('migrations', 'Do you want to compare the schema.php file to the database?'), array('y', 'n'), 'y');
+				}
+
 				$response = $this->in(__d('migrations', 'Do you want to compare the schema.php file to the database?'), array('y', 'n'), 'y');
 				if (strtolower($response) === 'y') {
 					$this->_generateFromComparison($migration, $oldSchema, $comparison);
@@ -1175,7 +1185,12 @@ class MigrationShell extends AppShell {
 		if (is_array($values)) {
 			foreach ($values as $key => $value) {
 				if (is_array($value)) {
-					$_values[] = "'" . $key . "' => array('" . implode("', '", $value) . "')";
+					if (array_keys($value) !== range(0, count($value) - 1)) {
+						$set = implode("', '", $this->_values($value));
+					} else {
+						$set = "'" . implode("', '", $value) . "'";
+					}
+					$_values[] = "'" . $key . "' => array(" . $set . ")";
 				} elseif (!is_numeric($key)) {
 					$value = var_export($value, true);
 					$_values[] = "'" . $key . "' => " . $value;
