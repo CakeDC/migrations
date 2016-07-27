@@ -343,7 +343,7 @@ class MigrationVersion {
 					$mapping = $this->getMapping($options['type']);
 					if (isset($mapping[$latestVersion]['version'])) {
 						$latestVersionName = '#' .
-							number_format($mapping[$latestVersion]['version'] / 100, 2, '', '') . ' ' .
+							sprintf("%'.03d", $mapping[$latestVersion]['version']) . ' ' .
 							$mapping[$latestVersion]['name'];
 					} else {
 						$latestVersionName = null;
