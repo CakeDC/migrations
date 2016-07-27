@@ -78,3 +78,20 @@ Will set the datasource and will run the migrations in this datasource.
 ```
 cake Migrations.migration run --connection my_data_source
 ```
+
+Skipping certain migrations
+--------------------------------------------------
+
+Will skip one migration.
+
+```
+cake Migrations.migration run all --skip 1458963215_articles_table
+```
+
+You can skip many migrations using comma to separate, for example.
+
+```
+cake Migrations.migration run all --skip 1458963215_articles_table,1457412585_users_table
+```
+
+Remember this migrations will be set as executed.

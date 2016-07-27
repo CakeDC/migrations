@@ -69,6 +69,13 @@ class MigrationVersion {
 	public $dry = false;
 
 /**
+ * Skip a version or it can skip many version using comma as separate.
+ *
+ * @var array
+ */
+	public $skip = array();
+
+/**
  * Log of SQL queries generated
  *
  * This is used for dry run
@@ -95,6 +102,10 @@ class MigrationVersion {
 			$this->migrationConnection = $options['migrationConnection'];
 		}
 
+		if (!empty($options['skip'])) {
+			$this->skip = $options['skip'];
+		}
+
 		if (!isset($options['dry'])) {
 			$options['dry'] = false;
 		}
@@ -112,7 +123,6 @@ class MigrationVersion {
  *
  * @return void
  */
-
 	public function initVersion() {
 		$this->Version = ClassRegistry::init(array(
 			'class' => 'Migrations.SchemaMigration',
@@ -312,6 +322,10 @@ class MigrationVersion {
 			}
 		}
 
+		if (!empty($this->skip) && is_string($this->skip)) {
+			$this->skip = explode(',', trim($this->skip));
+		}
+
 		if ($direction === 'up' && !isset($options['version'])) {
 			$keys = array_keys($mapping);
 			$flipped = array_flip($keys);
@@ -329,6 +343,11 @@ class MigrationVersion {
 				break;
 			} elseif (($direction === 'up' && $info['migrated'] === null)
 				|| ($direction === 'down' && $info['migrated'] !== null)) {
+
+				if (in_array($mapping[$version]['name'], $this->skip)) {
+					$this->setVersion($version, $info['type']);
+					continue;
+				}
 
 				$migration = $this->getMigration($info['name'], $info['class'], $info['type'], $options);
 				$migration->Version = $this;
@@ -359,7 +378,6 @@ class MigrationVersion {
 		if (isset($result)) {
 			return $result;
 		}
-
 		return true;
 	}
 
