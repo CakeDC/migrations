@@ -62,6 +62,13 @@ class MigrationShell extends AppShell {
 	public $Version;
 
 /**
+ * Skip a version or it can skip many version using comma as separate.
+ *
+ * @var array
+ */
+	public $skip = array();
+
+/**
  * Messages used to display action being performed
  *
  * @var array
@@ -87,12 +94,17 @@ class MigrationShell extends AppShell {
 			$this->type = $this->params['plugin'];
 		}
 
+		if (!empty($this->params['skip'])) {
+			$this->skip = $this->params['skip'];
+		}
+
 		$this->path = $this->_getPath() . 'Config' . DS . 'Migration' . DS;
 
 		$options = array(
 			'precheck' => $this->params['precheck'],
 			'autoinit' => !$this->params['no-auto-init'],
-			'dry' => $this->params['dry']);
+			'dry' => $this->params['dry'],
+			'skip' => isset($this->params['skip']) ? $this->params['skip'] : null);
 
 		if (!empty($this->connection)) {
 			$options['connection'] = $this->connection;
@@ -101,7 +113,6 @@ class MigrationShell extends AppShell {
 		if (!empty($this->migrationConnection)) {
 			$options['migrationConnection'] = $this->migrationConnection;
 		}
-
 		$this->Version = new MigrationVersion($options);
 
 		$this->_messages = array(
@@ -166,9 +177,8 @@ class MigrationShell extends AppShell {
 				'short' => 'f',
 				'boolean' => true,
 				'help' => __d('migrations', 'Force \'generate\' to compare all tables.')))
-            ->addOption('skip', array(
-                'boolean' => true,
-                'help' => __('Skip to a certain migration.')))
+			->addOption('skip', array(
+				'help' => __('Skip to a certain migration.')))
 			->addOption('overwrite', array(
 				'short' => 'o',
 				'boolean' => true,
@@ -240,7 +250,8 @@ class MigrationShell extends AppShell {
 			'precheck' => isset($this->params['precheck']) ? $this->params['precheck'] : null,
 			'type' => $this->type,
 			'dry' => $this->params['dry'],
-			'callback' => &$this);
+			'callback' => &$this,
+			'skip' => $this->skip);
 
 		$once = false; //In case of exception run shell again (all, reset, migration number)
 		if (isset($this->args[0]) && in_array($this->args[0], array('up', 'down'))) {
@@ -272,7 +283,6 @@ class MigrationShell extends AppShell {
 			$this->out(__d('migrations', 'Migration will run dry, no database changes will be made'));
 			$this->out('');
 		}
-
 		$result = $this->_execute($options, $once);
 		if ($result !== true) {
 			$this->out($result);
@@ -398,9 +408,6 @@ class MigrationShell extends AppShell {
 				if ($valid) {
 					$options['version'] = (int)$response;
 					$direction = 'up';
-                    if ($this->params['skip'] === true) {
-                        $this->_skipVersion($mapping, $response);
-                    }
 					if (empty($mapping[(int)$response]['migrated'])) {
 						$direction = 'up';
 					} elseif ((int)$response <= $latestVersion) {
@@ -442,7 +449,7 @@ class MigrationShell extends AppShell {
 					$fromSchema = true;
 				} else {
 					$response = $this->in(__d('migrations', 'Do you want to compare the database to the schema.php file?'), array('y', 'n'), 'y');
-					if(strtolower($response) === 'y') {
+					if (strtolower($response) === 'y') {
 						$this->_generateFromInverseComparison($migration, $oldSchema, $comparison);
 						$this->_migrationChanges($migration);
 						$fromSchema = false;
@@ -471,6 +478,12 @@ class MigrationShell extends AppShell {
 		}
 	}
 
+/**
+ * _migrationsChanges method
+ *
+ * @param array $migration list of migrations
+ * @return bool
+ */
 	protected function _migrationChanges($migration) {
 		if (empty($migration)) {
 			$this->hr();
@@ -478,19 +491,6 @@ class MigrationShell extends AppShell {
 			return $this->_stop();
 		}
 	}
-
-/**
- * Skip to a certain migration, saving others migrations in schema_migration table.
- *
- * @return void
- */
-    protected function _skipVersion($mapping, $response) {
-        foreach ($mapping as $version) {
-            if ($version['version'] !== (int)$response) {
-                $this->Version->setVersion($version['version'], $version['type']);
-            }
-        }
-    }
 
 /**
  * Generate a migration by comparing schema.php with the database.
@@ -841,14 +841,14 @@ class MigrationShell extends AppShell {
 		}
 
 		$folder = new Folder($this->_getPath($type) . 'Config' . DS . 'Schema');
-		$schema_files = $folder->find('.*schema.*.php');
+		$schemaFiles = $folder->find('.*schema.*.php');
 
-		if (count($schema_files) === 0) {
+		if (count($schemaFiles) === 0) {
 			return false;
 		}
 
 		$name = $this->_getSchemaClassName($type);
-		$file = $this->_findSchemaFile($folder, $schema_files, $name);
+		$file = $this->_findSchemaFile($folder, $schemaFiles, $name);
 
 		if ($type === 'app' && empty($file)) {
 			$appDir = preg_replace('/[^a-zA-Z0-9]/', '', APP_DIR);
@@ -867,13 +867,13 @@ class MigrationShell extends AppShell {
  * Finds schema file
  *
  * @param Folder $folder Folder object with schema folder path.
- * @param string $schema_files Schema files inside schema folder.
+ * @param string $schemaFiles Schema files inside schema folder.
  * @param string $name Schema-class name.
  * @return mixed null in case of no file found, schema file.
  */
-	protected function _findSchemaFile($folder, $schema_files, $name) {
-		foreach ($schema_files as $schema_file) {
-			$file = new File($folder->pwd() . DS . $schema_file);
+	protected function _findSchemaFile($folder, $schemaFiles, $name) {
+		foreach ($schemaFiles as $schemaFile) {
+			$file = new File($folder->pwd() . DS . $schemaFile);
 			$content = $file->read();
 			if (strpos($content, $name) !== false) {
 				return $file->path;
