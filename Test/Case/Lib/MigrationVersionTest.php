@@ -309,6 +309,27 @@ class MigrationVersionTest extends CakeTestCase {
 	}
 
 /**
+ * TestGetVersionByName method
+ *
+ * @return void
+ */
+	public function testGetVersionByName() {
+		$Version = new MigrationVersion(array(
+			'jumpTo' => '007_schema_dump'
+		));
+
+		$result = $Version->getVersionByName($this->_mapping());
+		$this->assertEquals(7, $result);
+
+		$Version = new MigrationVersion(array(
+			'jumpTo' => '00_schema_dump'
+		));
+
+		$result = $Version->getVersionByName($this->_mapping());
+		$this->assertFalse($result);
+	}
+
+/**
  * _mapping method
  *
  * @param int $start
@@ -319,7 +340,8 @@ class MigrationVersionTest extends CakeTestCase {
 		$mapping = array();
 		for ($i = 1; $i <= 10; $i++) {
 			$mapping[$i] = array(
-				'version' => $i, 'name' => '001_schema_dump',
+				'version' => $i,
+				'name' => "00{$i}_schema_dump",
 				'class' => 'M4af9d151e1484b74ad9d007058157726',
 				'type' => 'mocks', 'migrated' => null
 			);

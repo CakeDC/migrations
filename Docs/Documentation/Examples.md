@@ -95,3 +95,14 @@ cake Migrations.migration run all --skip 1458963215_articles_table,1457412585_us
 ```
 
 Remember this migrations will be set as executed.
+
+Jumping to certain migrations
+--------------------------------------------------
+
+If you want to jump to certain migration, you can use ```--jump-to``` or ```-j``` + migration name as the example below.
+
+```
+cake Migrations.migration run all -j 1458963215_articles_table
+```
+
+Remember all migrations before this will be set as executed.

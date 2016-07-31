@@ -105,7 +105,8 @@ class MigrationShell extends AppShell {
 			'precheck' => $this->params['precheck'],
 			'autoinit' => !$this->params['no-auto-init'],
 			'dry' => $this->params['dry'],
-			'skip' => isset($this->params['skip']) ? $this->params['skip'] : null);
+			'skip' => isset($this->params['skip']) ? $this->params['skip'] : null,
+			'jumpTo' => isset($this->params['jump-to']) ? $this->params['jump-to'] : null);
 
 		if (!empty($this->connection)) {
 			$options['connection'] = $this->connection;
@@ -179,7 +180,10 @@ class MigrationShell extends AppShell {
 				'boolean' => true,
 				'help' => __d('migrations', 'Force \'generate\' to compare all tables.')))
 			->addOption('skip', array(
-				'help' => __('Skip to a certain migration.')))
+				'help' => __('Skip certain migration.')))
+			->addOption('jump-to', array(
+				'short' => 'j',
+				'help' => __('Will jump to the migration and mark the others as executed.')))
 			->addOption('compare', array(
 				'short' => 'm',
 				'boolean' => true,
