@@ -62,49 +62,46 @@ if (document.getElementsByClassName == undefined) {
 		return results;
 	}
 }
-setTimeout(function() {
-    DEBUGKIT.$(document).ready(function () {
-        DEBUGKIT.module('migrationsPanel');
-        DEBUGKIT.migrationsPanel = function () {
-            var toolbar = DEBUGKIT.toolbar,
-                Element = DEBUGKIT.Util.Element,
-                Cookie = DEBUGKIT.Util.Cookie,
-                Collection = DEBUGKIT.Util.Collection,
-                Event = DEBUGKIT.Util.Event,
-                migrationsHidden = false;
 
-            return {
-                init: function () {
-                    var button = document.getElementById('hide-migrations'),
-                        self = this;
+DEBUGKIT.module('migrationsPanel');
+DEBUGKIT.migrationsPanel = function () {
+	var toolbar = DEBUGKIT.toolbar,
+		Element = DEBUGKIT.Util.Element,
+		Cookie = DEBUGKIT.Util.Cookie,
+		Collection = DEBUGKIT.Util.Collection,
+		Event = DEBUGKIT.Util.Event,
+		migrationsHidden = false;
 
-                    Event.addEvent(button, 'click', function (event) {
-                        event.preventDefault();
-                        self.toggleMigrations();
-                    });
+	return {
+		init: function () {
+			var button = document.getElementById('hide-migrations'),
+				self = this;
 
-                    var migrationsState = Cookie.read('migrationsDisplay');
-                    console.log(migrationsState);
-                    if (migrationsState != 'show') {
-                        migrationsHidden = false;
-                        this.toggleMigrations();
-                    }
-                },
+			Event.addEvent(button, 'click', function (event) {
+				event.preventDefault();
+				self.toggleMigrations();
+			});
 
-                toggleMigrations: function () {
-                    var display = migrationsHidden ? 'show' : 'hide';
-                    var arr = document.getElementsByClassName("migration-applied");
-                    for (i = 0; i < arr.length; i++) {
-                        Element[display](arr[i]);
-                    }
-                    Cookie.write('migrationsDisplay', display);
-                    migrationsHidden = !migrationsHidden;
-                    return false;
-                }
-            };
-        }();
-        DEBUGKIT.loader.register(DEBUGKIT.migrationsPanel);
-    });
-}, 0);
+			var migrationsState = Cookie.read('migrationsDisplay');
+			console.log(migrationsState);
+			if (migrationsState != 'show') {
+				migrationsHidden = false;
+				this.toggleMigrations();
+			}
+		},
+
+		toggleMigrations: function () {
+			var display = migrationsHidden ? 'show' : 'hide';
+			var arr = document.getElementsByClassName("migration-applied");
+			for (i = 0; i < arr.length; i++) {
+				Element[display](arr[i]);
+			}
+			Cookie.write('migrationsDisplay', display);
+			migrationsHidden = !migrationsHidden;
+			return false;
+		}
+	};
+}();
+DEBUGKIT.loader.register(DEBUGKIT.migrationsPanel);
 //]]>
 </script>

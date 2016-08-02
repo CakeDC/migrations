@@ -63,4 +63,5 @@ class TestMigrationPlugin4Schema extends CakeSchema {
 			'PRIMARY' => array('column' => 'id', 'unique' => 1)
 		)
 	);
+
 }

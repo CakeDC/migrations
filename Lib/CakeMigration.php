@@ -13,6 +13,7 @@ App::uses('CakeSchema', 'Model');
 
 /**
  * Base Class for Migration management
+ *
  */
 class CakeMigration extends Object {
 
@@ -109,7 +110,7 @@ class CakeMigration extends Object {
  * If try, the SQL will be outputted to screen rather than
  * applied to the database
  *
- * @var bool
+ * @var boolean
  */
 	public $dry = false;
 
@@ -126,7 +127,7 @@ class CakeMigration extends Object {
  * Before migration callback
  *
  * @param string $direction Direction of migration process (up or down)
- * @return bool Should process continue
+ * @return boolean Should process continue
  */
 	public function before($direction) {
 		return true;
@@ -136,7 +137,7 @@ class CakeMigration extends Object {
  * After migration callback
  *
  * @param string $direction Direction of migration process (up or down)
- * @return bool Should process continue
+ * @return boolean Should process continue
  */
 	public function after($direction) {
 		return true;
@@ -145,7 +146,7 @@ class CakeMigration extends Object {
 /**
  * Log a dry run SQL query
  *
- * @param string $sql SQL query
+ * @param str $sql
  * @return void
  */
 	public function logQuery($sql) {
@@ -195,9 +196,10 @@ class CakeMigration extends Object {
 			App::uses('PrecheckException', 'Migrations.Lib/Migration');
 			$this->Precheck = new PrecheckException();
 		} else {
-			list($plugin, $class) = pluginSplit($options['precheck'], true);
-			$class = Inflector::camelize($class);
+			$class = Inflector::camelize($options['precheck']);
+			list($plugin, $class) = pluginSplit($class, true);
 			App::uses($class, $plugin . 'Lib/Migration');
+
 			if (!class_exists($class)) {
 				throw new MigrationException($this, sprintf(
 					__d('migrations', 'Migration precheck class (%s) could not be loaded.'), $options['precheck']
@@ -218,7 +220,7 @@ class CakeMigration extends Object {
  * Run migration
  *
  * @param string $direction Direction of migration process (up or down)
- * @return bool Status of the process
+ * @return boolean Status of the process
  * @throws MigrationException
  */
 	public function run($direction) {
@@ -308,7 +310,7 @@ class CakeMigration extends Object {
  *
  * @param string $a Type
  * @param string $b Type
- * @return int Comparison value
+ * @return integer Comparison value
  */
 	protected function migration_order($a, $b) {
 		$order = array('drop_table', 'rename_table', 'create_table', 'drop_field', 'rename_field', 'alter_field', 'create_field');
@@ -320,7 +322,7 @@ class CakeMigration extends Object {
  *
  * @param string $type Type of operation to be done, in this case 'create_table'
  * @param array $tables List of tables to be created
- * @return bool Return true in case of success, otherwise false
+ * @return boolean Return true in case of success, otherwise false
  * @throws MigrationException
  */
 	protected function _createTable($type, $tables) {
@@ -352,7 +354,7 @@ class CakeMigration extends Object {
  *
  * @param string $type Type of operation to be done, in this case 'drop_table'
  * @param array $tables List of tables to be dropped
- * @return bool Return true in case of success, otherwise false
+ * @return boolean Return true in case of success, otherwise false
  * @throws MigrationException
  */
 	protected function _dropTable($type, $tables) {
@@ -381,7 +383,7 @@ class CakeMigration extends Object {
  *
  * @param string $type Type of operation to be done, this case 'rename_table'
  * @param array $tables List of tables to be renamed
- * @return bool Return true in case of success, otherwise false
+ * @return boolean Return true in case of success, otherwise false
  * @throws MigrationException
  */
 	protected function _renameTable($type, $tables) {
@@ -409,7 +411,7 @@ class CakeMigration extends Object {
  *
  * @param string $type Type of operation to be done
  * @param array $tables List of tables and fields
- * @return bool Return true in case of success, otherwise false
+ * @return boolean Return true in case of success, otherwise false
  * @throws MigrationException
  */
 	protected function _alterTable($type, $tables) {
@@ -571,11 +573,12 @@ class CakeMigration extends Object {
  * This method will invoke the before/afterAction callbacks, it is good when
  * you need track every action.
  *
- * @param string $callback Callback name, beforeMigration, beforeAction or afterMigration.
- * @param string $type Type of action (e.g. create_table, drop_table, etc.)
- *   Also can be the direction (before/after) for Migration callbacks
+ * @param string $callback Callback name, beforeMigration, beforeAction
+  *         or afterMigration.
+ * @param string $type Type of action. i.e: create_table, drop_table, etc.
+ *         Or also can be the direction, for before and after Migration callbacks
  * @param array $data Data to send to the callback
- * @return bool
+ * @return boolean
  */
 	protected function _invokePrecheck($callback, $type, $data = array()) {
 		if ($this->dry) {
@@ -617,7 +620,7 @@ class CakeMigration extends Object {
  *
  * @param string $name Model name to be initialized
  * @param string $table Table name to be initialized
- * @param array $options Model constructor options
+ * @param array $options
  * @return Model
  */
 	public function generateModel($name, $table = null, $options = array()) {
@@ -636,6 +639,7 @@ class CakeMigration extends Object {
 
 /**
  * Exception used when something goes wrong on migrations
+ *
  */
 class MigrationException extends Exception {
 
@@ -650,7 +654,7 @@ class MigrationException extends Exception {
  *
  * @param CakeMigration $Migration Reference to the Migration
  * @param string $message Message explaining the error
- * @param int $code Error code
+ * @param integer $code Error code
  * @return \MigrationException
  */
 	public function __construct($Migration, $message = '', $code = 0) {

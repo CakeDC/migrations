@@ -4,45 +4,55 @@
 				'articles' => array(
 					'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary'),
 					'user_id' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false),
-					'title' => array('type' => 'string', 'null' => true, 'default' => null, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-					'body' => array('type' => 'text', 'null' => true, 'default' => null, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-					'published' => array('type' => 'string', 'null' => true, 'default' => 'N', 'length' => 1, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+					'title' => array('type' => 'string', 'null' => true, 'default' => null, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
+					'body' => array('type' => 'text', 'null' => true, 'default' => null, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
+					'published' => array('type' => 'string', 'null' => true, 'default' => 'N', 'length' => 1, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
 					'created' => array('type' => 'datetime', 'null' => true, 'default' => null),
 					'updated' => array('type' => 'datetime', 'null' => true, 'default' => null),
 					'indexes' => array(
 						'PRIMARY' => array('column' => 'id', 'unique' => 1),
 					),
-					'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB'),
+					'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'InnoDB'),
+				),
+				'jumped_migrations' => array(
+					'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary'),
+					'class' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 33, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
+					'type' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 50, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
+					'created' => array('type' => 'datetime', 'null' => false, 'default' => null),
+					'indexes' => array(
+						'PRIMARY' => array('column' => 'id', 'unique' => 1),
+					),
+					'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'MEMORY'),
 				),
 				'posts' => array(
 					'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary'),
 					'author_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false),
-					'title' => array('type' => 'string', 'null' => false, 'default' => null, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-					'body' => array('type' => 'text', 'null' => true, 'default' => null, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-					'published' => array('type' => 'string', 'null' => true, 'default' => 'N', 'length' => 1, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+					'title' => array('type' => 'string', 'null' => false, 'default' => null, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
+					'body' => array('type' => 'text', 'null' => true, 'default' => null, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
+					'published' => array('type' => 'string', 'null' => true, 'default' => 'N', 'length' => 1, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
 					'created' => array('type' => 'datetime', 'null' => true, 'default' => null),
 					'updated' => array('type' => 'datetime', 'null' => true, 'default' => null),
 					'indexes' => array(
 						'PRIMARY' => array('column' => 'id', 'unique' => 1),
 					),
-					'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB'),
+					'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'InnoDB'),
 				),
 				'users' => array(
 					'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary'),
-					'user' => array('type' => 'string', 'null' => true, 'default' => null, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-					'password' => array('type' => 'string', 'null' => true, 'default' => null, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+					'user' => array('type' => 'string', 'null' => true, 'default' => null, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
+					'password' => array('type' => 'string', 'null' => true, 'default' => null, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
 					'created' => array('type' => 'datetime', 'null' => true, 'default' => null),
 					'updated' => array('type' => 'datetime', 'null' => true, 'default' => null),
 					'indexes' => array(
 						'PRIMARY' => array('column' => 'id', 'unique' => 1),
 					),
-					'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MEMORY'),
+					'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'MEMORY'),
 				),
 			),
 		),
 		'down' => array(
 			'drop_table' => array(
-				'articles', 'posts', 'users'
+				'articles', 'jumped_migrations', 'posts', 'users'
 			),
 		),
 	);

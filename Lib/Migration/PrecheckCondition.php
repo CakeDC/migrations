@@ -1,4 +1,4 @@
-<?php
+<?php 
 /**
  * Copyright 2009 - 2014, Cake Development Corporation (http://cakedc.com)
  *
@@ -16,8 +16,8 @@ class PrecheckCondition extends PrecheckBase {
 /**
  * Perform check before table drop.
  *
- * @param string $table Table to look for
- * @return bool
+ * @param string $table
+ * @return boolean
  */
 	public function checkDropTable($table) {
 		return $this->tableExists($table);
@@ -26,8 +26,8 @@ class PrecheckCondition extends PrecheckBase {
 /**
  * Perform check before table create.
  *
- * @param string $table Table to look for
- * @return bool
+ * @param string $table
+ * @return boolean
  */
 	public function checkCreateTable($table) {
 		return !$this->tableExists($table);
@@ -36,9 +36,9 @@ class PrecheckCondition extends PrecheckBase {
 /**
  * Perform check before field drop.
  *
- * @param string $table Table to look for
- * @param string $field Field to look for
- * @return bool
+ * @param string $table
+ * @param string $field
+ * @return boolean
  */
 	public function checkDropField($table, $field) {
 		return $this->tableExists($table) && $this->fieldExists($table, $field);
@@ -47,12 +47,13 @@ class PrecheckCondition extends PrecheckBase {
 /**
  * Perform check before field create.
  *
- * @param string $table Table to look for
- * @param string $field Field to look for
- * @return bool
+ * @param string $table
+ * @param string $field
+ * @return boolean
  */
 	public function checkAddField($table, $field) {
 		return $this->tableExists($table) && !$this->fieldExists($table, $field);
 	}
 
 }
+

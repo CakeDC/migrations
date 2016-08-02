@@ -1,9 +1,10 @@
 language: php
 
 php:
+  - 5.3
+  - 5.4
   - 5.5
-  - 5.6
-  - 7.0
+
 env:
   global:
     - PLUGIN_NAME=Migrations
@@ -12,21 +13,22 @@ env:
     - REQUIRE="phpunit/phpunit:3.7.31"
 
   matrix:
-    - DB=mysql CAKE_VERSION=2.7
+    - DB=mysql CAKE_VERSION=master
 
 matrix:
   include:
+    - php: 5.3
+      env:
+        - CAKE_VERSION=master
+    - php: 5.4
+      env:
+        - CAKE_VERSION=master
     - php: 5.5
       env:
-        - CAKE_VERSION=2.7
-    - php: 5.6
-      env:
-        - CAKE_VERSION=2.7
-    - php: 7.0
-      env:
-        - CAKE_VERSION=2.8
+        - CAKE_VERSION=master
+
 before_script:
-  - git clone https://github.com/steinkel/travis.git --depth 1 ../travis
+  - git clone https://github.com/burzum/travis.git --depth 1 ../travis
   - ../travis/before_script.sh
   - if [ "$PHPCS" != 1 ]; then
             echo "
@@ -42,4 +44,3 @@ after_success:
 
 notifications:
   email: false
-
