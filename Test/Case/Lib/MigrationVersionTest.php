@@ -12,6 +12,7 @@
 App::uses('CakeMigration', 'Migrations.Lib');
 App::uses('CakeSchema', 'Model');
 App::uses('MigrationVersion', 'Migrations.Lib');
+App::uses('CakeTime', 'Utility');
 
 class MigrationVersionTest extends CakeTestCase {
 
@@ -375,8 +376,8 @@ class MigrationVersionTest extends CakeTestCase {
 /**
  * _mapping method
  *
- * @param integer $start
- * @param integer $end
+ * @param int $start
+ * @param int $end
  * @return array
  */
 	protected function _mapping($start = 0, $end = 0) {
@@ -389,7 +390,7 @@ class MigrationVersionTest extends CakeTestCase {
 				'type' => 'mocks', 'migrated' => null
 			);
 			if ($i >= $start && $i <= $end) {
-				$mapping[$i]['migrated'] = date('r');
+				$mapping[$i]['migrated'] = CakeTime::nice();
 			}
 		}
 

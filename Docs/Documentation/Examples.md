@@ -69,7 +69,6 @@ Gets the status of all migrations.
 ```
 cake Migrations.migration status
 ```
-<<<<<<< Updated upstream
 
 Adding a specific datasource
 --------------------------------------------------

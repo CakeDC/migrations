@@ -12,6 +12,8 @@
 abstract class PrecheckBase {
 
 /**
+ * CakeMigration instance
+ *
  * @var CakeMigration
  */
 	protected $_migration;
@@ -19,42 +21,42 @@ abstract class PrecheckBase {
 /**
  * Perform check before field create.
  *
- * @param string $table
- * @param string $field
- * @return boolean
+ * @param string $table Table to look for
+ * @param string $field Field to look for
+ * @return bool
  */
 	abstract public function checkAddField($table, $field);
 
 /**
  * Perform check before table create.
  *
- * @param string $table
- * @return boolean
+ * @param string $table Table to look for
+ * @return bool
  */
 	abstract public function checkCreateTable($table);
 
 /**
  * Perform check before table drop.
  *
- * @param string $table
- * @return boolean
+ * @param string $table Table to look for
+ * @return bool
  */
 	abstract public function checkDropTable($table);
 
 /**
  * Perform check before field drop.
  *
- * @param string $table
- * @param string $field
- * @return boolean
+ * @param string $table Table to look for
+ * @param string $field Field to look for
+ * @return bool
  */
 	abstract public function checkDropField($table, $field);
 
 /**
  * Check that table exists.
  *
- * @param string $table
- * @return boolean
+ * @param string $table Table to look for
+ * @return bool
  */
 	public function tableExists($table) {
 		$this->_migration->db->cacheSources = false;
@@ -65,9 +67,9 @@ abstract class PrecheckBase {
 /**
  * Check that field exists.
  *
- * @param string $table
- * @param string $field
- * @return boolean
+ * @param string $table Table to look for
+ * @param string $field Field to look for
+ * @return bool
  */
 	public function fieldExists($table, $field) {
 		if (!$this->tableExists($table)) {
@@ -80,11 +82,11 @@ abstract class PrecheckBase {
 /**
  * Before action precheck callback.
  *
- * @param $migration
- * @param string $type
- * @param array $data
+ * @param CakeMigration $migration Migration to perform
+ * @param string $type Type of action being performed
+ * @param array $data Data passed to action
  * @throws MigrationException
- * @return boolean
+ * @return bool
  */
 	public function beforeAction($migration, $type, $data) {
 		$this->_migration = $migration;

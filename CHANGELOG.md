@@ -1,6 +1,76 @@
 Changelog
 =========
 
+Release 2.4.1
+-------------
+
+* Bugfix/Improvement release
+
+Release 2.4.0
+-------------
+
+* [43228df](https://github.com/cakedc/migrations/commit/43228df) Code standard fix
+* [4352ed8](https://github.com/cakedc/migrations/commit/4352ed8) Changed method comment to a clearer comment
+* [25d7181](https://github.com/cakedc/migrations/commit/25d7181) Changed uses of the ConnectionManager class to static
+* [9a56814](https://github.com/cakedc/migrations/commit/9a56814) Fixed method comments
+* [2ee4c1e](https://github.com/cakedc/migrations/commit/2ee4c1e) Changed call of enumConnectionObjects to static
+* [caf1730](https://github.com/cakedc/migrations/commit/caf1730) Correct definition of the connection manager class uses
+* [193ed70](https://github.com/cakedc/migrations/commit/193ed70) Fixed code formating
+* [283590a](https://github.com/cakedc/migrations/commit/283590a) Fixed console input message that asks migrationConnection
+* [1909320](https://github.com/cakedc/migrations/commit/1909320) Added test case to check migrationConnection shell parameter
+* [b60fa05](https://github.com/cakedc/migrations/commit/b60fa05) Fixed array syntax in model uses
+* [9237949](https://github.com/cakedc/migrations/commit/9237949) Validate migrateConnection argument when a custom connection is set
+* [6374acc](https://github.com/cakedc/migrations/commit/6374acc) Added example to set a specific datasource on run
+
+Release 2.3.6
+-------------
+
+* [1489496](https://github.com/cakedc/migrations/commit/1489496) Revert "fixing unit tests" to pass tests in travis env
+* [ebf6bc6](https://github.com/cakedc/migrations/commit/ebf6bc6) using minor for travis CakePHP
+* [517a810](https://github.com/cakedc/migrations/commit/517a810) updating travis
+* [180fe03](https://github.com/cakedc/migrations/commit/180fe03) fixed class condition after some changes done in Inflector::camelize in 2.6.6
+* [27d5afb](https://github.com/cakedc/migrations/commit/27d5afb) fixing unit tests
+
+Release 2.3.6
+-------------
+
+https://github.com/CakeDC/migrations/tree/2.3.6
+
+* [ccac5a3](https://github.com/cakedc/migrations/commit/ccac5a3) Update translation files
+* [bca17ea](https://github.com/cakedc/migrations/commit/bca17ea) Show prompt for marking as successful when failure
+* [18aa020](https://github.com/cakedc/migrations/commit/18aa020) crlf to lf
+* [db96c9e](https://github.com/cakedc/migrations/commit/db96c9e) Grammatical corrections for generate command
+* [cc7b03a](https://github.com/cakedc/migrations/commit/cc7b03a) Fix CS issues
+* [942eab0](https://github.com/cakedc/migrations/commit/942eab0) Fix grammar in console output
+* [89ddfc1](https://github.com/cakedc/migrations/commit/89ddfc1) Tidy up unlinking in tests
+* [894f736](https://github.com/cakedc/migrations/commit/894f736) Fix for incorrect naming of all plugin migrations
+
+Release 2.3.5
+-------------
+
+https://github.com/CakeDC/migrations/tree/2.3.5
+
+* [69e6136](https://github.com/cakedc/migrations/commit/69e6136) Add translations for new/missing strings
+* [c98ecdd](https://github.com/cakedc/migrations/commit/c98ecdd) Exit shell if comparing schema.php and nothing has changed
+
+Release 2.3.4
+-------------
+
+https://github.com/CakeDC/migrations/tree/2.3.4
+
+* [94a7fe9](https://github.com/cakedc/migrations/commit/94a7fe9) Removed cakephp dependency from composer.json
+
+Release 2.3.3
+-------------
+
+https://github.com/CakeDC/migrations/tree/2.3.3
+
+* [14a3cc4](https://github.com/cakedc/migrations/commit/14a3cc4) Bump minimum required CakePHP version to 2.5.4 (refs [#184](https://github.com/CakeDC/migrations/issues/184))
+* [f6f3490](https://github.com/cakedc/migrations/commit/f6f3490) CS: Changed doc block "boolean" to "bool"
+* [b6c579c](https://github.com/cakedc/migrations/commit/b6c579c) Fixes Schema/app.php issue.
+* [749e634](https://github.com/cakedc/migrations/commit/749e634) Improved logic for schema class name detection.
+* [9ef51fd](https://github.com/cakedc/migrations/commit/9ef51fd) Adds an option for specifying the Schema class name.
+
 Release 2.3.2
 -------------
 
