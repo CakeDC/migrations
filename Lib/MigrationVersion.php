@@ -355,25 +355,20 @@ class MigrationVersion {
 				break;
 			} elseif (($direction === 'up' && $info['migrated'] === null) 
 				|| ($direction === 'down' && $info['migrated'] !== null)) {
-				
-				$jumpVersion = $this->getVersionByName($mapping);
-				if ($version < $jumpVersion) {
-					$this->jump($version, $info['type']);
-					continue;
-				}
+				$type = $info['type'];
 
 				$jumpVersion = $this->getVersionByName($mapping);
 				if ($version < $jumpVersion) {
-					$this->jump($version, $info['type']);
+					$this->jump($version, $type);
 					continue;
 				}
 
 				if (in_array($mapping[$version]['name'], $this->skip)) {
-					$this->setVersion($version, $info['type']);
+					$this->setVersion($version, $type);
 					continue;
 				}
 
-				$migration = $this->getMigration($info['name'], $info['class'], $info['type'], $options);
+				$migration = $this->getMigration($info['name'], $info['class'], $type, $options);
 				$migration->Version = $this;
 				$migration->info = $info;
 
@@ -395,7 +390,7 @@ class MigrationVersion {
 					return $errorMessage;
 				}
 
-				$this->setVersion($version, $info['type'], ($direction === 'up'));
+				$this->setVersion($version, $type, ($direction === 'up'));
 			}
 		}
 
