@@ -185,7 +185,6 @@ class MigrationVersion {
 		$bc = ($this->Version->schema('class') === null);
 		$field = $bc ? 'version' : 'class';
 		$value = $bc ? $version : $mapping[$version]['class'];
-
 		if ($migrated) {
 			$this->Version->create();
 			$result = $this->Version->save(array(
@@ -359,7 +358,13 @@ class MigrationVersion {
 				
 				$jumpVersion = $this->getVersionByName($mapping);
 				if ($version < $jumpVersion) {
-					$this->setVersion($version, $info['type']);
+					$this->jump($version, $info['type']);
+					continue;
+				}
+
+				$jumpVersion = $this->getVersionByName($mapping);
+				if ($version < $jumpVersion) {
+					$this->jump($version, $info['type']);
 					continue;
 				}
 
@@ -398,6 +403,17 @@ class MigrationVersion {
 			return $result;
 		}
 		return true;
+	}
+
+/**
+ * jump method
+ *
+ * @param array $version version of a migration
+ * @param array $info migration info
+ * @return void
+ */
+	public function jump($version, $type) {
+		$this->setVersion($version, $type);
 	}
 
 /**

@@ -119,11 +119,11 @@ class MigrationVersionTest extends CakeTestCase {
 				'migrated' => '2011-11-18 13:53:32'
 			),
 			3 => array(
-					'version' => 3,
-					'name' => '003_increase_class_name_length',
-					'class' => 'IncreaseClassNameLength',
-					'type' => 'Migrations',
-					'migrated' => null
+				'version' => 3,
+				'name' => '003_increase_class_name_length',
+				'class' => 'IncreaseClassNameLength',
+				'type' => 'Migrations',
+				'migrated' => null
 			)
 		);
 		$this->assertEquals($result, $expected);
@@ -309,6 +309,50 @@ class MigrationVersionTest extends CakeTestCase {
 	}
 
 /**
+ * TestRunWithJump method
+ *
+ * @return void
+ */
+	public function testRunWithJump() {
+		$options = array(
+			'connection' => 'test',
+			'autoinit' => false,
+			'jumpTo' => '003_schema_dump'
+		);
+
+		$Version = $this->getMock('MigrationVersion',
+			array('getMapping', 'getMigration', 'getVersion', 'jump'),
+			array($options),
+			'TestMigrationVersionMockMigrationVersions'
+		);
+
+		$CakeMigration = new CakeMigration($options);
+
+		$Version->expects($this->any())
+			->method('getMigration')
+			->will($this->returnValue($CakeMigration));
+
+		$Version->Version = ClassRegistry::init(array(
+			'class' => 'schema_migrations',
+			'ds' => 'test'
+		));
+
+		$Version->expects($this->at(0))->method('getVersion')->will($this->returnValue(9));
+		$Version->expects($this->exactly(2))->method('jump');
+		$Version->expects($this->any())->method('getMapping')->will($this->returnValue($this->_mapping()));
+
+		$this->assertTrue($Version->run(array('direction' => 'up', 'type' => 'mocks')));
+
+		$migrations = $Version->Version->find('count', array(
+			'conditions' => array(
+				'type' => 'mocks'
+			)
+		));
+
+		$this->assertEquals(8, $migrations);
+	}
+
+/**
  * TestGetVersionByName method
  *
  * @return void
@@ -349,6 +393,7 @@ class MigrationVersionTest extends CakeTestCase {
 				$mapping[$i]['migrated'] = CakeTime::nice();
 			}
 		}
+
 		return $mapping;
 	}
 }
