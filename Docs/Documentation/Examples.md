@@ -99,7 +99,7 @@ Remember this migrations will be set as executed.
 Jumping to certain migrations
 --------------------------------------------------
 
-If you want to jump to certain migration, you can use ```--jump-to``` or ```-j``` + migration name as the example below.
+If you want to jump to a certain migration, you can use ```--jump-to``` or ```-j``` + migration name as in the example below.
 
 ```
 cake Migrations.migration run all -j 1458963215_articles_table

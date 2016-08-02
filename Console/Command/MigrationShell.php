@@ -183,7 +183,7 @@ class MigrationShell extends AppShell {
 				'help' => __('Skip certain migration.')))
 			->addOption('jump-to', array(
 				'short' => 'j',
-				'help' => __('Will jump to the migration and mark the others as executed.')))
+				'help' => __('Jump to a certain migration and mark the preceding migrations as executed.')))
 			->addOption('compare', array(
 				'short' => 'm',
 				'boolean' => true,

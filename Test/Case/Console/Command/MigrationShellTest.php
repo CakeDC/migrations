@@ -206,7 +206,8 @@ class MigrationShellTest extends CakeTestCase {
 			'version' => 1,
 			'dry' => false,
 			'precheck' => null,
-			'skip' => array())));
+			'skip' => array()))
+		);
 		$this->Shell->args = array('up');
 		$this->assertTrue($this->Shell->run());
 
@@ -229,7 +230,8 @@ class MigrationShellTest extends CakeTestCase {
 			'version' => 1,
 			'dry' => false,
 			'precheck' => null,
-			'skip' => array())));
+			'skip' => array()))
+		);
 		$this->Shell->args = array('down');
 		$this->assertTrue($this->Shell->run());
 

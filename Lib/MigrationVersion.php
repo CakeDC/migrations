@@ -76,7 +76,7 @@ class MigrationVersion {
 	public $skip = array();
 
 /**
- * Will jump to the migration.
+ * Jump to a certain migration.
  *
  * @var null|string
  */
@@ -406,10 +406,10 @@ class MigrationVersion {
 	}
 
 /**
- * jump method
+ * Jump to a certain migration and mark the preceding migrations as executed.
  *
- * @param array $version version of a migration
- * @param array $info migration info
+ * @param array $version Version of a migration to jump to.
+ * @param array $type migration type
  * @return void
  */
 	public function jump($version, $type) {
@@ -419,6 +419,7 @@ class MigrationVersion {
 /**
  * Will return a version based in the migration name
  *
+ * @param array $mapping mapping of all migrations.
  * @return bool|string
  */
 	public function getVersionByName($mapping) {
