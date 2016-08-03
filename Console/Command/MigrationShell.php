@@ -105,7 +105,8 @@ class MigrationShell extends AppShell {
 			'precheck' => $this->params['precheck'],
 			'autoinit' => !$this->params['no-auto-init'],
 			'dry' => $this->params['dry'],
-			'skip' => isset($this->params['skip']) ? $this->params['skip'] : null);
+			'skip' => isset($this->params['skip']) ? $this->params['skip'] : null,
+			'jumpTo' => isset($this->params['jump-to']) ? $this->params['jump-to'] : null);
 
 		if (!empty($this->connection)) {
 			$options['connection'] = $this->connection;
@@ -179,7 +180,10 @@ class MigrationShell extends AppShell {
 				'boolean' => true,
 				'help' => __d('migrations', 'Force \'generate\' to compare all tables.')))
 			->addOption('skip', array(
-				'help' => __('Skip to a certain migration.')))
+				'help' => __('Skip certain migration.')))
+			->addOption('jump-to', array(
+				'short' => 'j',
+				'help' => __('Jump to a certain migration and mark the preceding migrations as executed.')))
 			->addOption('compare', array(
 				'short' => 'm',
 				'boolean' => true,
@@ -453,7 +457,6 @@ class MigrationShell extends AppShell {
 					$response = $this->in(__d('migrations', 'Do you want to compare the schema.php file to the database?'), array('y', 'n'), 'y');
 				}
 
-				$response = $this->in(__d('migrations', 'Do you want to compare the schema.php file to the database?'), array('y', 'n'), 'y');
 				if (strtolower($response) === 'y') {
 					$this->_generateFromComparison($migration, $oldSchema, $comparison);
 					$this->_migrationChanges($migration);

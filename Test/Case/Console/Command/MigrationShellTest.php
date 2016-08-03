@@ -205,7 +205,9 @@ class MigrationShellTest extends CakeTestCase {
 			'direction' => 'up',
 			'version' => 1,
 			'dry' => false,
-			'precheck' => null)));
+			'precheck' => null,
+			'skip' => array()))
+		);
 		$this->Shell->args = array('up');
 		$this->assertTrue($this->Shell->run());
 
@@ -227,7 +229,9 @@ class MigrationShellTest extends CakeTestCase {
 			'direction' => 'down',
 			'version' => 1,
 			'dry' => false,
-			'precheck' => null)));
+			'precheck' => null,
+			'skip' => array()))
+		);
 		$this->Shell->args = array('down');
 		$this->assertTrue($this->Shell->run());
 
@@ -239,7 +243,8 @@ class MigrationShellTest extends CakeTestCase {
 			'version' => 10,
 			'direction' => 'up',
 			'dry' => false,
-			'precheck' => null)));
+			'precheck' => null,
+			'skip' => array())));
 		$this->Shell->args = array('all');
 		$this->assertTrue($this->Shell->run());
 
@@ -251,7 +256,8 @@ class MigrationShellTest extends CakeTestCase {
 			'version' => 0,
 			'direction' => 'down',
 			'dry' => false,
-			'precheck' => null)));
+			'precheck' => null,
+			'skip' => array())));
 		$this->Shell->args = array('reset');
 		$this->assertTrue($this->Shell->run());
 
@@ -1082,4 +1088,3 @@ TEXT;
 	}
 
 }
-
