@@ -9,12 +9,13 @@
  * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('CakeObject', 'Core');
 App::uses('CakeSchema', 'Model');
 
 /**
  * Base Class for Migration management
  */
-class CakeMigration extends Object {
+class CakeMigration extends CakeObject {
 
 /**
  * Migration description
