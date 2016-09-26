@@ -14,7 +14,7 @@ App::uses('CakeSchema', 'Model');
 /**
  * Base Class for Migration management
  */
-class CakeMigration extends Object {
+class CakeMigration {
 
 /**
  * Migration description
@@ -168,7 +168,6 @@ class CakeMigration extends Object {
  * @throws MigrationException
  */
 	public function __construct($options = array()) {
-		parent::__construct();
 
 		if (!isset($options['dry'])) {
 			$options['dry'] = false;
