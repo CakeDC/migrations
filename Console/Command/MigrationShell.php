@@ -1102,7 +1102,6 @@ class MigrationShell extends AppShell {
  * @param string $class Class name of migration
  * @param array $migration Migration instructions array
  * @return string
- * @throws Exception
  */
 	protected function _generateMigration($name, $class, $migration) {
 		if (!preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $name)) {
