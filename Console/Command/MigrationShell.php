@@ -299,6 +299,10 @@ class MigrationShell extends AppShell {
 
 		$this->out(__d('migrations', 'All migrations have completed.'));
 		$this->out('');
+
+		Configure::write('Cache.disable', false);
+		Cache::clear(false, '_cake_model_');
+
 		return true;
 	}
 
@@ -438,6 +442,8 @@ class MigrationShell extends AppShell {
  * @return void
  */
 	public function generate() {
+		Configure::write('Cache.disable', true);
+
 		$fromSchema = false;
 		$this->Schema = $this->_getSchema();
 		$migration = array('up' => array(), 'down' => array());
