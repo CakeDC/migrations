@@ -20,7 +20,7 @@ If you prefer full control over your changes, or don't want to mess with *SQL*, 
 cake Migrations.migration generate
 ```
 
-Skip the comparison of the current database to the existing schema if asked. Then, open the newly created file under ```app/Config/Migrations```, then fill the file with the following migration directives.
+Skip the comparison of the current database to the existing schema if asked or force comparing using ```--compare``` parameter. Then, open the newly created file under ```app/Config/Migrations```, then fill the file with the following migration directives.
 
 Column Keys
 -----------
