@@ -16,6 +16,12 @@ If you want import all tables regardless if it has a model or not you can use ``
 cake Migrations.migration generate -f
 ```
 
+If you want to force the comparison between schema file and database you can use ```--compare``` parameter.
+
+```
+cake Migrations.migration generate --compare
+```
+
 Running All Pending Migrations
 -----------------------------
 
@@ -95,3 +101,14 @@ cake Migrations.migration run all --skip 1458963215_articles_table,1457412585_us
 ```
 
 Remember this migrations will be set as executed.
+
+Jumping to certain migrations
+--------------------------------------------------
+
+If you want to jump to a certain migration, you can use ```--jump-to``` or ```-j``` + migration name as in the example below.
+
+```
+cake Migrations.migration run all -j 1458963215_articles_table
+```
+
+Remember all migrations before this will be set as executed.
