@@ -10,6 +10,7 @@
  */
 
 App::uses('CakeSchema', 'Model');
+App::uses('Object', 'Core');
 
 /**
  * Base Class for Migration management
