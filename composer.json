@@ -21,7 +21,7 @@
 		"source": "https://github.com/CakeDC/migrations"
 	},
 	"require": {
-		"php": ">=5.2.8",
+		"php": ">=5.3.0",
 		"composer/installers": "*"
 	}
 }
