@@ -1,6 +1,14 @@
 Changelog
 =========
 
+Release 2.5.0
+-------------
+
+* [ff07928](https://github.com/cakedc/migrations/commit/ff07928) adding unit test to skip feature
+* [be0922a](https://github.com/cakedc/migrations/commit/be0922a) adding skip migration feature, updating the documentation
+* [cb3281f](https://github.com/cakedc/migrations/commit/cb3281f) update docs re --compare parameter
+
+
 Release 2.4.2
 -------------
 
