@@ -454,6 +454,9 @@ class CakeMigration extends Object {
 							));
 							break;
 						case 'change':
+							if (array_key_exists('length', $tableFields[$field]) && !array_key_exists('length', $col)) {
+								$col['length'] = null;
+							}
 							if (!isset($col['type']) || $col['type'] == $tableFields[$field]['type']) {
 								$def = array_merge($tableFields[$field], $col);
 							} else {
