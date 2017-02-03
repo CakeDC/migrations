@@ -659,9 +659,9 @@ class MigrationShell extends AppShell {
  * @return void
  */
 	protected function _finalizeGeneratedMigration(&$migration, &$migrationName, &$fromSchema) {
-		if ($this->params['preview'] === true) {
+		if (!empty($this->params['preview'])) {
 			$preview = 'y';
-		} elseif ($this->params['no-preview'] === true) {
+		} elseif (!empty($this->params['no-preview'])) {
 			$preview = 'n';
 		} else {
 			$preview = $this->in(__d('migrations', 'Do you want to preview the file before generation?'), array('y', 'n'), 'y');
