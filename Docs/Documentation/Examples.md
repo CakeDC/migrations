@@ -22,6 +22,9 @@ If you want to force the comparison between schema file and database you can use
 cake Migrations.migration generate --compare
 ```
 
+**Note:** *The comparison can be made on a double-handed path. Between the (modified) schema and the database, and also
+between the (modified) database and the schema.*
+
 Running All Pending Migrations
 -----------------------------
 
