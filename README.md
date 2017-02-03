@@ -23,8 +23,8 @@ However, you can make use of the ```before()``` and ```after()``` callbacks in t
 Requirements
 ------------
 
-* CakePHP 2.7.0+
-* PHP 5.3.0+
+* CakePHP 2.5+ (We recomment latest 2.x)
+* PHP 5.3.0+ (We recommend php 7+)
 
 Documentation
 -------------
