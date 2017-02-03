@@ -180,10 +180,10 @@ class MigrationShell extends AppShell {
 				'boolean' => true,
 				'help' => __d('migrations', 'Force \'generate\' to compare all tables.')))
 			->addOption('skip', array(
-				'help' => __('Skip certain migration.')))
+				'help' => __d('migrations', 'Skip certain migration.')))
 			->addOption('jump-to', array(
 				'short' => 'j',
-				'help' => __('Jump to a certain migration and mark the preceding migrations as executed.')))
+				'help' => __d('migrations', 'Jump to a certain migration and mark the preceding migrations as executed.')))
 			->addOption('compare', array(
 				'short' => 'm',
 				'boolean' => true,
