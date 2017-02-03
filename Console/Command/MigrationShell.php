@@ -467,7 +467,6 @@ class MigrationShell extends AppShell {
 		$this->Schema = $this->_getSchema();
 		$migration = array('up' => array(), 'down' => array());
 		$migrationName = $this->migrationName;
-		$this->out($migrationName);
 		$comparison = array();
 
 		if (!empty($this->args)) {
@@ -660,8 +659,15 @@ class MigrationShell extends AppShell {
  * @return void
  */
 	protected function _finalizeGeneratedMigration(&$migration, &$migrationName, &$fromSchema) {
-		$response = $this->in(__d('migrations', 'Do you want to preview the file before generation?'), array('y', 'n'), 'y');
-		if (strtolower($response) === 'y') {
+		if ($this->params['preview'] === true) {
+			$preview = 'y';
+		} elseif ($this->params['no-preview'] === true) {
+			$preview = 'n';
+		} else {
+			$preview = $this->in(__d('migrations', 'Do you want to preview the file before generation?'), array('y', 'n'), 'y');
+		}
+
+		if (strtolower($preview) === 'y') {
 			$this->out($this->_generateMigration('Preview of migration', 'PreviewMigration', $migration));
 		}
 
