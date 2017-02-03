@@ -720,9 +720,11 @@ class MigrationShell extends AppShell {
 		if (!preg_match('/^([A-Za-z0-9_]+|\s)+$/', $name) || is_numeric($name[0])) {
 			$this->out('');
 			$this->err(__d('migrations', 'Migration name (%s) is invalid. It must only contain alphanumeric characters and start with a letter.', $name));
+			return false;
 		} elseif (strlen($name) > 255) {
 			$this->out('');
 			$this->err(__d('migrations', 'Migration name (%s) is invalid. It cannot be longer than 255 characters.', $name));
+			return false;
 		}
 		return true;
 	}
