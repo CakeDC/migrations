@@ -750,6 +750,23 @@ TEXT;
 	}
 
 /**
+ * Test writing migration with invalid name
+ *
+ * @return void
+ * @link https://github.com/CakeDC/migrations/issues/262
+ */
+	public function testWriteMigrationInvalidName() {
+		$name = 'invalid name !@#$%^&*()';
+		$expectedException = "Invalid migration name '{$name}'";
+		try{
+			$this->Shell->writeMigration($name, 12346, array());
+			$this->fail("Expected exception \"{$expectedException}\" not thrown");
+		} catch (Exception $e) {
+			$this->assertEquals($expectedException, $e->getMessage());
+		}
+	}
+
+/**
  * TestGenerate method
  *
  * @return void

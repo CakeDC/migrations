@@ -642,7 +642,7 @@ class MigrationShell extends AppShell {
 	protected function _finalizeGeneratedMigration(&$migration, &$migrationName, &$fromSchema) {
 		$response = $this->in(__d('migrations', 'Do you want to preview the file before generation?'), array('y', 'n'), 'y');
 		if (strtolower($response) === 'y') {
-			$this->out($this->_generateMigration('Preview of migration', 'PreviewMigration', $migration));
+			$this->out($this->_generateMigration('PreviewMigration', 'PreviewMigration', $migration));
 		}
 
 		$name = $migrationName;
@@ -1108,8 +1108,13 @@ class MigrationShell extends AppShell {
  * @param string $class Class name of migration
  * @param array $migration Migration instructions array
  * @return string
+ * @throws Exception
  */
 	protected function _generateMigration($name, $class, $migration) {
+		if (!preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $name)) {
+			throw new Exception("Invalid migration name '{$name}'");
+		}
+
 		$content = '';
 		foreach ($migration as $direction => $actions) {
 			$content .= "\t\t'" . $direction . "' => array(\n";
