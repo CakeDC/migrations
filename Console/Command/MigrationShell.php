@@ -235,7 +235,7 @@ class MigrationShell extends AppShell {
 /**
  * Run the migrations
  *
- * @return void
+ * @return bool True if success
  */
 	public function run() {
 		try {
