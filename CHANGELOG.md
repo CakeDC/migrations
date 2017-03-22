@@ -1,6 +1,33 @@
 Changelog
 =========
 
+Release 2.5.1
+-------------
+
+* [955e10b3](https://github.com/CakeDC/migrations/commit/955e10b3) fix phpdo
+* [7d9b053](https://github.com/CakeDC/migrations/commit/7d9b053a6) Missing note about the schema/database comparison.
+* [7b47ae3](https://github.com/CakeDC/migrations/commit/7b47ae3) Updating the docs.
+* [a59d1d1](https://github.com/CakeDC/migrations/commit/a59d1d1) Fix missing return statements.
+* [9363915](https://github.com/CakeDC/migrations/commit/9363915) Migration name check.
+* [263c739](https://github.com/CakeDC/migrations/commit/263c739) New preview options.
+* [0a4dc0b](https://github.com/CakeDC/migrations/commit/0a4dc0b) Fix missing translation domain.
+* [dfbed18](https://github.com/CakeDC/migrations/commit/dfbed18) New name param.
+
+
+Release 2.5.0
+-------------
+
+* [ff07928](https://github.com/cakedc/migrations/commit/ff07928) adding unit test to skip feature
+* [be0922a](https://github.com/cakedc/migrations/commit/be0922a) adding skip migration feature, updating the documentation
+* [cb3281f](https://github.com/cakedc/migrations/commit/cb3281f) update docs re --compare parameter
+
+**Note:** The release **2.4.2** was created wrong, there we have new features too, not only bugfixes and improvements. 
+
+Release 2.4.2
+-------------
+
+* Bugfixes and doc improvements
+
 Release 2.4.1
 -------------
 
