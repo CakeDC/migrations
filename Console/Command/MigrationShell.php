@@ -49,6 +49,13 @@ class MigrationShell extends AppShell {
 	public $path;
 
 /**
+ * The migration script name
+ *
+ * @var string
+ */
+	public $migrationName = '';
+
+/**
  * Type of migration, can be 'app' or a plugin name
  *
  * @var string
@@ -90,6 +97,10 @@ class MigrationShell extends AppShell {
 		}
 
 		$this->migrationConnection = $this->_startMigrationConnection();
+
+		if (!empty($this->params['name'])) {
+			$this->migrationName = $this->params['name'];
+		}
 
 		if (!empty($this->params['plugin'])) {
 			$this->type = $this->params['plugin'];
@@ -168,9 +179,11 @@ class MigrationShell extends AppShell {
 		return $parser->description(
 				'The Migration shell.' .
 				'')
+			->addOption('name', array(
+				'help' => __d('migrations', 'The migration script name.')))
 			->addOption('plugin', array(
 				'short' => 'p',
-				'help' => __d('migrations', 'Plugin name to be used')))
+				'help' => __d('migrations', 'Plugin name to be used.')))
 			->addOption('precheck', array(
 				'short' => 'm',
 				'default' => 'Migrations.PrecheckException',
@@ -180,10 +193,10 @@ class MigrationShell extends AppShell {
 				'boolean' => true,
 				'help' => __d('migrations', 'Force \'generate\' to compare all tables.')))
 			->addOption('skip', array(
-				'help' => __('Skip certain migration.')))
+				'help' => __d('migrations', 'Skip certain migration.')))
 			->addOption('jump-to', array(
 				'short' => 'j',
-				'help' => __('Jump to a certain migration and mark the preceding migrations as executed.')))
+				'help' => __d('migrations', 'Jump to a certain migration and mark the preceding migrations as executed.')))
 			->addOption('compare', array(
 				'short' => 'm',
 				'boolean' => true,
@@ -215,6 +228,12 @@ class MigrationShell extends AppShell {
 				'boolean' => false,
 				'default' => false,
 				'help' => __d('migrations', 'CamelCased Classname without the `Schema` suffix to use when reading or generating schema files. See `Console/cake schema generate --help`.')))
+			->addOption('preview', array(
+				'boolean' => true,
+				'help' => __d('migrations', 'Enables the migration file preview.')))
+			->addOption('no-preview', array(
+				'boolean' => true,
+				'help' => __d('migrations', 'Disables the migration file preview.')))
 			->addSubcommand('status', array(
 				'help' => __d('migrations', 'Displays a status of all plugin and app migrations.')))
 			->addSubcommand('run', array(
@@ -447,7 +466,7 @@ class MigrationShell extends AppShell {
 		$fromSchema = false;
 		$this->Schema = $this->_getSchema();
 		$migration = array('up' => array(), 'down' => array());
-		$migrationName = '';
+		$migrationName = $this->migrationName;
 		$comparison = array();
 
 		if (!empty($this->args)) {
@@ -640,14 +659,26 @@ class MigrationShell extends AppShell {
  * @return void
  */
 	protected function _finalizeGeneratedMigration(&$migration, &$migrationName, &$fromSchema) {
-		$response = $this->in(__d('migrations', 'Do you want to preview the file before generation?'), array('y', 'n'), 'y');
-		if (strtolower($response) === 'y') {
+		if (!empty($this->params['preview'])) {
+			$preview = 'y';
+		} elseif (!empty($this->params['no-preview'])) {
+			$preview = 'n';
+		} else {
+			$preview = $this->in(__d('migrations', 'Do you want to preview the file before generation?'), array('y', 'n'), 'y');
+		}
+
+		if (strtolower($preview) === 'y') {
 			$this->out($this->_generateMigration('Preview of migration', 'PreviewMigration', $migration));
 		}
 
 		$name = $migrationName;
 		if (empty($name)) {
 			$name = $this->_promptForMigrationName();
+		} else {
+			$validMigrationName = $this->_validateMigrationName($name);
+			if ($validMigrationName === true) {
+				$name = $this->_buildMigrationName($name);
+			}
 		}
 
 		$this->out(__d('migrations', 'Generating Migration...'));
@@ -670,18 +701,42 @@ class MigrationShell extends AppShell {
 	protected function _promptForMigrationName() {
 		while (true) {
 				$name = $this->in(__d('migrations', 'Please enter the descriptive name of the migration to generate:'));
-			if (!preg_match('/^([A-Za-z0-9_]+|\s)+$/', $name) || is_numeric($name[0])) {
-				$this->out('');
-				$this->err(__d('migrations', 'Migration name (%s) is invalid. It must only contain alphanumeric characters and start with a letter.', $name));
-			} elseif (strlen($name) > 255) {
-				$this->out('');
-				$this->err(__d('migrations', 'Migration name (%s) is invalid. It cannot be longer than 255 characters.', $name));
-			} else {
-				$name = str_replace(' ', '_', trim($name));
-				break;
-			}
+				$validMigrationName = $this->_validateMigrationName($name);
+				if ($validMigrationName === true) {
+					$name = $this->_buildMigrationName($name);
+					break;
+				}
 		}
 		return $name;
+	}
+
+/**
+ * Validates the presented migration name.
+ *
+ * @param string $name
+ * @return bool
+ */
+	protected function _validateMigrationName($name) {
+		if (!preg_match('/^([A-Za-z0-9_]+|\s)+$/', $name) || is_numeric($name[0])) {
+			$this->out('');
+			$this->err(__d('migrations', 'Migration name (%s) is invalid. It must only contain alphanumeric characters and start with a letter.', $name));
+			return false;
+		} elseif (strlen($name) > 255) {
+			$this->out('');
+			$this->err(__d('migrations', 'Migration name (%s) is invalid. It cannot be longer than 255 characters.', $name));
+			return false;
+		}
+		return true;
+	}
+
+/**
+ * Build the migration name.
+ *
+ * @param string $name
+ * @return mixed
+ */
+	protected function _buildMigrationName($name) {
+		return str_replace(' ', '_', trim($name));
 	}
 
 /**

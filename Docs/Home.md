@@ -6,8 +6,8 @@ This **Migrations** plugin enables developers to quickly and easily manage and m
 Requirements
 ------------
 
-* CakePHP 2.5+
-* PHP 5.2.8+
+* CakePHP 2.5+ (We recomment latest 2.x)
+* PHP 5.3.0+ (We recommend php 7+)
 
 Documentation
 -------------
