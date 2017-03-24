@@ -4,15 +4,14 @@ Changelog
 Release 2.5.1
 -------------
 
-* [955e10b3](https://github.com/CakeDC/migrations/commit/955e10b3) fix phpdo
-* [7d9b053](https://github.com/CakeDC/migrations/commit/7d9b053a6) Missing note about the schema/database comparison.
-* [7b47ae3](https://github.com/CakeDC/migrations/commit/7b47ae3) Updating the docs.
-* [a59d1d1](https://github.com/CakeDC/migrations/commit/a59d1d1) Fix missing return statements.
-* [9363915](https://github.com/CakeDC/migrations/commit/9363915) Migration name check.
-* [263c739](https://github.com/CakeDC/migrations/commit/263c739) New preview options.
-* [0a4dc0b](https://github.com/CakeDC/migrations/commit/0a4dc0b) Fix missing translation domain.
-* [dfbed18](https://github.com/CakeDC/migrations/commit/dfbed18) New name param.
-
+* [dfbed18](https://github.com/CakeDC/migrations/commit/dfbed18) New migration name CLI parameter
+* [955e10b3](https://github.com/CakeDC/migrations/commit/955e10b3) Fix doc block
+* [7d9b053](https://github.com/CakeDC/migrations/commit/7d9b053a6) Missing note about the schema/database comparison
+* [7b47ae3](https://github.com/CakeDC/migrations/commit/7b47ae3) Updating the docs
+* [a59d1d1](https://github.com/CakeDC/migrations/commit/a59d1d1) Fix missing return statements
+* [9363915](https://github.com/CakeDC/migrations/commit/9363915) Migration name check
+* [263c739](https://github.com/CakeDC/migrations/commit/263c739) New preview options
+* [0a4dc0b](https://github.com/CakeDC/migrations/commit/0a4dc0b) Fix missing translation domain
 
 Release 2.5.0
 -------------
