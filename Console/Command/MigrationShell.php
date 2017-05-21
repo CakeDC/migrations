@@ -484,13 +484,13 @@ class MigrationShell extends AppShell {
 
 				if (strtolower($response) === 'y') {
 					$this->_generateFromComparison($migration, $oldSchema, $comparison);
-					$this->_migrationChanges($migration);
+					$this->_checkNoMigrationChanges($migration);
 					$fromSchema = true;
 				} else {
 					$response = $this->in(__d('migrations', 'Do you want to compare the database to the schema.php file?'), array('y', 'n'), 'y');
 					if (strtolower($response) === 'y') {
 						$this->_generateFromInverseComparison($migration, $oldSchema, $comparison);
-						$this->_migrationChanges($migration);
+						$this->_checkNoMigrationChanges($migration);
 						$fromSchema = false;
 					}
 				}
@@ -518,16 +518,18 @@ class MigrationShell extends AppShell {
 	}
 
 /**
- * _migrationsChanges method
+ * Check whether there are migration changes
  *
  * @param array $migration list of migrations
- * @return bool
+ * @return void
  */
-	protected function _migrationChanges($migration) {
-		if (empty($migration)) {
+	protected function _checkNoMigrationChanges($migration) {
+		if (empty($migration) ||
+            (empty($migration['up']) && empty($migration['down']))) {
 			$this->hr();
 			$this->out(__d('migrations', 'No database changes detected.'));
-			return $this->_stop();
+			$this->_stop();
+            return;
 		}
 	}
 
