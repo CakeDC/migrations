@@ -247,10 +247,10 @@ public function after($direction) {
 	$Status = ClassRegistry::init('Status');
 	if ($direction === 'up') {
 		// add 2 records to statues table
-		$data['Status'][0]['id'] = '59a6a2c0-2368-11e2-81c1-0800200c9a66';
-		$data['Status'][0]['name'] = 'Published';
-		$data['Status'][1]['id'] = '59a6a2c1-2368-11e2-81c1-0800200c9a67';
-		$data['Status'][1]['name'] = 'Unpublished';
+		$data[0]['Status']['id'] = '59a6a2c0-2368-11e2-81c1-0800200c9a66';
+		$data[0]['Status']['name'] = 'Published';
+		$data[1]['Status']['id'] = '59a6a2c1-2368-11e2-81c1-0800200c9a67';
+		$data[1]['Status']['name'] = 'Unpublished';
 		$Status->create();
 		if ($Status->saveAll($data)) {
 			$this->callback->out('statuses table has been initialized');
