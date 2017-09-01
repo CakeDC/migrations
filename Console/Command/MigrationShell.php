@@ -942,7 +942,7 @@ class MigrationShell extends AppShell {
  * Finds schema file
  *
  * @param Folder $folder Folder object with schema folder path.
- * @param string $schemaFiles Schema files inside schema folder.
+ * @param array $schemaFiles Schema files inside schema folder.
  * @param string $name Schema-class name.
  * @return mixed null in case of no file found, schema file.
  */
