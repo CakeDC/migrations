@@ -1,6 +1,8 @@
 # User specific & automatically generated files #
 #################################################
 *.mo
+vendor/
+composer.lock
 
 # IDE and editor specific files #
 #################################
