@@ -11,7 +11,7 @@ env:
     - PLUGIN_NAME=Migrations
     - DB=mysql
     - MYSQL_CREATE_DB="mysql -e 'create database cakephp_test CHARACTER SET utf8 COLLATE utf8_general_ci;'"
-    - REQUIRE="phpunit/phpunit:3.7.38"
+    - REQUIRE="phpunit/phpunit:4.*"
 
   matrix:
     - DB=mysql CAKE_VERSION=2.9
@@ -33,6 +33,21 @@ matrix:
     - php: 7.2
       env:
         - CAKE_VERSION=2.9
+    - php: 5.5
+      env:
+        - CAKE_VERSION=2.10
+    - php: 5.6
+      env:
+        - CAKE_VERSION=2.10
+    - php: 7.0
+      env:
+        - CAKE_VERSION=2.10
+    - php: 7.1
+      env:
+        - CAKE_VERSION=2.10
+    - php: 7.2
+      env:
+        - CAKE_VERSION=2.10
 before_script:
   - git clone https://github.com/steinkel/travis.git --depth 1 ../travis
   - ../travis/before_script.sh
