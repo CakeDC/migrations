@@ -43,6 +43,7 @@ matrix:
 before_script:
   - git clone https://github.com/steinkel/travis.git --depth 1 ../travis
   - ../travis/before_script.sh
+  - echo "require_once 'vendors/autoload.php';" >> app/Config/bootstrap.php
 
 script:
   - ../travis/script.sh
