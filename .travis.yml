@@ -35,7 +35,7 @@ before_script:
   - if [ "$PHPCS" != 1 ]; then
             echo "
                 require_once APP . DS . 'vendor' . DS . 'phpunit' . DS . 'phpunit' . DS . 'PHPUnit' . DS . 'Autoload.php';
-            " >> ../app/Config/bootstrap.php;
+            " >> ../cakephp/app/Config/bootstrap.php;
     fi
 
 script:
