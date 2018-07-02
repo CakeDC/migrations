@@ -494,7 +494,7 @@ class CakeMigrationTest extends CakeTestCase {
 		$migration = new TestCakeMigration(array(
 			'up' => array(
 				'alter_field' => array(
-					'posts' => array('published' => array('type' => 'integer'))
+					'posts' => array('published' => array('type' => 'string'))
 				)
 			),
 			'down' => array(
@@ -506,9 +506,11 @@ class CakeMigrationTest extends CakeTestCase {
 		$fields = $this->db->describe($model);
 		$this->assertEquals($fields['published']['type'], 'string');
 		$this->assertTrue($migration->run('up'));
+
 		$fields = $this->db->describe($model);
-		$this->assertEquals($fields['published']['type'], 'integer');
+		$this->assertEquals($fields['published']['type'], 'string');
 		$this->assertTrue($migration->run('down'));
+
 		$fields = $this->db->describe($model);
 		$this->assertEquals($fields['published']['type'], 'string');
 	}
@@ -525,7 +527,7 @@ class CakeMigrationTest extends CakeTestCase {
 		$migration = new TestCakeMigration(array(
 			'up' => array(
 				'alter_field' => array(
-					'posts' => array('created' => array('type' => 'integer', 'length' => 11))
+					'posts' => array('created' => array('type' => 'datetime'))
 				)
 			),
 			'down' => array(
@@ -541,8 +543,7 @@ class CakeMigrationTest extends CakeTestCase {
 
 		$this->assertTrue($migration->run('up'));
 		$fields = $this->db->describe($model);
-		$this->assertEquals($fields['created']['type'], 'integer');
-		$this->assertEquals($fields['created']['length'], 11);
+		$this->assertEquals($fields['created']['type'], 'datetime');
 
 		$this->assertTrue($migration->run('down'));
 		$fields = $this->db->describe($model);
