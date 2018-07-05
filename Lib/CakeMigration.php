@@ -14,7 +14,7 @@ App::uses('CakeSchema', 'Model');
 /**
  * Base Class for Migration management
  */
-class CakeMigration extends CakeObject {
+class CakeMigration extends Object {
 
 /**
  * Migration description
