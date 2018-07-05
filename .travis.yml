@@ -13,22 +13,22 @@ env:
     - REQUIRE="phpunit/phpunit:3.7"
 
   matrix:
-    - DB=mysql CAKE_VERSION=2.1
+    - DB=mysql CAKE_VERSION=2.10.0
 
 matrix:
   include:
     - php: 5.6
       env:
-        - CAKE_VERSION=2.1
+        - CAKE_VERSION=2.10.0
     - php: 7.0
       env:
-        - CAKE_VERSION=2.1
+        - CAKE_VERSION=2.10.0
     - php: 7.1
       env:
-        - CAKE_VERSION=2.1
+        - CAKE_VERSION=2.10.0
     - php: 7.2
       env:
-        - CAKE_VERSION=2.1
+        - CAKE_VERSION=2.10.0
 before_script:
   - git clone https://github.com/steinkel/travis.git --depth 1 ../travis
   - ../travis/before_script.sh
