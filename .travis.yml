@@ -3,6 +3,7 @@ language: php
 php:
   - 5.6
   - 7.0
+  - 7.1
 env:
   global:
     - PLUGIN_NAME=Migrations
@@ -11,7 +12,7 @@ env:
     - REQUIRE="phpunit/phpunit:3.7.31"
 
   matrix:
-    - DB=mysql CAKE_VERSION=2.1
+    - DB=mysql CAKE_VERSION=2.7
 
 matrix:
   include:
@@ -19,6 +20,9 @@ matrix:
       env:
         - CAKE_VERSION=2.7
     - php: 7.0
+      env:
+        - CAKE_VERSION=2.8
+    - php: 7.1
       env:
         - CAKE_VERSION=2.1
 before_script:
