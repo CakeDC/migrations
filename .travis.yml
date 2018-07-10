@@ -24,13 +24,13 @@ matrix:
         - CAKE_VERSION=2.8
     - php: 7.1
       env:
-        - CAKE_VERSION=2.1
+        - CAKE_VERSION=2.10.0
 before_script:
   - git clone https://github.com/steinkel/travis.git --depth 1 ../travis
   - ../travis/before_script.sh
   - if [ "$PHPCS" != 1 ]; then
             echo "
-                require_once APP . DS . 'vendor' . DS . 'phpunit' . DS . 'phpunit' . DS . 'PHPUnit' . DS . 'Autoload.php';
+                require_once APP . DS . 'Vendor' . DS . 'phpunit' . DS . 'phpunit' . DS . 'PHPUnit' . DS . 'Autoload.php';
             " >> ../cakephp/app/Config/bootstrap.php;
     fi
 script:
