@@ -24,7 +24,7 @@ matrix:
         - CAKE_VERSION=2.8
     - php: 7.1
       env:
-        - CAKE_VERSION=2.10.0
+        - CAKE_VERSION=2.1
 before_script:
   - git clone https://github.com/steinkel/travis.git --depth 1 ../travis
   - ../travis/before_script.sh
