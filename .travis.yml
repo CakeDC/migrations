@@ -12,6 +12,7 @@ env:
     - REQUIRE="phpunit/phpunit:3.7.31"
 
   matrix:
+    - DB=mysql CAKE_VERSION=2.1
     - DB=mysql CAKE_VERSION=2.7
 
 matrix:
