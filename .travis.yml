@@ -33,7 +33,7 @@ before_script:
           echo "
               require_once APP . DS . 'vendor' . DS . 'phpunit' . DS . 'phpunit' . DS . 'PHPUnit' . DS . 'Autoload.php';
           " >> ../cakephp/app/Config/bootstrap.php;
-  fi
+    fi
 script:
   - ../travis/script.sh
 after_success:
