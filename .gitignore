@@ -16,3 +16,5 @@
 Icon?
 ehthumbs.db
 Thumbs.db
+composer.lock
+vendor

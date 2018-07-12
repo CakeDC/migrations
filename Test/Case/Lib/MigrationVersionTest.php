@@ -370,7 +370,7 @@ class MigrationVersionTest extends CakeTestCase {
 		));
 
 		$result = $Version->getVersionByName($this->_mapping());
-		//$this->assertFalse($result);
+		$this->assertFalse($result);
 	}
 
 /**
