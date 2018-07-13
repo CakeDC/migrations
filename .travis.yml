@@ -3,7 +3,6 @@ language: php
 php:
   - 5.6
   - 7.0
-  - 7.1
 env:
   global:
     - PLUGIN_NAME=Migrations
@@ -12,7 +11,6 @@ env:
     - REQUIRE="phpunit/phpunit:3.7.31"
 
   matrix:
-    - DB=mysql CAKE_VERSION=2.1
     - DB=mysql CAKE_VERSION=2.7
 
 matrix:
@@ -23,9 +21,6 @@ matrix:
     - php: 7.0
       env:
         - CAKE_VERSION=2.8
-    - php: 7.0
-      env:
-        - CAKE_VERSION=2.1
 before_script:
   - git clone https://github.com/steinkel/travis.git --depth 1 ../travis
   - ../travis/before_script.sh
