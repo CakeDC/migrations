@@ -42,5 +42,5 @@ Composer
 To install the plugin with the [Composer dependency manager](https://getcomposer.org/), run the following from your CakePHP project's ROOT directory (where the ``composer.json`` file is located):
 
 ```
-php composer.phar require cakedc/migrations "~2.4.0"
+php composer.phar require cakedc/migrations "^2.6.0"
 ```
