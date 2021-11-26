@@ -252,7 +252,8 @@ class MigrationVersion {
 
 		ksort($mapping);
 		foreach ($mapping as $version => $migration) {
-			list($name, $class) = each($migration);
+			$class = reset($migration);
+            		$name = key($migration);
 
 			$mapping[$version] = array(
 				'version' => $version, 'name' => $name, 'class' => $class,
@@ -439,7 +440,8 @@ class MigrationVersion {
 		if (!in_array($db->fullTableName('schema_migrations', false, false), $db->listSources())) {
 			$map = $this->_enumerateMigrations('migrations');
 
-			list($name, $class) = each($map[1]);
+			$class = reset($map[1]);
+            		$name = key($map[1]);
 			$migration = $this->getMigration($name, $class, 'Migrations');
 			$migration->run('up');
 			$this->setVersion(1, 'Migrations');
